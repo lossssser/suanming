@@ -8,15 +8,15 @@ export default {
       return json({ error: "Use POST request." }, 405);
     }
 
-    if (!env.DEEPSEEK_API_KEY) {
-      return json({ error: "Missing DEEPSEEK_API_KEY secret on this Worker." }, 500);
-    }
-
     try {
       const body = await request.json();
+      const provider = normalizeProvider(body.provider || env.AI_PROVIDER || "deepseek");
       const messages = buildMessages(body);
-      const answer = await callDeepSeek(messages, env);
-      return json({ answer });
+      const answer = provider === "openai"
+        ? await callOpenAI(messages, env)
+        : await callDeepSeek(messages, env);
+
+      return json({ answer, provider });
     } catch (error) {
       return json({ error: error.message || "AI reading failed." }, 500);
     }
@@ -24,14 +24,44 @@ export default {
 };
 
 async function callDeepSeek(messages, env) {
-  const response = await fetch("https://api.deepseek.com/chat/completions", {
+  if (!env.DEEPSEEK_API_KEY) {
+    throw new Error("Missing DEEPSEEK_API_KEY secret on this Worker.");
+  }
+
+  const data = await postChatCompletion({
+    url: "https://api.deepseek.com/chat/completions",
+    apiKey: env.DEEPSEEK_API_KEY,
+    model: env.DEEPSEEK_MODEL || "deepseek-chat",
+    messages,
+  });
+
+  return data.choices?.[0]?.message?.content?.trim() || "DeepSeek returned no readable text.";
+}
+
+async function callOpenAI(messages, env) {
+  if (!env.OPENAI_API_KEY) {
+    throw new Error("Missing OPENAI_API_KEY secret on this Worker.");
+  }
+
+  const data = await postChatCompletion({
+    url: "https://api.openai.com/v1/chat/completions",
+    apiKey: env.OPENAI_API_KEY,
+    model: env.OPENAI_MODEL || "gpt-4.1-mini",
+    messages,
+  });
+
+  return data.choices?.[0]?.message?.content?.trim() || "OpenAI returned no readable text.";
+}
+
+async function postChatCompletion({ url, apiKey, model, messages }) {
+  const response = await fetch(url, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${env.DEEPSEEK_API_KEY}`,
+      Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: env.DEEPSEEK_MODEL || "deepseek-v4-flash",
+      model,
       messages,
       temperature: 0.7,
       max_tokens: 1200,
@@ -47,10 +77,18 @@ async function callDeepSeek(messages, env) {
   }
 
   if (!response.ok) {
-    throw new Error(data.error?.message || `DeepSeek request failed: HTTP ${response.status}`);
+    throw new Error(data.error?.message || `AI request failed: HTTP ${response.status}`);
   }
 
-  return data.choices?.[0]?.message?.content?.trim() || "DeepSeek returned no readable text.";
+  return data;
+}
+
+function normalizeProvider(provider) {
+  const value = String(provider || "").toLowerCase();
+  if (value === "openai" || value === "deepseek") {
+    return value;
+  }
+  throw new Error("Unsupported provider. Use openai or deepseek.");
 }
 
 function buildMessages(body) {
@@ -58,10 +96,11 @@ function buildMessages(body) {
     {
       role: "system",
       content: [
-        "你是一位谨慎的六爻排盘解读助手。",
-        "只根据用户提供的盘面作传统术数风格的分析，不声称结果必然发生。",
-        "输出要清楚、克制、可读，避免恐吓、绝对化承诺和医疗/法律/投资定论。",
-        "如果信息不足，说明需要结合月建、用神取法、现实背景再判断。",
+        "You are a cautious Liuyao divination chart reading assistant. ",
+        "Answer in Simplified Chinese. ",
+        "Analyze only from the chart provided by the user. ",
+        "Do not claim certainty, do not intimidate the user, and do not provide medical, legal, or investment conclusions. ",
+        "If important context is missing, say that month branch, useful-god selection, and real-world context are needed for a firmer reading.",
       ].join(""),
     },
     {
@@ -77,37 +116,37 @@ function buildPrompt(body) {
   const movingLines = lines.filter((line) => line.moving);
 
   return [
-    "请解读下面这个六爻盘。",
+    "Please read this Liuyao chart and answer in Simplified Chinese.",
     "",
-    `所问事项：${body.question || chart.question || "未填写"}`,
-    `起卦时间：${chart.castTime || "未填写"}`,
-    `日辰：${chart.dayGanzhi || "未填写"}`,
-    `空亡：${(chart.emptyBranches || []).join("") || "未填写"}`,
+    `Question: ${body.question || chart.question || "not provided"}`,
+    `Cast time: ${chart.castTime || "not provided"}`,
+    `Day ganzhi: ${chart.dayGanzhi || "not provided"}`,
+    `Empty branches: ${(chart.emptyBranches || []).join("") || "not provided"}`,
     "",
-    formatHexagram("本卦", chart.original),
-    formatHexagram("变卦", chart.changed),
-    `动爻：${movingLines.length ? movingLines.map((line) => `${line.index}爻`).join("、") : "无动爻"}`,
+    formatHexagram("Original hexagram", chart.original),
+    formatHexagram("Changed hexagram", chart.changed),
+    `Moving lines: ${movingLines.length ? movingLines.map((line) => `${line.index}`).join(", ") : "none"}`,
     "",
-    "爻位明细（从上爻到初爻）：",
+    "Line details, top to bottom:",
     ...lines.slice().reverse().map(formatLine),
     "",
-    "请按以下结构输出：",
-    "1. 盘面总览",
-    "2. 用神和关键爻提示",
-    "3. 生克动变分析",
-    "4. 趋势判断",
-    "5. 行动建议",
+    "Use this structure:",
+    "1. Chart overview",
+    "2. Useful god and key lines",
+    "3. Generating, controlling, moving, and changing relations",
+    "4. Trend judgment",
+    "5. Practical advice",
   ].join("\n");
 }
 
 function formatHexagram(label, hexagram = {}) {
-  return `${label}：${hexagram.name || "未知"}（${hexagram.number || "?"}），${hexagram.palace || "?"}宫${hexagram.palaceElement || "?"}，${hexagram.palaceStage || "?"}`;
+  return `${label}: ${hexagram.name || "unknown"} (${hexagram.number || "?"}), palace ${hexagram.palace || "?"}${hexagram.palaceElement || "?"}, stage ${hexagram.palaceStage || "?"}`;
 }
 
 function formatLine(line) {
   const marker = line.marker ? ` ${line.marker}` : "";
-  const moving = line.moving ? " 动" : "";
-  return `${line.index}爻：${line.spirit || ""} ${line.relation || ""} ${line.branch || ""}${line.element || ""} ${line.symbol || ""}${marker}${moving} -> ${line.changedSymbol || ""}`;
+  const moving = line.moving ? " moving" : "";
+  return `${line.index}: ${line.spirit || ""} ${line.relation || ""} ${line.branch || ""}${line.element || ""} ${line.symbol || ""}${marker}${moving} -> ${line.changedSymbol || ""}`;
 }
 
 function json(data, status = 200) {

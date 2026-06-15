@@ -68,6 +68,7 @@ const summary = document.querySelector("#summary");
 const castTimeInput = document.querySelector("#castTime");
 const questionInput = document.querySelector("#question");
 const dayInput = document.querySelector("#dayGanzhi");
+const aiProviderInput = document.querySelector("#aiProvider");
 const aiButton = document.querySelector("#aiButton");
 const aiPanel = document.querySelector("#aiPanel");
 const aiStatus = document.querySelector("#aiStatus");
@@ -96,6 +97,7 @@ function init() {
   document.querySelector("#clearButton").addEventListener("click", () => {
     questionInput.value = "";
     dayInput.value = "";
+    aiProviderInput.value = "deepseek";
     setCurrentTime();
     document.querySelectorAll("select").forEach((select) => (select.value = "8"));
     clearCoins();
@@ -286,6 +288,7 @@ async function requestAiReading() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        provider: aiProviderInput.value,
         question: chart.question,
         chart: chartToPayload(chart),
       }),

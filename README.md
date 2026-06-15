@@ -48,18 +48,25 @@ Cloudflare Worker -> AI/API 后端
 https://suanming-api.826552635.workers.dev
 ```
 
-`worker.js` 是 Cloudflare Worker 代码。它会调用 DeepSeek Chat Completions 接口返回断卦文字。
+`worker.js` 是 Cloudflare Worker 代码。它可以按前端选择调用 DeepSeek 或 OpenAI，并返回断卦文字。
 
 在 Cloudflare Worker 的 `Settings` -> `Variables` 中添加：
 
 - Secret: `DEEPSEEK_API_KEY`
+- Secret: `OPENAI_API_KEY`
 - Variable（可选）: `DEEPSEEK_MODEL`
+- Variable（可选）: `OPENAI_MODEL`
+- Variable（可选）: `AI_PROVIDER`
 
-默认模型：
+默认配置：
 
 ```text
-deepseek-v4-flash
+AI_PROVIDER = deepseek
+DEEPSEEK_MODEL = deepseek-chat
+OPENAI_MODEL = gpt-4.1-mini
 ```
+
+只想用 DeepSeek 时，只配置 `DEEPSEEK_API_KEY` 即可。前端选择 OpenAI 时，Worker 才会要求 `OPENAI_API_KEY`。
 
 如果不想用命令行，可以在 Cloudflare 控制台新建名为 `suanming-api` 的 Worker，把 `worker.js` 内容粘贴进去并部署。
 
