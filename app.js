@@ -72,6 +72,7 @@ function init() {
   document.querySelectorAll("select").forEach((select, index) => {
     LINE_OPTIONS.forEach(([value, label]) => select.add(new Option(label, value)));
     select.value = index % 2 === 0 ? "8" : "7";
+    select.addEventListener("change", clearCoins);
   });
   setCurrentTime();
   form.addEventListener("submit", (event) => {
@@ -91,6 +92,7 @@ function init() {
     dayInput.value = "";
     setCurrentTime();
     document.querySelectorAll("select").forEach((select) => (select.value = "8"));
+    clearCoins();
     render();
   });
   render();
@@ -103,9 +105,10 @@ function setCurrentTime() {
 }
 
 function randomize() {
-  const values = ["6", "7", "8", "9"];
-  document.querySelectorAll("select").forEach((select) => {
-    select.value = values[Math.floor(Math.random() * values.length)];
+  [1, 2, 3, 4, 5, 6].forEach((line) => {
+    const toss = tossCoins();
+    document.querySelector(`[name=line${line}]`).value = String(toss.value);
+    renderCoins(line, toss.coins);
   });
 }
 
@@ -261,6 +264,25 @@ function renderLines(chart) {
       </tr>`;
     })
     .join("");
+}
+
+function tossCoins() {
+  const coins = Array.from({ length: 3 }, () => (Math.random() < 0.5 ? "正" : "背"));
+  const value = coins.reduce((sum, coin) => sum + (coin === "正" ? 3 : 2), 0);
+  return { coins, value };
+}
+
+function renderCoins(line, coins) {
+  const output = document.querySelector(`[data-coins="${line}"]`);
+  output.innerHTML = coins.map((coin) => `<span class="coin-face">${coin}</span>`).join("");
+  output.title = `三枚铜钱：${coins.join("、")}`;
+}
+
+function clearCoins() {
+  document.querySelectorAll("[data-coins]").forEach((output) => {
+    output.innerHTML = "";
+    output.removeAttribute("title");
+  });
 }
 
 function escapeHtml(value) {

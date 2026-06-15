@@ -144,7 +144,7 @@ h1 {
 
 .line-row {
   display: grid;
-  grid-template-columns: 52px 1fr;
+  grid-template-columns: 52px minmax(128px, 1fr) minmax(118px, auto);
   align-items: center;
   gap: 10px;
 }
@@ -152,6 +152,28 @@ h1 {
 .line-row span {
   color: #41464d;
   font-weight: 600;
+}
+
+.coins {
+  min-height: 30px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: right;
+}
+
+.coin-face {
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  margin-left: 3px;
+  place-items: center;
+  border: 1px solid #d4b06a;
+  border-radius: 50%;
+  color: #6f4712;
+  background: #fff7df;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .actions {
@@ -305,5 +327,14 @@ tbody tr:last-child td {
   .topbar {
     min-height: 100px;
     padding: 16px;
+  }
+
+  .line-row {
+    grid-template-columns: 48px 1fr;
+  }
+
+  .coins {
+    grid-column: 2;
+    text-align: left;
   }
 }
