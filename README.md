@@ -51,6 +51,11 @@ GitHub Pages 网页 -> Cloudflare Worker -> 返回结果
 
 后续接入 AI 时，把 API Key 放在 Cloudflare Worker 的 Secret/环境变量里，不要写进 `app.js`。
 
+OpenAI 版 Worker 需要在 Cloudflare Worker 的 `Settings` -> `Variables` 中添加：
+
+- Secret: `OPENAI_API_KEY`
+- Variable（可选）: `OPENAI_MODEL`，默认使用 `gpt-4.1-mini`
+
 部署方式：
 
 ```powershell
