@@ -75,7 +75,7 @@ const aiStatus = document.querySelector("#aiStatus");
 const aiAnswer = document.querySelector("#aiAnswer");
 
 function init() {
-  document.querySelectorAll("select").forEach((select, index) => {
+  document.querySelectorAll('select[name^="line"]').forEach((select, index) => {
     LINE_OPTIONS.forEach(([value, label]) => select.add(new Option(label, value)));
     select.value = index % 2 === 0 ? "8" : "7";
     select.addEventListener("change", clearCoins);
@@ -99,7 +99,7 @@ function init() {
     dayInput.value = "";
     aiProviderInput.value = "deepseek";
     setCurrentTime();
-    document.querySelectorAll("select").forEach((select) => (select.value = "8"));
+    document.querySelectorAll('select[name^="line"]').forEach((select) => (select.value = "8"));
     clearCoins();
     clearAiPanel();
     render();
