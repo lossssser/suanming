@@ -75,6 +75,12 @@ const aiStatus = document.querySelector("#aiStatus");
 const aiAnswer = document.querySelector("#aiAnswer");
 
 function init() {
+  aiProviderInput.replaceChildren(
+    new Option("DeepSeek", "deepseek"),
+    new Option("OpenAI", "openai"),
+  );
+  aiProviderInput.value = "deepseek";
+
   document.querySelectorAll('select[name^="line"]').forEach((select, index) => {
     LINE_OPTIONS.forEach(([value, label]) => select.add(new Option(label, value)));
     select.value = index % 2 === 0 ? "8" : "7";
