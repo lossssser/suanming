@@ -28,21 +28,38 @@ https://lossssser.github.io/suanming/
 
 保存后等待 1-3 分钟即可访问。
 
-## Cloudflare Worker
+## Cloudflare Worker（路线 1）
 
-网页里的“AI断卦”会请求：
+本项目采用：
 
 ```text
-https://suanming.826552635.workers.dev
+GitHub Pages -> 静态网页
+Cloudflare Worker -> AI/API 后端
 ```
 
-`worker.js` 是 Cloudflare Worker 示例代码。先部署它可以验证：
+网页里的“AI断卦”会请求独立 Worker：
+
+```text
+https://suanming-api.826552635.workers.dev
+```
+
+`worker.js` 是 Cloudflare Worker 代码。先部署它可以验证：
 
 ```text
 GitHub Pages 网页 -> Cloudflare Worker -> 返回结果
 ```
 
 后续接入 AI 时，把 API Key 放在 Cloudflare Worker 的 Secret/环境变量里，不要写进 `app.js`。
+
+部署方式：
+
+```powershell
+npm.cmd install
+npx.cmd wrangler login
+npx.cmd wrangler deploy
+```
+
+如果不想用命令行，也可以在 Cloudflare 控制台新建名为 `suanming-api` 的 Worker，把 `worker.js` 内容粘贴进去并部署。
 
 ## 运行
 

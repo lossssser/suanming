@@ -60,7 +60,7 @@ const KONG_WANG = {
 const LINE_OPTIONS = [
   ["8", "少阴 8"], ["7", "少阳 7"], ["6", "老阴 6 动"], ["9", "老阳 9 动"],
 ];
-const AI_ENDPOINT = "https://suanming.826552635.workers.dev";
+const AI_ENDPOINT = "https://suanming-api.826552635.workers.dev";
 
 const form = document.querySelector("#chartForm");
 const lineTable = document.querySelector("#lineTable");
