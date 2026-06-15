@@ -72,6 +72,7 @@
           <div class="actions wide">
             <button class="primary" type="submit">排盘</button>
             <button id="randomButton" class="secondary" type="button">铜钱起卦</button>
+            <button id="aiButton" class="secondary" type="button">AI断卦</button>
             <button id="clearButton" class="secondary" type="button">清空</button>
           </div>
         </form>
@@ -94,6 +95,13 @@
             <tbody id="lineTable"></tbody>
           </table>
         </div>
+        <article id="aiPanel" class="ai-panel" hidden>
+          <header>
+            <h2>AI断卦</h2>
+            <span id="aiStatus">待请求</span>
+          </header>
+          <div id="aiAnswer" class="ai-answer"></div>
+        </article>
       </section>
     </main>
 

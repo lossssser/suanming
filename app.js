@@ -60,6 +60,7 @@ const KONG_WANG = {
 const LINE_OPTIONS = [
   ["8", "少阴 8"], ["7", "少阳 7"], ["6", "老阴 6 动"], ["9", "老阳 9 动"],
 ];
+const AI_ENDPOINT = "https://suanming.826552635.workers.dev";
 
 const form = document.querySelector("#chartForm");
 const lineTable = document.querySelector("#lineTable");
@@ -67,6 +68,10 @@ const summary = document.querySelector("#summary");
 const castTimeInput = document.querySelector("#castTime");
 const questionInput = document.querySelector("#question");
 const dayInput = document.querySelector("#dayGanzhi");
+const aiButton = document.querySelector("#aiButton");
+const aiPanel = document.querySelector("#aiPanel");
+const aiStatus = document.querySelector("#aiStatus");
+const aiAnswer = document.querySelector("#aiAnswer");
 
 function init() {
   document.querySelectorAll("select").forEach((select, index) => {
@@ -87,12 +92,14 @@ function init() {
     randomize();
     render();
   });
+  aiButton.addEventListener("click", requestAiReading);
   document.querySelector("#clearButton").addEventListener("click", () => {
     questionInput.value = "";
     dayInput.value = "";
     setCurrentTime();
     document.querySelectorAll("select").forEach((select) => (select.value = "8"));
     clearCoins();
+    clearAiPanel();
     render();
   });
   render();
@@ -116,6 +123,7 @@ function render() {
   const chart = buildChart();
   renderSummary(chart);
   renderLines(chart);
+  return chart;
 }
 
 function buildChart() {
@@ -264,6 +272,72 @@ function renderLines(chart) {
       </tr>`;
     })
     .join("");
+}
+
+async function requestAiReading() {
+  const chart = render();
+  aiPanel.hidden = false;
+  aiStatus.textContent = "请求中";
+  aiAnswer.textContent = "正在连接 Cloudflare Worker...";
+  aiButton.disabled = true;
+
+  try {
+    const response = await fetch(AI_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        question: chart.question,
+        chart: chartToPayload(chart),
+      }),
+    });
+    const text = await response.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = { answer: text };
+    }
+
+    if (!response.ok) {
+      throw new Error(data.error || data.message || `请求失败：HTTP ${response.status}`);
+    }
+
+    aiStatus.textContent = "已返回";
+    aiAnswer.textContent = data.answer || data.result || data.message || JSON.stringify(data, null, 2);
+  } catch (error) {
+    aiStatus.textContent = "失败";
+    aiAnswer.textContent = `没有拿到可用结果：${error.message}`;
+  } finally {
+    aiButton.disabled = false;
+  }
+}
+
+function chartToPayload(chart) {
+  return {
+    question: chart.question,
+    castTime: chart.castTime,
+    dayGanzhi: chart.dayGanzhi,
+    emptyBranches: chart.emptyBranches,
+    original: chart.original,
+    changed: chart.changed,
+    lines: chart.lines.map((line) => ({
+      index: line.index,
+      spirit: line.spirit,
+      relation: line.relation,
+      branch: line.branch,
+      element: line.element,
+      symbol: line.symbol,
+      changedSymbol: line.changedSymbol,
+      moving: line.moving,
+      marker: line.marker,
+    })),
+  };
+}
+
+function clearAiPanel() {
+  aiPanel.hidden = true;
+  aiStatus.textContent = "待请求";
+  aiAnswer.textContent = "";
 }
 
 function tossCoins() {

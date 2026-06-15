@@ -178,7 +178,7 @@ h1 {
 
 .actions {
   display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
   gap: 10px;
 }
 
@@ -300,6 +300,43 @@ tbody tr:last-child td {
 
 .empty {
   color: var(--muted);
+}
+
+.ai-panel {
+  margin-top: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.ai-panel header {
+  min-height: 48px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #f7fbfa;
+}
+
+.ai-panel h2 {
+  margin: 0;
+  font-size: 17px;
+  letter-spacing: 0;
+}
+
+#aiStatus {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.ai-answer {
+  min-height: 96px;
+  padding: 14px;
+  line-height: 1.75;
+  white-space: pre-wrap;
 }
 
 @media (max-width: 860px) {

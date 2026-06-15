@@ -28,6 +28,22 @@ https://lossssser.github.io/suanming/
 
 保存后等待 1-3 分钟即可访问。
 
+## Cloudflare Worker
+
+网页里的“AI断卦”会请求：
+
+```text
+https://suanming.826552635.workers.dev
+```
+
+`worker.js` 是 Cloudflare Worker 示例代码。先部署它可以验证：
+
+```text
+GitHub Pages 网页 -> Cloudflare Worker -> 返回结果
+```
+
+后续接入 AI 时，把 API Key 放在 Cloudflare Worker 的 Secret/环境变量里，不要写进 `app.js`。
+
 ## 运行
 
 ```powershell
