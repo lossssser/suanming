@@ -5,50 +5,36 @@ export default {
     }
 
     if (request.method !== "POST") {
-      return json({ error: "请使用 POST 请求。" }, 405);
+      return json({ error: "Use POST request." }, 405);
     }
 
-    if (!env.OPENAI_API_KEY) {
-      return json({ error: "Worker 缺少 OPENAI_API_KEY Secret。" }, 500);
+    if (!env.DEEPSEEK_API_KEY) {
+      return json({ error: "Missing DEEPSEEK_API_KEY secret on this Worker." }, 500);
     }
 
     try {
       const body = await request.json();
-      const prompt = buildPrompt(body);
-      const answer = await callOpenAI(prompt, env);
+      const messages = buildMessages(body);
+      const answer = await callDeepSeek(messages, env);
       return json({ answer });
     } catch (error) {
-      return json({ error: error.message || "AI断卦失败。" }, 500);
+      return json({ error: error.message || "AI reading failed." }, 500);
     }
   },
 };
 
-async function callOpenAI(prompt, env) {
-  const response = await fetch("https://api.openai.com/v1/responses", {
+async function callDeepSeek(messages, env) {
+  const response = await fetch("https://api.deepseek.com/chat/completions", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+      Authorization: `Bearer ${env.DEEPSEEK_API_KEY}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: env.OPENAI_MODEL || "gpt-4.1-mini",
-      input: [
-        {
-          role: "system",
-          content: [
-            "你是一位谨慎的六爻排盘解读助手。",
-            "只根据用户提供的盘面作传统术数风格的分析，不声称结果必然发生。",
-            "输出要清楚、克制、可读，避免恐吓、绝对化承诺和医疗/法律/投资定论。",
-            "如果信息不足，说明需要结合月建、用神取法、现实背景再判断。",
-          ].join(""),
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
+      model: env.DEEPSEEK_MODEL || "deepseek-v4-flash",
+      messages,
       temperature: 0.7,
-      max_output_tokens: 900,
+      max_tokens: 1200,
     }),
   });
 
@@ -61,29 +47,28 @@ async function callOpenAI(prompt, env) {
   }
 
   if (!response.ok) {
-    throw new Error(data.error?.message || `OpenAI 请求失败：HTTP ${response.status}`);
+    throw new Error(data.error?.message || `DeepSeek request failed: HTTP ${response.status}`);
   }
 
-  return extractOutputText(data) || "OpenAI 已返回，但没有解析到文本内容。";
+  return data.choices?.[0]?.message?.content?.trim() || "DeepSeek returned no readable text.";
 }
 
-function extractOutputText(data) {
-  if (data.output_text) {
-    return data.output_text;
-  }
-
-  const chunks = [];
-  for (const item of data.output || []) {
-    for (const content of item.content || []) {
-      if (content.type === "output_text" && content.text) {
-        chunks.push(content.text);
-      }
-      if (content.type === "text" && content.text) {
-        chunks.push(content.text);
-      }
-    }
-  }
-  return chunks.join("\n").trim();
+function buildMessages(body) {
+  return [
+    {
+      role: "system",
+      content: [
+        "你是一位谨慎的六爻排盘解读助手。",
+        "只根据用户提供的盘面作传统术数风格的分析，不声称结果必然发生。",
+        "输出要清楚、克制、可读，避免恐吓、绝对化承诺和医疗/法律/投资定论。",
+        "如果信息不足，说明需要结合月建、用神取法、现实背景再判断。",
+      ].join(""),
+    },
+    {
+      role: "user",
+      content: buildPrompt(body),
+    },
+  ];
 }
 
 function buildPrompt(body) {

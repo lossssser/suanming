@@ -1,10 +1,14 @@
 # suanming
 
-一个六爻基础排盘工具，包含网页版和 Python 命令行版。
+一个六爻基础排盘工具，包含网页版、Python 命令行版，以及 Cloudflare Worker AI 解读接口。
 
 ## 网页版
 
-打开 `index.html` 即可本地使用。推送到 GitHub 后，可以用 GitHub Pages 发布。
+公开访问地址：
+
+```text
+https://lossssser.github.io/suanming/
+```
 
 网页版的“铜钱起卦”会为每一爻模拟三枚铜钱：
 
@@ -12,13 +16,14 @@
 - 背面记 2
 - 三枚相加得到 `6`、`7`、`8`、`9`
 
-因此四种爻的概率为：老阴 `1/8`、少阳 `3/8`、少阴 `3/8`、老阳 `1/8`。
+四种爻的概率为：
 
-默认公开访问地址通常是：
+- 老阴 `6`：`1/8`
+- 少阳 `7`：`3/8`
+- 少阴 `8`：`3/8`
+- 老阳 `9`：`1/8`
 
-```text
-https://lossssser.github.io/suanming/
-```
+## GitHub Pages
 
 第一次发布需要到 GitHub 仓库的 `Settings` -> `Pages` 设置：
 
@@ -28,9 +33,9 @@ https://lossssser.github.io/suanming/
 
 保存后等待 1-3 分钟即可访问。
 
-## Cloudflare Worker（路线 1）
+## Cloudflare Worker
 
-本项目采用：
+本项目采用路线 1：
 
 ```text
 GitHub Pages -> 静态网页
@@ -43,20 +48,22 @@ Cloudflare Worker -> AI/API 后端
 https://suanming-api.826552635.workers.dev
 ```
 
-`worker.js` 是 Cloudflare Worker 代码。先部署它可以验证：
+`worker.js` 是 Cloudflare Worker 代码。它会调用 DeepSeek Chat Completions 接口返回断卦文字。
+
+在 Cloudflare Worker 的 `Settings` -> `Variables` 中添加：
+
+- Secret: `DEEPSEEK_API_KEY`
+- Variable（可选）: `DEEPSEEK_MODEL`
+
+默认模型：
 
 ```text
-GitHub Pages 网页 -> Cloudflare Worker -> 返回结果
+deepseek-v4-flash
 ```
 
-后续接入 AI 时，把 API Key 放在 Cloudflare Worker 的 Secret/环境变量里，不要写进 `app.js`。
+如果不想用命令行，可以在 Cloudflare 控制台新建名为 `suanming-api` 的 Worker，把 `worker.js` 内容粘贴进去并部署。
 
-OpenAI 版 Worker 需要在 Cloudflare Worker 的 `Settings` -> `Variables` 中添加：
-
-- Secret: `OPENAI_API_KEY`
-- Variable（可选）: `OPENAI_MODEL`，默认使用 `gpt-4.1-mini`
-
-部署方式：
+命令行部署方式：
 
 ```powershell
 npm.cmd install
@@ -64,9 +71,7 @@ npx.cmd wrangler login
 npx.cmd wrangler deploy
 ```
 
-如果不想用命令行，也可以在 Cloudflare 控制台新建名为 `suanming-api` 的 Worker，把 `worker.js` 内容粘贴进去并部署。
-
-## 运行
+## Python 命令行版
 
 ```powershell
 python .\liuyao.py "6 7 8 9 7 8" -q "问事业" -t "2026-06-15 19:50"
@@ -101,5 +106,4 @@ python .\liuyao.py
 - 六亲
 - 纳支与地支五行
 - 日辰与空亡
-
-这是排盘工具，不包含自动断卦结论。
+- AI 断卦文字
