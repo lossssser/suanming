@@ -4,7 +4,7 @@
 
 ## 网页版
 
-打开 `index.html` 即可本地使用。推送到 GitHub 后，会通过 GitHub Pages 自动部署。
+打开 `index.html` 即可本地使用。推送到 GitHub 后，可以用 GitHub Pages 发布。
 
 默认公开访问地址通常是：
 
@@ -12,7 +12,13 @@
 https://lossssser.github.io/suanming/
 ```
 
-如果第一次部署后没有自动可用，请到 GitHub 仓库的 `Settings` -> `Pages`，把构建来源设置为 `GitHub Actions`。
+第一次发布需要到 GitHub 仓库的 `Settings` -> `Pages` 设置：
+
+- Source: `Deploy from a branch`
+- Branch: `gh-pages`
+- Folder: `/ (root)`
+
+保存后等待 1-3 分钟即可访问。
 
 ## 运行
 
