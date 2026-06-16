@@ -323,15 +323,30 @@ async function requestAiReading() {
     aiAnswer.textContent = data.answer || data.result || data.message || JSON.stringify(data, null, 2);
   } catch (error) {
     aiStatus.textContent = "失败";
-    const message = error.name === "AbortError"
-      ? "请求超时。手机网络下 AI 生成可能被浏览器中断，请切换 Wi-Fi 或稍后再试。"
-      : `没有拿到可用结果：${error.message}`;
+    const message = formatAiError(error);
     aiAnswer.textContent = message;
   } finally {
     clearTimeout(timeoutId);
     clearTimeout(slowNoticeId);
     aiButton.disabled = false;
   }
+}
+
+function formatAiError(error) {
+  if (error.name === "AbortError") {
+    return "请求超时。手机网络下 AI 生成可能被浏览器中断，请切换 Wi-Fi 或稍后再试。";
+  }
+
+  const raw = error.message || "";
+  if (/failed to fetch|networkerror|load failed/i.test(raw)) {
+    return [
+      "无法连接 Cloudflare Worker。",
+      "如果关闭 VPN 后才出现这个问题，通常是当前网络无法稳定访问 workers.dev。",
+      "可以先打开 VPN 使用；长期方案是给 Worker 绑定自定义域名，或把接口改成 Cloudflare Pages Functions 同域调用。",
+    ].join("\n");
+  }
+
+  return `没有拿到可用结果：${raw}`;
 }
 
 function chartToPayload(chart) {
