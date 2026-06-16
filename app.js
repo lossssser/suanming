@@ -61,6 +61,7 @@ const LINE_OPTIONS = [
   ["8", "少阴 8"], ["7", "少阳 7"], ["6", "老阴 6 动"], ["9", "老阳 9 动"],
 ];
 const AI_ENDPOINT = "https://suanming-api.826552635.workers.dev";
+const AI_TIMEOUT_MS = 75000;
 
 const form = document.querySelector("#chartForm");
 const lineTable = document.querySelector("#lineTable");
@@ -286,13 +287,20 @@ async function requestAiReading() {
   const chart = render();
   aiPanel.hidden = false;
   aiStatus.textContent = "请求中";
-  aiAnswer.textContent = "正在连接 Cloudflare Worker...";
+  aiAnswer.textContent = "正在连接 Cloudflare Worker，移动网络下可能需要 10-30 秒...";
   aiButton.disabled = true;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+  const slowNoticeId = setTimeout(() => {
+    aiStatus.textContent = "仍在等待";
+    aiAnswer.textContent = "AI 还在生成。如果手机网络较慢，可以稍等片刻，或切换 Wi-Fi 后重试。";
+  }, 18000);
 
   try {
     const response = await fetch(AI_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: controller.signal,
       body: JSON.stringify({
         provider: aiProviderInput.value,
         question: chart.question,
@@ -315,8 +323,13 @@ async function requestAiReading() {
     aiAnswer.textContent = data.answer || data.result || data.message || JSON.stringify(data, null, 2);
   } catch (error) {
     aiStatus.textContent = "失败";
-    aiAnswer.textContent = `没有拿到可用结果：${error.message}`;
+    const message = error.name === "AbortError"
+      ? "请求超时。手机网络下 AI 生成可能被浏览器中断，请切换 Wi-Fi 或稍后再试。"
+      : `没有拿到可用结果：${error.message}`;
+    aiAnswer.textContent = message;
   } finally {
+    clearTimeout(timeoutId);
+    clearTimeout(slowNoticeId);
     aiButton.disabled = false;
   }
 }

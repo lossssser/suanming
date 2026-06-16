@@ -54,19 +54,33 @@ async function callOpenAI(messages, env) {
 }
 
 async function postChatCompletion({ url, apiKey, model, messages }) {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      messages,
-      temperature: 0.7,
-      max_tokens: 1200,
-    }),
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 45000);
+
+  let response;
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        model,
+        messages,
+        temperature: 0.7,
+        max_tokens: 800,
+      }),
+    });
+  } catch (error) {
+    if (error.name === "AbortError") {
+      throw new Error("AI provider request timed out. Please try again.");
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   const text = await response.text();
   let data;
@@ -101,6 +115,7 @@ function buildMessages(body) {
         "Analyze only from the chart provided by the user. ",
         "Do not claim certainty, do not intimidate the user, and do not provide medical, legal, or investment conclusions. ",
         "If important context is missing, say that month branch, useful-god selection, and real-world context are needed for a firmer reading.",
+        "Keep the answer concise, within about 700 Chinese characters.",
       ].join(""),
     },
     {
@@ -136,6 +151,8 @@ function buildPrompt(body) {
     "3. Generating, controlling, moving, and changing relations",
     "4. Trend judgment",
     "5. Practical advice",
+    "",
+    "Please keep the answer concise and practical.",
   ].join("\n");
 }
 
