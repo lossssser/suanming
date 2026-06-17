@@ -60,7 +60,7 @@ const KONG_WANG = {
 const LINE_OPTIONS = [
   ["8", "少阴 8"], ["7", "少阳 7"], ["6", "老阴 6 动"], ["9", "老阳 9 动"],
 ];
-const AI_ENDPOINT = "https://shxgjqaq.com";
+const AI_ENDPOINT = "https://api.shxgjqaq.com";
 const AI_TIMEOUT_MS = 75000;
 
 const form = document.querySelector("#chartForm");

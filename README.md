@@ -38,14 +38,14 @@ https://lossssser.github.io/suanming/
 本项目采用路线 1：
 
 ```text
-GitHub Pages -> 静态网页
-Cloudflare Worker -> AI/API 后端
+shxgjqaq.com -> Cloudflare Pages 静态网页
+api.shxgjqaq.com -> Cloudflare Worker AI/API 后端
 ```
 
 网页里的“AI断卦”会请求独立 Worker：
 
 ```text
-https://shxgjqaq.com
+https://api.shxgjqaq.com
 ```
 
 `worker.js` 是 Cloudflare Worker 代码。它可以按前端选择调用 DeepSeek 或 OpenAI，并返回断卦文字。
