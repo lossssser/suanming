@@ -45,7 +45,7 @@ Cloudflare Worker -> AI/API 后端
 网页里的“AI断卦”会请求独立 Worker：
 
 ```text
-https://suanming-api.826552635.workers.dev
+https://api.shxgjqaq.com
 ```
 
 `worker.js` 是 Cloudflare Worker 代码。它可以按前端选择调用 DeepSeek 或 OpenAI，并返回断卦文字。
