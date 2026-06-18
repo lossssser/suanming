@@ -62,6 +62,8 @@ const LINE_OPTIONS = [
 ];
 const AI_ENDPOINT = "https://api.shxgjqaq.com";
 const AI_TIMEOUT_MS = 75000;
+const HISTORY_KEY = "suanming_reading_history_v1";
+const HISTORY_LIMIT = 20;
 
 const form = document.querySelector("#chartForm");
 const lineTable = document.querySelector("#lineTable");
@@ -74,6 +76,8 @@ const aiButton = document.querySelector("#aiButton");
 const aiPanel = document.querySelector("#aiPanel");
 const aiStatus = document.querySelector("#aiStatus");
 const aiAnswer = document.querySelector("#aiAnswer");
+const historyList = document.querySelector("#historyList");
+const clearHistoryButton = document.querySelector("#clearHistoryButton");
 
 function init() {
   aiProviderInput.replaceChildren(
@@ -101,6 +105,8 @@ function init() {
     render();
   });
   aiButton.addEventListener("click", requestAiReading);
+  clearHistoryButton.addEventListener("click", clearHistory);
+  historyList.addEventListener("click", handleHistoryClick);
   document.querySelector("#clearButton").addEventListener("click", () => {
     questionInput.value = "";
     dayInput.value = "";
@@ -112,6 +118,7 @@ function init() {
     render();
   });
   render();
+  renderHistory();
 }
 
 function setCurrentTime() {
@@ -319,8 +326,10 @@ async function requestAiReading() {
       throw new Error(data.error || data.message || `请求失败：HTTP ${response.status}`);
     }
 
+    const answer = data.answer || data.result || data.message || JSON.stringify(data, null, 2);
     aiStatus.textContent = "已返回";
-    aiAnswer.textContent = data.answer || data.result || data.message || JSON.stringify(data, null, 2);
+    aiAnswer.textContent = answer;
+    saveHistory(chart, answer, aiProviderInput.value);
   } catch (error) {
     aiStatus.textContent = "失败";
     const message = formatAiError(error);
@@ -375,6 +384,128 @@ function clearAiPanel() {
   aiPanel.hidden = true;
   aiStatus.textContent = "待请求";
   aiAnswer.textContent = "";
+}
+
+function saveHistory(chart, answer, provider) {
+  const history = loadHistory();
+  const item = {
+    id: String(Date.now()),
+    savedAt: new Date().toISOString(),
+    provider,
+    chart,
+    answer,
+    lineValues: readLineValues(),
+  };
+  history.unshift(item);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, HISTORY_LIMIT)));
+  renderHistory();
+}
+
+function loadHistory() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function renderHistory() {
+  const history = loadHistory();
+  if (!history.length) {
+    historyList.innerHTML = '<div class="history-empty">暂无历史记录</div>';
+    return;
+  }
+
+  historyList.innerHTML = history.map((item) => {
+    const chart = item.chart || {};
+    const original = chart.original?.name || "未知本卦";
+    const changed = chart.changed?.name || "未知变卦";
+    const time = formatSavedAt(item.savedAt);
+    const title = escapeHtml(chart.question || "未填写");
+    const provider = item.provider === "openai" ? "OpenAI" : "DeepSeek";
+    return `<article class="history-item" data-id="${escapeHtml(item.id)}">
+      <div>
+        <div class="history-title">${title}</div>
+        <div class="history-meta">${escapeHtml(time)} · ${escapeHtml(provider)} · ${escapeHtml(original)} -> ${escapeHtml(changed)}</div>
+      </div>
+      <div class="history-actions">
+        <button class="mini-button" type="button" data-action="view">查看</button>
+        <button class="mini-button" type="button" data-action="restore">恢复</button>
+        <button class="mini-button" type="button" data-action="delete">删除</button>
+      </div>
+    </article>`;
+  }).join("");
+}
+
+function handleHistoryClick(event) {
+  const button = event.target.closest("button[data-action]");
+  if (!button) return;
+
+  const itemEl = button.closest(".history-item");
+  const item = loadHistory().find((entry) => entry.id === itemEl?.dataset.id);
+  if (!item) return;
+
+  const action = button.dataset.action;
+  if (action === "view") {
+    showHistoryItem(item);
+  } else if (action === "restore") {
+    restoreHistoryItem(item);
+  } else if (action === "delete") {
+    deleteHistoryItem(item.id);
+  }
+}
+
+function showHistoryItem(item) {
+  aiPanel.hidden = false;
+  aiStatus.textContent = `历史 · ${item.provider === "openai" ? "OpenAI" : "DeepSeek"}`;
+  aiAnswer.textContent = item.answer || "";
+}
+
+function restoreHistoryItem(item) {
+  const chart = item.chart || {};
+  questionInput.value = chart.question === "未填写" ? "" : chart.question || "";
+  if (chart.castTime) {
+    castTimeInput.value = chart.castTime.replace(" ", "T");
+  }
+  dayInput.value = chart.dayGanzhi || "";
+  aiProviderInput.value = item.provider || "deepseek";
+  if (Array.isArray(item.lineValues) && item.lineValues.length === 6) {
+    item.lineValues.forEach((value, index) => {
+      document.querySelector(`[name=line${index + 1}]`).value = value;
+    });
+  }
+  clearCoins();
+  render();
+  showHistoryItem(item);
+}
+
+function deleteHistoryItem(id) {
+  const history = loadHistory().filter((item) => item.id !== id);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  renderHistory();
+}
+
+function clearHistory() {
+  if (!loadHistory().length) return;
+  if (!confirm("确认清空本机历史记录？")) return;
+  localStorage.removeItem(HISTORY_KEY);
+  renderHistory();
+}
+
+function readLineValues() {
+  return [1, 2, 3, 4, 5, 6].map((line) => document.querySelector(`[name=line${line}]`).value);
+}
+
+function formatSavedAt(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleString("zh-CN", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function tossCoins() {
