@@ -100,6 +100,12 @@ select {
   gap: 8px;
 }
 
+.tool-search-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
 .tool-search span {
   color: var(--muted);
   font-size: 13px;
@@ -1194,6 +1200,7 @@ tbody tr:last-child td {
 }
 
 @media (max-width: 520px) {
+  .tool-search-row,
   .input-grid,
   .actions {
     grid-template-columns: 1fr;

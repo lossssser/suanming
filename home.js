@@ -1,40 +1,43 @@
+const searchForm = document.querySelector("#toolSearchForm");
 const searchInput = document.querySelector("#toolSearch");
 const searchHint = document.querySelector("#searchHint");
 const cards = Array.from(document.querySelectorAll(".tool-card"));
-const secretCards = Array.from(document.querySelectorAll(".secret-tool"));
 
 searchInput.addEventListener("input", applySearch);
+searchForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const query = getQuery();
+  if (query === "888") {
+    window.location.href = "cardgame.html";
+    return;
+  }
+  applySearch();
+});
 
 function applySearch() {
-  const query = searchInput.value.trim().toLowerCase();
-  const secretUnlocked = query === "888";
+  const query = getQuery();
   let visibleCount = 0;
 
-  secretCards.forEach((card) => {
-    card.hidden = !secretUnlocked;
-  });
-
   cards.forEach((card) => {
-    if (card.classList.contains("secret-tool") && !secretUnlocked) {
-      return;
-    }
-
     const haystack = [
       card.textContent,
       card.dataset.keywords || "",
-      card.dataset.secret || "",
     ].join(" ").toLowerCase();
 
-    const matched = !query || haystack.includes(query) || secretUnlocked;
+    const matched = !query || haystack.includes(query);
     card.hidden = !matched;
     if (matched) visibleCount += 1;
   });
 
-  if (secretUnlocked) {
-    searchHint.textContent = "隐藏项目已解锁。";
+  if (query === "888") {
+    searchHint.textContent = "暗号正确，点击确定进入隐藏项目。";
   } else if (query && visibleCount === 0) {
     searchHint.textContent = "没有找到匹配的小工具。";
   } else {
     searchHint.textContent = "输入关键词可以筛选已有小工具。";
   }
+}
+
+function getQuery() {
+  return searchInput.value.trim().toLowerCase();
 }

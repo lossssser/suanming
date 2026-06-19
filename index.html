@@ -17,10 +17,15 @@
       </header>
 
       <section class="tool-search" aria-label="搜索小工具">
-        <label>
-          <span>搜索小工具</span>
-          <input id="toolSearch" type="search" placeholder="输入名称、关键词或暗号">
-        </label>
+        <form id="toolSearchForm">
+          <label>
+            <span>搜索小工具</span>
+            <div class="tool-search-row">
+              <input id="toolSearch" type="search" placeholder="输入名称、关键词或暗号">
+              <button class="primary" type="submit">确定</button>
+            </div>
+          </label>
+        </form>
         <p id="searchHint">输入关键词可以筛选已有小工具。</p>
       </section>
 
@@ -78,26 +83,9 @@
           </div>
           <span class="project-action project-action-disabled">暂未开放</span>
         </article>
-
-        <a class="project-card project-card-secret tool-card secret-tool" data-secret="888" data-keywords="888 深渊 抽牌 卡牌 游戏 roguelike" href="cardgame.html" hidden>
-          <div class="project-visual">
-            <span class="project-glyph">渊</span>
-            <div class="abyss-orbit" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-          <div class="project-body">
-            <p class="project-label">隐藏项目</p>
-            <h2>深渊抽牌</h2>
-            <p>每层抽四选一，在血量、金币、命数和祝福之间做取舍。</p>
-          </div>
-          <span class="project-action">进入</span>
-        </a>
       </section>
     </main>
 
-    <script src="home.js?v=20260619-hidden-888"></script>
+    <script src="home.js?v=20260619-hidden-submit"></script>
   </body>
 </html>
