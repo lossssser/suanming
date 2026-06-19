@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>六爻排盘</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="workbench">
+        <header class="topbar">
+          <div>
+            <h1>六爻排盘</h1>
+            <p>本卦、变卦、世应、六神、六亲、纳支、日辰、空亡</p>
+          </div>
+          <div class="top-actions">
+            <a class="icon-button home-link" href="index.html" aria-label="返回主页" title="返回主页">首</a>
+            <button id="nowButton" class="icon-button" type="button" aria-label="使用当前时间" title="使用当前时间">
+              今
+            </button>
+          </div>
+        </header>
+
+        <form id="chartForm" class="input-grid">
+          <label class="field wide">
+            <span>所问事项</span>
+            <input id="question" type="text" placeholder="例如：问事业、问感情、问财运">
+          </label>
+
+          <label class="field">
+            <span>起卦时间</span>
+            <input id="castTime" type="datetime-local">
+          </label>
+
+          <label class="field">
+            <span>日辰</span>
+            <input id="dayGanzhi" type="text" maxlength="2" placeholder="自动">
+          </label>
+
+          <label class="field wide">
+            <span>AI服务</span>
+            <select id="aiProvider">
+              <option value="deepseek">DeepSeek</option>
+              <option value="openai">OpenAI</option>
+            </select>
+          </label>
+
+          <fieldset class="lines-panel wide">
+            <legend>六爻</legend>
+            <div class="line-row" data-line="6">
+              <span>上爻</span>
+              <select name="line6"></select>
+              <output class="coins" data-coins="6"></output>
+            </div>
+            <div class="line-row" data-line="5">
+              <span>五爻</span>
+              <select name="line5"></select>
+              <output class="coins" data-coins="5"></output>
+            </div>
+            <div class="line-row" data-line="4">
+              <span>四爻</span>
+              <select name="line4"></select>
+              <output class="coins" data-coins="4"></output>
+            </div>
+            <div class="line-row" data-line="3">
+              <span>三爻</span>
+              <select name="line3"></select>
+              <output class="coins" data-coins="3"></output>
+            </div>
+            <div class="line-row" data-line="2">
+              <span>二爻</span>
+              <select name="line2"></select>
+              <output class="coins" data-coins="2"></output>
+            </div>
+            <div class="line-row" data-line="1">
+              <span>初爻</span>
+              <select name="line1"></select>
+              <output class="coins" data-coins="1"></output>
+            </div>
+          </fieldset>
+
+          <div class="actions wide">
+            <button class="primary" type="submit">排盘</button>
+            <button id="randomButton" class="secondary" type="button">铜钱起卦</button>
+            <button id="aiButton" class="secondary" type="button">AI断卦</button>
+            <button id="clearButton" class="secondary" type="button">清空</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="result-area" aria-live="polite">
+        <div id="summary" class="summary"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>六神</th>
+                <th>六亲</th>
+                <th>纳支</th>
+                <th>本卦</th>
+                <th>世应</th>
+                <th>变卦</th>
+              </tr>
+            </thead>
+            <tbody id="lineTable"></tbody>
+          </table>
+        </div>
+        <article id="aiPanel" class="ai-panel" hidden>
+          <header>
+            <h2>AI断卦</h2>
+            <span id="aiStatus">待请求</span>
+          </header>
+          <div id="aiAnswer" class="ai-answer"></div>
+        </article>
+        <section class="history-panel">
+          <header>
+            <h2>历史记录</h2>
+            <button id="clearHistoryButton" class="text-button" type="button">清空</button>
+          </header>
+          <div id="historyList" class="history-list"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="app.js?v=20260618-local-history-2"></script>
+  </body>
+</html>
