@@ -127,11 +127,11 @@ button.project-card {
   background: rgba(250, 250, 250, 0.72);
 }
 
-.project-card-feedback {
+.project-card-feedback:not(.project-card-muted) {
   transition: transform 160ms ease, border-color 160ms ease;
 }
 
-.project-card-feedback:hover {
+.project-card-feedback:not(.project-card-muted):hover {
   border-color: rgba(183, 121, 31, 0.5);
   transform: translateY(-2px);
 }
