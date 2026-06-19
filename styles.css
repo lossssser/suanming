@@ -646,6 +646,11 @@ button.project-card {
   font-size: 20px;
 }
 
+.game-status .status-action {
+  width: 100%;
+  min-height: 42px;
+}
+
 .game-main {
   padding: 16px;
   display: grid;
@@ -757,13 +762,24 @@ button.project-card {
 }
 
 .tag-list span,
+.tag-list button,
 .tag-list em {
   padding: 4px 8px;
+  border: 0;
   border-radius: 999px;
   color: var(--muted);
   background: #eef1f2;
   font-size: 13px;
   font-style: normal;
+}
+
+.tag-list button {
+  cursor: pointer;
+}
+
+.tag-list button:hover {
+  color: var(--accent);
+  background: #e7f5f3;
 }
 
 .game-over {

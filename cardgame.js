@@ -31,20 +31,38 @@ let state;
 const heroSelect = document.querySelector("#heroSelect");
 const gameBoard = document.querySelector("#gameBoard");
 const gameOver = document.querySelector("#gameOver");
+const gameStatus = document.querySelector(".game-status");
 const cardChoices = document.querySelector("#cardChoices");
 const eventText = document.querySelector("#eventText");
 const restartButton = document.querySelector("#restartButton");
+const restartRunButton = document.createElement("button");
+
+restartRunButton.className = "primary status-action";
+restartRunButton.type = "button";
+restartRunButton.textContent = "重新开始";
+gameStatus.append(restartRunButton);
 
 heroSelect.addEventListener("click", (event) => {
   const button = event.target.closest("[data-hero]");
   if (!button) return;
+  if (state && !state.ended) return;
   startGame(button.dataset.hero);
 });
 restartButton.addEventListener("click", () => {
+  resetToHeroSelect();
+});
+restartRunButton.addEventListener("click", () => {
+  resetToHeroSelect();
+});
+
+function resetToHeroSelect() {
+  state = undefined;
   gameOver.hidden = true;
   gameBoard.hidden = true;
   heroSelect.hidden = false;
-});
+  cardChoices.innerHTML = "";
+  eventText.textContent = "选择一名角色，进入深渊。";
+}
 
 function startGame(heroKey) {
   const hero = HEROES[heroKey];
@@ -192,8 +210,22 @@ function treasure(s) {
 
 function addBlessing(s) {
   const blessing = BLESSINGS[randomInt(BLESSINGS.length)];
-  s.blessings.push(blessing.name);
+  const index = BLESSINGS.indexOf(blessing);
+  s.blessings.push({
+    name: blessing.name,
+    detail: getBlessingDetail(index),
+  });
   blessing.apply(s);
+}
+
+function getBlessingDetail(index) {
+  const details = [
+    "攻击 +1。后续战斗受到的伤害更低。",
+    "立刻恢复 8 点生命，但不会超过生命上限。",
+    "立刻获得 10 点护甲。护甲会优先抵消伤害。",
+    "立刻获得 14 枚金币。",
+  ];
+  return details[index] || "这个祝福已经生效。";
 }
 
 function takeDamage(s, amount) {
@@ -210,8 +242,27 @@ function render() {
   document.querySelector("#attackValue").textContent = state.attack;
   document.querySelector("#goldValue").textContent = state.gold;
   document.querySelector("#fateValue").textContent = state.fate;
-  renderTags("#blessingList", state.blessings, "暂无祝福");
+  renderBlessings();
   renderTags("#curseList", state.curses, "暂无诅咒");
+}
+
+function renderBlessings() {
+  const target = document.querySelector("#blessingList");
+  target.innerHTML = state.blessings.length
+    ? state.blessings.map((item, index) => {
+      const name = typeof item === "string" ? item : item.name;
+      return `<button class="tag-button" type="button" data-index="${index}">${name}</button>`;
+    }).join("")
+    : "<em>暂无祝福</em>";
+
+  target.querySelectorAll(".tag-button").forEach((button) => {
+    button.addEventListener("click", () => {
+      const item = state.blessings[Number(button.dataset.index)];
+      const name = typeof item === "string" ? item : item.name;
+      const detail = typeof item === "string" ? "这个祝福已经生效。" : item.detail;
+      eventText.textContent = `${name}：${detail}`;
+    });
+  });
 }
 
 function renderTags(selector, items, emptyText) {
