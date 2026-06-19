@@ -1,3 +1,9 @@
 name = "suanming-api"
 main = "worker.js"
 compatibility_date = "2026-06-16"
+
+# After creating a D1 database, uncomment and fill these fields if deploying with Wrangler.
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "suanming_posts"
+# database_id = "replace-with-your-d1-database-id"

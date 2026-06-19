@@ -68,6 +68,21 @@ OPENAI_MODEL = gpt-4.1-mini
 
 只想用 DeepSeek 时，只配置 `DEEPSEEK_API_KEY` 即可。前端选择 OpenAI 时，Worker 才会要求 `OPENAI_API_KEY`。
 
+公开留言帖子墙需要 Cloudflare D1：
+
+1. Cloudflare 控制台 -> `Storage & databases` -> `D1 SQL Database`
+2. 创建数据库，例如 `suanming_posts`
+3. 在 Worker `suanming-api` -> `Settings` -> `Bindings` 添加 D1 binding
+4. Binding name 必须填：
+
+```text
+DB
+```
+
+5. Database 选择刚创建的 `suanming_posts`
+
+Worker 会在第一次访问 `/posts` 时自动创建 `posts` 表。也可以手动执行 `schema.sql`。
+
 如果不想用命令行，可以在 Cloudflare 控制台新建名为 `suanming-api` 的 Worker，把 `worker.js` 内容粘贴进去并部署。
 
 命令行部署方式：

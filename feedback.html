@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>留言建议 - 十三的小工具</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="forum-shell">
+      <header class="forum-header">
+        <a class="back-link" href="index.html">返回主页</a>
+        <div>
+          <p class="home-kicker">PUBLIC BOARD</p>
+          <h1>还想要什么小工具？</h1>
+          <p class="home-copy">把你的想法发成帖子，大家都能看到。比如塔罗、八字、抽签、每日运势，或者任何奇怪但好玩的工具。</p>
+        </div>
+      </header>
+
+      <section class="post-composer">
+        <label class="feedback-field">
+          <span>昵称</span>
+          <input id="postName" maxlength="24" type="text" placeholder="游客">
+        </label>
+        <label class="feedback-field">
+          <span>想增加的小工具</span>
+          <textarea id="postContent" maxlength="800" rows="6" placeholder="写下你想要的小工具、玩法、按钮、风格或任何建议。"></textarea>
+        </label>
+        <div class="post-actions">
+          <p id="postStatus" class="feedback-status"></p>
+          <button class="primary" id="submitPostButton" type="button">发布帖子</button>
+        </div>
+      </section>
+
+      <section class="posts-board">
+        <header>
+          <h2>大家的留言</h2>
+          <button class="text-button" id="refreshPostsButton" type="button">刷新</button>
+        </header>
+        <div id="postsList" class="posts-list">
+          <div class="history-empty">正在加载留言...</div>
+        </div>
+      </section>
+    </main>
+
+    <script src="feedback.js?v=20260619-public-posts"></script>
+  </body>
+</html>

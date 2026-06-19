@@ -4,6 +4,11 @@ export default {
       return new Response(null, { headers: corsHeaders() });
     }
 
+    const url = new URL(request.url);
+    if (url.pathname === "/posts") {
+      return handlePosts(request, env);
+    }
+
     if (request.method !== "POST") {
       return json({ error: "Use POST request." }, 405);
     }
@@ -22,6 +27,65 @@ export default {
     }
   },
 };
+
+async function handlePosts(request, env) {
+  if (!env.DB) {
+    return json({ error: "Missing D1 binding DB on this Worker." }, 500);
+  }
+
+  await ensurePostsTable(env.DB);
+
+  if (request.method === "GET") {
+    const { results } = await env.DB.prepare(
+      "SELECT id, nickname, content, created_at FROM posts ORDER BY id DESC LIMIT 100",
+    ).all();
+    return json({ posts: results || [] });
+  }
+
+  if (request.method === "POST") {
+    const body = await request.json().catch(() => ({}));
+    const nickname = cleanText(body.nickname || "游客", 24) || "游客";
+    const content = cleanText(body.content || "", 800);
+
+    if (!content) {
+      return json({ error: "留言内容不能为空。" }, 400);
+    }
+
+    const createdAt = new Date().toISOString();
+    const result = await env.DB.prepare(
+      "INSERT INTO posts (nickname, content, created_at) VALUES (?, ?, ?)",
+    ).bind(nickname, content, createdAt).run();
+
+    return json({
+      post: {
+        id: result.meta?.last_row_id,
+        nickname,
+        content,
+        created_at: createdAt,
+      },
+    }, 201);
+  }
+
+  return json({ error: "Use GET or POST request." }, 405);
+}
+
+async function ensurePostsTable(db) {
+  await db.prepare(
+    `CREATE TABLE IF NOT EXISTS posts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nickname TEXT NOT NULL,
+      content TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    )`,
+  ).run();
+}
+
+function cleanText(value, maxLength) {
+  return String(value)
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, maxLength);
+}
 
 async function callDeepSeek(messages, env) {
   if (!env.DEEPSEEK_API_KEY) {

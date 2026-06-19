@@ -370,6 +370,110 @@ button.project-card {
   gap: 10px;
 }
 
+.forum-shell {
+  width: min(980px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0;
+}
+
+.forum-header {
+  min-height: 240px;
+  padding: 26px;
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(120deg, #164e63, #126c69 58%, #7b2d42);
+  display: grid;
+  align-content: end;
+  gap: 28px;
+}
+
+.back-link {
+  justify-self: start;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 6px;
+  color: #fff;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.post-composer,
+.posts-board {
+  margin-top: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.post-composer {
+  padding-bottom: 16px;
+}
+
+.post-actions {
+  padding: 12px 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.posts-board > header {
+  min-height: 52px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  background: #f7fbfa;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.posts-board h2 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 0;
+}
+
+.posts-list {
+  display: grid;
+}
+
+.post-card {
+  padding: 16px;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 10px;
+}
+
+.post-card:last-child {
+  border-bottom: 0;
+}
+
+.post-card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.post-card strong {
+  color: var(--accent);
+}
+
+.post-card time {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.post-card p {
+  margin: 0;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
 .workbench,
 .result-area {
   background: rgba(255, 255, 255, 0.86);

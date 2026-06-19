@@ -49,12 +49,12 @@
           <div class="project-body">
             <p class="project-label">待续</p>
             <h2>新的卡牌</h2>
-            <p>预留给下一个术数项目。</p>
+            <p>预留给下一个小工具。</p>
           </div>
           <span class="project-action project-action-disabled">待开放</span>
         </article>
 
-        <button class="project-card project-card-feedback" id="feedbackCard" type="button">
+        <a class="project-card project-card-feedback" href="feedback.html">
           <div class="project-visual">
             <span class="project-glyph">言</span>
             <div class="message-lines" aria-hidden="true">
@@ -64,37 +64,13 @@
             </div>
           </div>
           <div class="project-body">
-            <p class="project-label">留言建议</p>
+            <p class="project-label">公开留言</p>
             <h2>还想要什么小工具？</h2>
-            <p>告诉十三你想增加的功能、玩法或新的卡牌。</p>
+            <p>像帖子一样留言，所有游客都能看到大家的建议。</p>
           </div>
-          <span class="project-action">留言</span>
-        </button>
+          <span class="project-action">去留言</span>
+        </a>
       </section>
     </main>
-
-    <dialog class="feedback-dialog" id="feedbackDialog">
-      <form id="feedbackForm" method="dialog">
-        <header>
-          <h2>想增加什么小工具？</h2>
-          <button class="dialog-close" value="cancel" type="submit" aria-label="关闭">×</button>
-        </header>
-        <label class="feedback-field">
-          <span>你的建议</span>
-          <textarea id="feedbackText" rows="6" placeholder="例如：想要塔罗抽牌、八字排盘、抽签、每日运势……"></textarea>
-        </label>
-        <label class="feedback-field">
-          <span>联系方式（可空）</span>
-          <input id="feedbackContact" type="text" placeholder="邮箱、昵称或其他联系方式">
-        </label>
-        <p id="feedbackStatus" class="feedback-status"></p>
-        <div class="dialog-actions">
-          <button class="secondary" value="cancel" type="submit">取消</button>
-          <button class="primary" id="sendFeedbackButton" value="default" type="button">发送留言</button>
-        </div>
-      </form>
-    </dialog>
-
-    <script src="home.js?v=20260619-feedback-card"></script>
   </body>
 </html>
