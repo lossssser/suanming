@@ -86,6 +86,46 @@ select {
   line-height: 1.7;
 }
 
+.tool-search {
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: var(--shadow);
+}
+
+.tool-search label {
+  display: grid;
+  gap: 8px;
+}
+
+.tool-search span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.tool-search input {
+  width: 100%;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 12px;
+  color: var(--ink);
+  background: #fff;
+}
+
+.tool-search input:focus {
+  border-color: var(--accent);
+  outline: 3px solid rgba(18, 108, 105, 0.14);
+}
+
+.tool-search p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
 .project-grid {
   margin-top: 18px;
   display: grid;
@@ -154,6 +194,10 @@ button.project-card {
 
 .project-card-feedback .project-visual {
   background: #fffaf0;
+}
+
+.project-card-secret .project-visual {
+  background: #f5f7ff;
 }
 
 .project-glyph {
@@ -236,6 +280,32 @@ button.project-card {
 
 .message-lines span:nth-child(3) {
   width: 58%;
+}
+
+.abyss-orbit {
+  position: relative;
+  width: min(46%, 180px);
+  height: 90px;
+}
+
+.abyss-orbit span {
+  position: absolute;
+  border: 2px solid rgba(18, 108, 105, 0.48);
+  border-radius: 50%;
+}
+
+.abyss-orbit span:nth-child(1) {
+  inset: 8px 22px;
+}
+
+.abyss-orbit span:nth-child(2) {
+  inset: 20px 8px;
+  transform: rotate(18deg);
+}
+
+.abyss-orbit span:nth-child(3) {
+  inset: 30px 38px;
+  background: rgba(123, 45, 66, 0.18);
 }
 
 .project-body {
@@ -472,6 +542,234 @@ button.project-card {
   margin: 0;
   line-height: 1.75;
   white-space: pre-wrap;
+}
+
+.game-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0;
+}
+
+.game-header {
+  min-height: 240px;
+  padding: 26px;
+  border-radius: 8px;
+  color: #fff;
+  background:
+    linear-gradient(120deg, rgba(31, 41, 55, 0.96), rgba(18, 108, 105, 0.9) 58%, rgba(123, 45, 66, 0.92)),
+    url("data:image/svg+xml,%3Csvg width='900' height='320' viewBox='0 0 900 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='rgba(255,255,255,.18)' stroke-width='2'%3E%3Cpath d='M30 260c120-180 240-180 360 0s240 180 480 0'/%3E%3Cpath d='M30 200c120-140 240-140 360 0s240 140 480 0'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: cover;
+  display: grid;
+  align-content: end;
+  gap: 28px;
+}
+
+.hero-select {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.hero-option {
+  min-height: 150px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow);
+  text-align: left;
+  cursor: pointer;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.hero-option:hover {
+  border-color: rgba(18, 108, 105, 0.44);
+}
+
+.hero-option strong {
+  font-size: 22px;
+}
+
+.hero-option span {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.game-board {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 18px;
+}
+
+.game-status,
+.game-main,
+.game-over {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow);
+}
+
+.game-status {
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+  align-self: start;
+}
+
+.game-status div {
+  min-height: 52px;
+  padding: 10px;
+  border-left: 4px solid var(--accent);
+  background: #f7fbfa;
+  display: grid;
+  gap: 4px;
+}
+
+.game-status span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.game-status strong {
+  font-size: 20px;
+}
+
+.game-main {
+  padding: 16px;
+  display: grid;
+  gap: 16px;
+}
+
+.game-event {
+  min-height: 82px;
+  padding: 14px;
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(120deg, #164e63, #7b2d42);
+  display: flex;
+  align-items: center;
+}
+
+.game-event p {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.game-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.choice-card {
+  min-height: 190px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 10px;
+}
+
+.choice-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.choice-card span {
+  justify-self: start;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: var(--muted);
+  background: #eef1f2;
+  font-size: 12px;
+}
+
+.choice-card strong {
+  font-size: 20px;
+}
+
+.choice-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.card-combat span,
+.card-boss span,
+.card-danger span {
+  color: #8a1f37;
+  background: #fff0f3;
+}
+
+.card-heal span,
+.card-rest span {
+  color: #0e5351;
+  background: #e7f5f3;
+}
+
+.card-treasure span,
+.card-gold span,
+.card-shop span {
+  color: #7a4b11;
+  background: #fff4d8;
+}
+
+.game-tags {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.game-tags section {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.game-tags h2 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  letter-spacing: 0;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-list span,
+.tag-list em {
+  padding: 4px 8px;
+  border-radius: 999px;
+  color: var(--muted);
+  background: #eef1f2;
+  font-size: 13px;
+  font-style: normal;
+}
+
+.game-over {
+  margin-top: 18px;
+  padding: 20px;
+  display: grid;
+  gap: 12px;
+}
+
+.game-over h2,
+.game-over p {
+  margin: 0;
 }
 
 .workbench,
@@ -880,6 +1178,16 @@ tbody tr:last-child td {
     padding: 24px;
   }
 
+  .hero-select,
+  .game-board,
+  .game-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .game-tags {
+    grid-template-columns: 1fr;
+  }
+
   .summary {
     grid-template-columns: 1fr;
   }
@@ -907,6 +1215,16 @@ tbody tr:last-child td {
 
   .home-hero {
     min-height: 210px;
+    padding: 18px;
+  }
+
+  .game-shell {
+    width: min(100% - 20px, 720px);
+    padding: 10px 0;
+  }
+
+  .game-header {
+    min-height: 220px;
     padding: 18px;
   }
 

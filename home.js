@@ -1,53 +1,40 @@
-const FEEDBACK_EMAIL = "826552635@qq.com";
+const searchInput = document.querySelector("#toolSearch");
+const searchHint = document.querySelector("#searchHint");
+const cards = Array.from(document.querySelectorAll(".tool-card"));
+const secretCards = Array.from(document.querySelectorAll(".secret-tool"));
 
-const feedbackCard = document.querySelector("#feedbackCard");
-const feedbackDialog = document.querySelector("#feedbackDialog");
-const feedbackText = document.querySelector("#feedbackText");
-const feedbackContact = document.querySelector("#feedbackContact");
-const feedbackStatus = document.querySelector("#feedbackStatus");
-const sendFeedbackButton = document.querySelector("#sendFeedbackButton");
+searchInput.addEventListener("input", applySearch);
 
-feedbackCard.addEventListener("click", () => {
-  feedbackStatus.textContent = "";
-  feedbackDialog.showModal();
-  feedbackText.focus();
-});
+function applySearch() {
+  const query = searchInput.value.trim().toLowerCase();
+  const secretUnlocked = query === "888";
+  let visibleCount = 0;
 
-sendFeedbackButton.addEventListener("click", async () => {
-  const suggestion = feedbackText.value.trim();
-  const contact = feedbackContact.value.trim();
+  secretCards.forEach((card) => {
+    card.hidden = !secretUnlocked;
+  });
 
-  if (!suggestion) {
-    feedbackStatus.textContent = "先写一点想法再发送。";
-    feedbackText.focus();
-    return;
-  }
+  cards.forEach((card) => {
+    if (card.classList.contains("secret-tool") && !secretUnlocked) {
+      return;
+    }
 
-  const body = [
-    "十三的小工具留言",
-    "",
-    "建议：",
-    suggestion,
-    "",
-    `联系方式：${contact || "未填写"}`,
-    `时间：${new Date().toLocaleString("zh-CN")}`,
-  ].join("\n");
+    const haystack = [
+      card.textContent,
+      card.dataset.keywords || "",
+      card.dataset.secret || "",
+    ].join(" ").toLowerCase();
 
-  await copyFeedback(body);
-  const mailto = [
-    `mailto:${FEEDBACK_EMAIL}`,
-    `?subject=${encodeURIComponent("十三的小工具留言")}`,
-    `&body=${encodeURIComponent(body)}`,
-  ].join("");
+    const matched = !query || haystack.includes(query) || secretUnlocked;
+    card.hidden = !matched;
+    if (matched) visibleCount += 1;
+  });
 
-  feedbackStatus.textContent = "已复制留言，并尝试打开邮箱发送。";
-  window.location.href = mailto;
-});
-
-async function copyFeedback(text) {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch {
-    feedbackStatus.textContent = "浏览器不支持自动复制，请手动复制后发送。";
+  if (secretUnlocked) {
+    searchHint.textContent = "隐藏项目已解锁。";
+  } else if (query && visibleCount === 0) {
+    searchHint.textContent = "没有找到匹配的小工具。";
+  } else {
+    searchHint.textContent = "输入关键词可以筛选已有小工具。";
   }
 }

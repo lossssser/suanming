@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>深渊抽牌 - 十三的小工具</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="game-shell">
+      <header class="game-header">
+        <a class="back-link" href="index.html">返回主页</a>
+        <div>
+          <p class="home-kicker">HIDDEN GAME · 888</p>
+          <h1>深渊抽牌</h1>
+          <p class="home-copy">每层抽四选一。活下去，变强，别让命数吞掉你。</p>
+        </div>
+      </header>
+
+      <section class="hero-select" id="heroSelect">
+        <button class="hero-option" type="button" data-hero="swordsman">
+          <strong>剑士</strong>
+          <span>生命高，攻击稳定。每次进入新层获得 2 护甲。</span>
+        </button>
+        <button class="hero-option" type="button" data-hero="mage">
+          <strong>术士</strong>
+          <span>生命低，命数越高越容易获得祝福。</span>
+        </button>
+        <button class="hero-option" type="button" data-hero="ranger">
+          <strong>游侠</strong>
+          <span>金币更多，遇到宝箱和商店更舒服。</span>
+        </button>
+      </section>
+
+      <section class="game-board" id="gameBoard" hidden>
+        <aside class="game-status">
+          <div><span>角色</span><strong id="heroName">-</strong></div>
+          <div><span>层数</span><strong id="floorValue">1</strong></div>
+          <div><span>生命</span><strong id="hpValue">0</strong></div>
+          <div><span>护甲</span><strong id="shieldValue">0</strong></div>
+          <div><span>攻击</span><strong id="attackValue">0</strong></div>
+          <div><span>金币</span><strong id="goldValue">0</strong></div>
+          <div><span>命数</span><strong id="fateValue">0</strong></div>
+        </aside>
+
+        <section class="game-main">
+          <div class="game-event">
+            <p id="eventText">选择一名角色，进入深渊。</p>
+          </div>
+          <div class="game-cards" id="cardChoices"></div>
+          <div class="game-tags">
+            <section>
+              <h2>祝福</h2>
+              <div id="blessingList" class="tag-list"></div>
+            </section>
+            <section>
+              <h2>诅咒</h2>
+              <div id="curseList" class="tag-list"></div>
+            </section>
+          </div>
+        </section>
+      </section>
+
+      <section class="game-over" id="gameOver" hidden>
+        <h2 id="gameOverTitle">深渊止步</h2>
+        <p id="gameOverText"></p>
+        <button class="primary" id="restartButton" type="button">重新开始</button>
+      </section>
+    </main>
+
+    <script src="cardgame.js?v=20260619-prototype"></script>
+  </body>
+</html>
