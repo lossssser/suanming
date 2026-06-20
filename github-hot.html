@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GitHub 热门仓库 - 十三的小工具</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="hot-shell">
+      <header class="hot-header">
+        <a class="back-link" href="index.html">返回主页</a>
+        <div>
+          <p class="home-kicker">GITHUB RADAR</p>
+          <h1>GitHub 热门仓库</h1>
+          <p class="home-copy">按每周或每月筛选新项目，汇总星标增长最快和实用性较高的开源仓库。</p>
+        </div>
+      </header>
+
+      <section class="hot-controls" aria-label="筛选 GitHub 仓库">
+        <label>
+          <span>时间范围</span>
+          <select id="periodSelect">
+            <option value="week">最近一周</option>
+            <option value="month">最近一月</option>
+          </select>
+        </label>
+        <label>
+          <span>语言</span>
+          <select id="languageSelect">
+            <option value="">全部语言</option>
+            <option value="JavaScript">JavaScript</option>
+            <option value="TypeScript">TypeScript</option>
+            <option value="Python">Python</option>
+            <option value="Go">Go</option>
+            <option value="Rust">Rust</option>
+            <option value="Java">Java</option>
+            <option value="C++">C++</option>
+          </select>
+        </label>
+        <label class="hot-keyword">
+          <span>关键词</span>
+          <input id="keywordInput" type="search" placeholder="AI、agent、database...">
+        </label>
+        <button class="primary" id="loadHotButton" type="button">刷新榜单</button>
+      </section>
+
+      <section class="hot-summary">
+        <p id="hotStatus">准备加载 GitHub 热门仓库。</p>
+        <p id="hotNote">增长榜使用当前星标数 / 创建天数估算，适合发现新近爆发的项目。</p>
+      </section>
+
+      <section class="hot-lists">
+        <article class="hot-panel">
+          <header>
+            <h2>当期 stars 增长最快</h2>
+            <span id="fastestMeta">-</span>
+          </header>
+          <div class="repo-list" id="fastestList"></div>
+        </article>
+
+        <article class="hot-panel">
+          <header>
+            <h2>实用性较高项目</h2>
+            <span id="practicalMeta">-</span>
+          </header>
+          <div class="repo-list" id="practicalList"></div>
+        </article>
+      </section>
+    </main>
+
+    <script src="github-hot.js?v=20260620"></script>
+  </body>
+</html>

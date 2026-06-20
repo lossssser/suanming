@@ -9,6 +9,10 @@ export default {
       return handlePosts(request, env);
     }
 
+    if (url.pathname === "/github-hot") {
+      return handleGitHubHot(request, env, url);
+    }
+
     if (request.method !== "POST") {
       return json({ error: "Use POST request." }, 405);
     }
@@ -85,6 +89,133 @@ function cleanText(value, maxLength) {
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, maxLength);
+}
+
+async function handleGitHubHot(request, env, url) {
+  if (request.method !== "GET") {
+    return json({ error: "Use GET request." }, 405);
+  }
+
+  const period = normalizePeriod(url.searchParams.get("period"));
+  const language = cleanGitHubQuery(url.searchParams.get("language") || "");
+  const keyword = cleanGitHubQuery(url.searchParams.get("keyword") || "");
+  const since = getSinceDate(period);
+  const queryParts = [`created:>=${since}`, "stars:>3"];
+
+  if (language) queryParts.push(`language:${language}`);
+  if (keyword) queryParts.push(keyword);
+
+  const apiUrl = new URL("https://api.github.com/search/repositories");
+  apiUrl.searchParams.set("q", queryParts.join(" "));
+  apiUrl.searchParams.set("sort", "stars");
+  apiUrl.searchParams.set("order", "desc");
+  apiUrl.searchParams.set("per_page", "80");
+
+  const headers = {
+    Accept: "application/vnd.github+json",
+    "User-Agent": "shxgjqaq-github-hot",
+    "X-GitHub-Api-Version": "2022-11-28",
+  };
+
+  if (env.GITHUB_TOKEN) {
+    headers.Authorization = `Bearer ${env.GITHUB_TOKEN}`;
+  }
+
+  const response = await fetch(apiUrl, { headers });
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    return json({
+      error: data.message || `GitHub request failed: HTTP ${response.status}`,
+      status: response.status,
+    }, response.status);
+  }
+
+  const repos = (data.items || []).map(scoreRepository);
+  const fastest = repos
+    .slice()
+    .sort((a, b) => b.starVelocity - a.starVelocity || b.stars - a.stars)
+    .slice(0, 20);
+  const practical = repos
+    .slice()
+    .sort((a, b) => b.practicalScore - a.practicalScore || b.stars - a.stars)
+    .slice(0, 20);
+
+  return json({
+    period,
+    since,
+    language,
+    keyword,
+    totalCount: data.total_count || 0,
+    fetchedCount: repos.length,
+    fastest,
+    practical,
+    note: "GitHub API does not provide historical star deltas directly. Star growth is estimated by stars per day among repositories created in the selected time window.",
+  });
+}
+
+function normalizePeriod(period) {
+  return period === "month" ? "month" : "week";
+}
+
+function getSinceDate(period) {
+  const days = period === "month" ? 30 : 7;
+  const date = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  return date.toISOString().slice(0, 10);
+}
+
+function cleanGitHubQuery(value) {
+  return String(value || "")
+    .replace(/[^\p{L}\p{N}_ .#+-]/gu, "")
+    .trim()
+    .slice(0, 40);
+}
+
+function scoreRepository(repo) {
+  const createdAt = repo.created_at || new Date().toISOString();
+  const updatedAt = repo.updated_at || createdAt;
+  const ageDays = Math.max(1, (Date.now() - Date.parse(createdAt)) / 86400000);
+  const updatedDays = Math.max(0, (Date.now() - Date.parse(updatedAt)) / 86400000);
+  const topics = Array.isArray(repo.topics) ? repo.topics : [];
+  const stars = repo.stargazers_count || 0;
+  const forks = repo.forks_count || 0;
+  const hasDescription = repo.description ? 1 : 0;
+  const hasHomepage = repo.homepage ? 1 : 0;
+  const hasLicense = repo.license?.spdx_id ? 1 : 0;
+  const recentBonus = Math.max(0, 30 - updatedDays) / 30;
+
+  return {
+    name: repo.name,
+    fullName: repo.full_name,
+    url: repo.html_url,
+    description: repo.description || "暂无简介",
+    language: repo.language || "Unknown",
+    stars,
+    forks,
+    openIssues: repo.open_issues_count || 0,
+    createdAt,
+    updatedAt,
+    pushedAt: repo.pushed_at,
+    homepage: repo.homepage || "",
+    license: repo.license?.spdx_id || "",
+    topics: topics.slice(0, 8),
+    starVelocity: round(stars / ageDays, 2),
+    practicalScore: round(
+      stars * 0.55 +
+      forks * 1.2 +
+      topics.length * 10 +
+      hasDescription * 18 +
+      hasHomepage * 12 +
+      hasLicense * 10 +
+      recentBonus * 18,
+      1,
+    ),
+  };
+}
+
+function round(value, digits) {
+  const factor = 10 ** digits;
+  return Math.round(value * factor) / factor;
 }
 
 async function callDeepSeek(messages, env) {
@@ -240,7 +371,7 @@ function json(data, status = 200) {
 function corsHeaders() {
   return {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
   };
 }

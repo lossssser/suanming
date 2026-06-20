@@ -202,6 +202,10 @@ button.project-card {
   background: #fffaf0;
 }
 
+.project-card-github .project-visual {
+  background: #eef6ff;
+}
+
 .project-card-secret .project-visual {
   background: #f5f7ff;
 }
@@ -286,6 +290,38 @@ button.project-card {
 
 .message-lines span:nth-child(3) {
   width: 58%;
+}
+
+.github-bars {
+  width: min(46%, 190px);
+  height: 86px;
+  display: flex;
+  align-items: end;
+  gap: 10px;
+}
+
+.github-bars span {
+  flex: 1;
+  border-radius: 6px 6px 0 0;
+  background: #126c69;
+}
+
+.github-bars span:nth-child(1) {
+  height: 42%;
+}
+
+.github-bars span:nth-child(2) {
+  height: 68%;
+  background: #b7791f;
+}
+
+.github-bars span:nth-child(3) {
+  height: 52%;
+  background: #7b2d42;
+}
+
+.github-bars span:nth-child(4) {
+  height: 86%;
 }
 
 .abyss-orbit {
@@ -794,6 +830,199 @@ button.project-card {
   margin: 0;
 }
 
+.hot-shell {
+  width: min(1240px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0;
+}
+
+.hot-header {
+  min-height: 240px;
+  padding: 26px;
+  border-radius: 8px;
+  color: #fff;
+  background:
+    linear-gradient(120deg, rgba(18, 108, 105, 0.96), rgba(31, 41, 55, 0.92) 58%, rgba(123, 45, 66, 0.9)),
+    url("data:image/svg+xml,%3Csvg width='960' height='320' viewBox='0 0 960 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='rgba(255,255,255,.18)' stroke-width='2'%3E%3Cpath d='M80 250V80M220 250V130M360 250V40M500 250V100M640 250V70M780 250V30'/%3E%3Cpath d='M60 250h840'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: cover;
+  display: grid;
+  align-content: end;
+  gap: 28px;
+}
+
+.hot-controls,
+.hot-summary,
+.hot-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow);
+}
+
+.hot-controls {
+  margin-top: 18px;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 160px 180px minmax(220px, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.hot-controls label {
+  display: grid;
+  gap: 8px;
+}
+
+.hot-controls span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.hot-controls select,
+.hot-controls input {
+  width: 100%;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 12px;
+  color: var(--ink);
+  background: #fff;
+}
+
+.hot-controls select:focus,
+.hot-controls input:focus {
+  border-color: var(--accent);
+  outline: 3px solid rgba(18, 108, 105, 0.14);
+}
+
+.hot-summary {
+  margin-top: 14px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 6px;
+}
+
+.hot-summary p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.hot-lists {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.hot-panel {
+  overflow: hidden;
+}
+
+.hot-panel > header {
+  min-height: 62px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.hot-panel h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.hot-panel header span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.repo-list {
+  display: grid;
+}
+
+.repo-card {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 12px;
+}
+
+.repo-card:last-child {
+  border-bottom: 0;
+}
+
+.repo-rank {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--accent);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+.repo-content {
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.repo-content header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.repo-content a {
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.repo-content header span {
+  flex: 0 0 auto;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: #7a4b11;
+  background: #fff4d8;
+  font-size: 12px;
+}
+
+.repo-content p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.repo-meta,
+.repo-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.repo-meta span,
+.repo-topics span {
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: var(--muted);
+  background: #eef1f2;
+  font-size: 12px;
+}
+
+.repo-empty {
+  margin: 0;
+  padding: 16px;
+  color: var(--muted);
+}
+
 .workbench,
 .result-area {
   background: rgba(255, 255, 255, 0.86);
@@ -1202,7 +1431,9 @@ tbody tr:last-child td {
 
   .hero-select,
   .game-board,
-  .game-cards {
+  .game-cards,
+  .hot-controls,
+  .hot-lists {
     grid-template-columns: 1fr;
   }
 
@@ -1249,6 +1480,20 @@ tbody tr:last-child td {
   .game-header {
     min-height: 220px;
     padding: 18px;
+  }
+
+  .hot-shell {
+    width: min(100% - 20px, 720px);
+    padding: 10px 0;
+  }
+
+  .hot-header {
+    min-height: 210px;
+    padding: 18px;
+  }
+
+  .repo-content header {
+    display: grid;
   }
 
   .home-copy {
