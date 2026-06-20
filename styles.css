@@ -1192,6 +1192,181 @@ button.project-card {
   background: #fff;
 }
 
+.astro-shell {
+  width: min(1240px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0;
+  display: grid;
+  grid-template-columns: minmax(320px, 430px) minmax(0, 1fr);
+  gap: 18px;
+}
+
+.astro-workbench,
+.astro-result,
+.astro-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow);
+}
+
+.astro-workbench {
+  align-self: start;
+  overflow: hidden;
+}
+
+.astro-result {
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+}
+
+.compact-notice {
+  margin: 14px;
+}
+
+.compact-notice a {
+  color: #0969da;
+  font-weight: 700;
+}
+
+.astro-card {
+  padding: 16px;
+  box-shadow: none;
+  display: grid;
+  gap: 14px;
+}
+
+.astro-card + .astro-card {
+  margin-top: 14px;
+}
+
+.astro-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.astro-card h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.astro-card header span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.bazi-table {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.bazi-table article {
+  min-height: 138px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f7fbfa;
+  display: grid;
+  gap: 6px;
+}
+
+.bazi-table span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.bazi-table strong {
+  color: var(--accent);
+  font-size: 30px;
+}
+
+.bazi-table p,
+.bazi-table em {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+  font-size: 13px;
+  font-style: normal;
+}
+
+.element-bars {
+  display: grid;
+  gap: 10px;
+}
+
+.element-row {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 36px;
+  gap: 10px;
+  align-items: center;
+}
+
+.element-row span,
+.element-row strong {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.element-row div {
+  height: 12px;
+  border-radius: 999px;
+  background: #eef1f2;
+  overflow: hidden;
+}
+
+.element-row i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+}
+
+.palace-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.palace-grid article {
+  min-height: 96px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  display: grid;
+  gap: 4px;
+}
+
+.palace-grid article.is-ming {
+  border-color: rgba(18, 108, 105, 0.55);
+  background: #f0fbfa;
+}
+
+.palace-grid article.is-shen {
+  border-color: rgba(183, 121, 31, 0.55);
+}
+
+.palace-grid span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.palace-grid strong {
+  color: var(--ink);
+}
+
+.palace-grid p,
+.reading-box p,
+.source-small {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
 .workbench,
 .result-area {
   background: rgba(255, 255, 255, 0.86);
@@ -1603,8 +1778,14 @@ tbody tr:last-child td {
   .game-cards,
   .hot-controls,
   .hot-lists,
-  .source-layout {
+  .source-layout,
+  .astro-shell {
     grid-template-columns: 1fr;
+  }
+
+  .bazi-table,
+  .palace-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .game-tags {
@@ -1672,6 +1853,11 @@ tbody tr:last-child td {
     padding: 18px;
   }
 
+  .astro-shell {
+    width: min(100% - 20px, 720px);
+    padding: 10px 0;
+  }
+
   .repo-content header {
     display: grid;
   }
@@ -1702,6 +1888,11 @@ tbody tr:last-child td {
 
   .line-row {
     grid-template-columns: 48px 1fr;
+  }
+
+  .bazi-table,
+  .palace-grid {
+    grid-template-columns: 1fr;
   }
 
   .coins {

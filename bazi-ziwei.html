@@ -3,67 +3,139 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>八字紫微 Skill - 十三的小工具</title>
-    <link rel="stylesheet" href="styles.css?v=20260620-bazi">
+    <title>八字紫微排盘 - 十三的小工具</title>
+    <link rel="stylesheet" href="styles.css?v=20260620-bazi-tool">
   </head>
   <body>
-    <main class="source-shell">
-      <header class="source-header">
-        <a class="back-link" href="index.html">返回主页</a>
-        <div>
-          <p class="home-kicker">BAZI · ZIWEI · STUDY</p>
-          <h1>八字紫微 Skill</h1>
-          <p class="home-copy">这是一个命理资料学习入口，用来整理八字与紫微斗数相关的仓库信息和使用说明。</p>
-        </div>
-      </header>
+    <main class="astro-shell">
+      <section class="astro-workbench">
+        <header class="topbar">
+          <div>
+            <h1>八字紫微排盘</h1>
+            <p>输入出生信息，生成八字四柱、五行统计、十神藏干与紫微十二宫学习盘。</p>
+          </div>
+          <div class="top-actions">
+            <a class="icon-button home-link" href="index.html" aria-label="返回主页" title="返回主页">首</a>
+          </div>
+        </header>
 
-      <section class="source-notice">
-        <strong>重要声明</strong>
-        <p>本项目仅供学习、研究与资料整理参考，不构成现实决策建议。请相信科学，理性看待传统术数内容。</p>
+        <form id="astroForm" class="input-grid">
+          <label class="field">
+            <span>姓名 / 代称</span>
+            <input id="personName" type="text" placeholder="可不填">
+          </label>
+
+          <label class="field">
+            <span>性别</span>
+            <select id="gender">
+              <option value="male">男</option>
+              <option value="female">女</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>出生日期</span>
+            <input id="birthDate" type="date" required>
+          </label>
+
+          <label class="field">
+            <span>出生时间</span>
+            <input id="birthTime" type="time" value="12:00" required>
+          </label>
+
+          <label class="field">
+            <span>历法</span>
+            <select id="calendarType">
+              <option value="solar">公历</option>
+              <option value="lunar" disabled>农历稍后支持</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>时区</span>
+            <select id="timezone">
+              <option value="8">东八区</option>
+            </select>
+          </label>
+
+          <div class="actions wide">
+            <button class="primary" type="submit">生成排盘</button>
+            <button id="sampleAstroButton" type="button">示例</button>
+            <button id="clearAstroButton" type="button">清空</button>
+          </div>
+        </form>
+
+        <section class="source-notice compact-notice">
+          <strong>来源与声明</strong>
+          <p>
+            本工具参考并标注来源仓库
+            <a href="https://github.com/dzcmemory-web/bazi-ziwei-skill" target="_blank" rel="noreferrer">dzcmemory-web/bazi-ziwei-skill</a>
+            的 Skill 设计思路。仅供学习、研究与资料整理参考，请相信科学，勿作为现实重大决策依据。
+          </p>
+        </section>
       </section>
 
-      <section class="source-layout">
-        <article class="source-panel">
-          <h2>项目来源</h2>
-          <p>本页面使用并标注的来源仓库为：</p>
-          <a class="source-link" href="https://github.com/dzcmemory-web/bazi-ziwei-skill" target="_blank" rel="noreferrer">
-            dzcmemory-web/bazi-ziwei-skill
-          </a>
-          <dl class="source-meta">
-            <div>
-              <dt>原作者 / 仓库</dt>
-              <dd>dzcmemory-web / bazi-ziwei-skill</dd>
-            </div>
-            <div>
-              <dt>协议</dt>
-              <dd>MIT License</dd>
-            </div>
-            <div>
-              <dt>本站用途</dt>
-              <dd>作为学习参考项目入口，不声明原创归属。</dd>
-            </div>
-          </dl>
-        </article>
+      <section class="astro-result">
+        <div class="empty-state" id="astroEmpty">
+          <h2>等待排盘</h2>
+          <p>填写出生日期和时间后，点击“生成排盘”。</p>
+        </div>
 
-        <article class="source-panel">
-          <h2>使用边界</h2>
-          <ul class="source-list">
-            <li>不用于医疗、法律、投资、婚恋等重大现实决策。</li>
-            <li>不宣称预测结果具有确定性。</li>
-            <li>如需使用原仓内容，请遵守原仓许可证和作者说明。</li>
-            <li>本站展示仅用于学习参考，请相信科学。</li>
-          </ul>
-        </article>
+        <div id="astroOutput" hidden>
+          <section class="astro-card">
+            <header>
+              <h2>基本信息</h2>
+              <span id="astroSourceBadge">学习参考</span>
+            </header>
+            <div class="summary" id="basicSummary"></div>
+          </section>
 
-        <article class="source-panel source-panel-wide">
-          <h2>后续计划</h2>
-          <p>后续可以把这个入口扩展成资料索引、术语卡片、学习笔记或本地演示页面。涉及原仓代码或提示词内容时，会继续保留来源标注。</p>
-          <div class="source-actions">
-            <a class="primary link-button" href="https://github.com/dzcmemory-web/bazi-ziwei-skill" target="_blank" rel="noreferrer">查看原仓库</a>
-            <a class="secondary link-button" href="index.html">回到工具首页</a>
-          </div>
-        </article>
+          <section class="astro-card">
+            <header>
+              <h2>八字四柱</h2>
+              <span id="baziMode">四柱</span>
+            </header>
+            <div class="bazi-table" id="baziTable"></div>
+          </section>
+
+          <section class="astro-card">
+            <header>
+              <h2>五行统计</h2>
+              <span>天干地支粗略统计</span>
+            </header>
+            <div class="element-bars" id="elementBars"></div>
+          </section>
+
+          <section class="astro-card">
+            <header>
+              <h2>紫微十二宫框架</h2>
+              <span>学习版宫位盘</span>
+            </header>
+            <div class="palace-grid" id="palaceGrid"></div>
+          </section>
+
+          <section class="astro-card">
+            <header>
+              <h2>学习参考解读</h2>
+              <button class="mini-button" id="astroAiButton" type="button">AI 深度解读</button>
+            </header>
+            <div class="reading-box" id="astroReading"></div>
+          </section>
+
+          <section class="astro-card">
+            <header>
+              <h2>来源说明</h2>
+              <span>MIT / 学习参考</span>
+            </header>
+            <p class="source-small">
+              本页面参考 dzcmemory-web/bazi-ziwei-skill 的“确定性排盘 + 分析提示”工作流。原仓库使用 MIT License。
+              当前网页端为学习版实现，紫微部分展示宫位框架，不等同完整专业安星盘。
+            </p>
+          </section>
+        </div>
       </section>
     </main>
+
+    <script src="bazi-ziwei.js?v=20260620-tool"></script>
   </body>
 </html>

@@ -13,6 +13,10 @@ export default {
       return handleGitHubHot(request, env, url);
     }
 
+    if (url.pathname === "/bazi-ziwei-reading") {
+      return handleBaziZiweiReading(request, env);
+    }
+
     if (request.method !== "POST") {
       return json({ error: "Use POST request." }, 405);
     }
@@ -152,6 +156,82 @@ async function handleGitHubHot(request, env, url) {
     practical,
     note: "GitHub API does not provide historical star deltas directly. Star growth is estimated by stars per day among repositories created in the selected time window.",
   });
+}
+
+async function handleBaziZiweiReading(request, env) {
+  if (request.method !== "POST") {
+    return json({ error: "Use POST request." }, 405);
+  }
+
+  try {
+    const body = await request.json();
+    const provider = normalizeProvider(body.provider || env.AI_PROVIDER || "deepseek");
+    const messages = buildBaziZiweiMessages(body.chart || {});
+    const answer = provider === "openai"
+      ? await callOpenAI(messages, env)
+      : await callDeepSeek(messages, env);
+
+    return json({ answer, provider });
+  } catch (error) {
+    return json({ error: error.message || "Bazi Ziwei reading failed." }, 500);
+  }
+}
+
+function buildBaziZiweiMessages(chart) {
+  return [
+    {
+      role: "system",
+      content: [
+        "You are a cautious traditional culture study assistant for Bazi and Ziwei charts. ",
+        "Answer in Simplified Chinese. ",
+        "Use the provided chart only as cultural-study material. ",
+        "Do not claim certainty, do not make medical, legal, investment, marriage, or life-changing decisions for the user. ",
+        "Clearly remind the user to believe in science and treat this as learning reference. ",
+        "Keep the answer concise, practical, and within about 700 Chinese characters.",
+      ].join(""),
+    },
+    {
+      role: "user",
+      content: buildBaziZiweiPrompt(chart),
+    },
+  ];
+}
+
+function buildBaziZiweiPrompt(chart) {
+  const pillars = chart.pillars || {};
+  const counts = chart.elementCounts || {};
+  const ziwei = chart.ziwei || {};
+  const palaces = ziwei.palaces || [];
+
+  return [
+    "Please give a cautious Bazi + Ziwei learning-reference reading.",
+    "",
+    `Name: ${chart.input?.name || "not provided"}`,
+    `Gender: ${chart.input?.gender || "not provided"}`,
+    `Birth time: ${chart.solarText || "not provided"}`,
+    `Lunar: ${chart.lunarText || "not provided"}`,
+    `Engine: ${chart.engine || "unknown"}`,
+    "",
+    `Year pillar: ${formatPillar(pillars.year)}`,
+    `Month pillar: ${formatPillar(pillars.month)}`,
+    `Day pillar: ${formatPillar(pillars.day)} (day master ${chart.dayMaster || "?"})`,
+    `Hour pillar: ${formatPillar(pillars.hour)}`,
+    `Elements: 木${counts["木"] || 0}, 火${counts["火"] || 0}, 土${counts["土"] || 0}, 金${counts["金"] || 0}, 水${counts["水"] || 0}`,
+    "",
+    "Ziwei palace frame:",
+    palaces.map((palace) => `${palace.name}: ${palace.branch}${palace.isMing ? " 命宫" : ""}${palace.isShen ? " 身宫" : ""}`).join("\n") || "not provided",
+    "",
+    "Use this structure:",
+    "1. Bazi overview",
+    "2. Element balance learning notes",
+    "3. Ziwei palace-frame notes",
+    "4. Practical reflection questions",
+    "5. Scientific disclaimer",
+  ].join("\n");
+}
+
+function formatPillar(pillar = {}) {
+  return `${pillar.gan || "?"}${pillar.zhi || "?"}`;
 }
 
 function normalizePeriod(period) {
