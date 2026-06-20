@@ -206,6 +206,10 @@ button.project-card {
   background: #eef6ff;
 }
 
+.project-card-bazi .project-visual {
+  background: #f7f1fb;
+}
+
 .project-card-secret .project-visual {
   background: #f5f7ff;
 }
@@ -322,6 +326,24 @@ button.project-card {
 
 .github-bars span:nth-child(4) {
   height: 86%;
+}
+
+.bazi-plate {
+  width: min(46%, 190px);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.bazi-plate span {
+  min-height: 34px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  color: #7b2d42;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
 }
 
 .abyss-orbit {
@@ -1040,6 +1062,136 @@ button.project-card {
   color: var(--muted);
 }
 
+.source-shell {
+  width: min(1040px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0;
+}
+
+.source-header {
+  min-height: 240px;
+  padding: 26px;
+  border-radius: 8px;
+  color: #fff;
+  background:
+    linear-gradient(120deg, rgba(123, 45, 66, 0.96), rgba(18, 108, 105, 0.88) 58%, rgba(31, 41, 55, 0.92)),
+    url("data:image/svg+xml,%3Csvg width='960' height='320' viewBox='0 0 960 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='rgba(255,255,255,.18)' stroke-width='2'%3E%3Cpath d='M80 80h800M80 160h800M80 240h800M180 40v240M380 40v240M580 40v240M780 40v240'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: cover;
+  display: grid;
+  align-content: end;
+  gap: 28px;
+}
+
+.source-notice,
+.source-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.source-notice {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-color: rgba(183, 121, 31, 0.5);
+  background: #fffaf0;
+}
+
+.source-notice strong {
+  color: #7a4b11;
+}
+
+.source-notice p,
+.source-panel p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.source-layout {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.source-panel {
+  padding: 18px;
+}
+
+.source-panel-wide {
+  grid-column: 1 / -1;
+}
+
+.source-panel h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.source-link {
+  margin-top: 12px;
+  color: #0969da;
+  font-weight: 700;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  display: inline-block;
+}
+
+.source-link:hover {
+  text-decoration: underline;
+}
+
+.source-meta {
+  margin: 16px 0 0;
+  display: grid;
+  gap: 10px;
+}
+
+.source-meta div {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #f6f8fa;
+}
+
+.source-meta dt {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.source-meta dd {
+  margin: 4px 0 0;
+  color: var(--ink);
+}
+
+.source-list {
+  margin: 12px 0 0;
+  padding-left: 20px;
+  color: var(--muted);
+  line-height: 1.9;
+}
+
+.source-actions {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.link-button {
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.link-button.secondary {
+  border: 1px solid var(--line);
+  color: var(--ink);
+  background: #fff;
+}
+
 .workbench,
 .result-area {
   background: rgba(255, 255, 255, 0.86);
@@ -1450,7 +1602,8 @@ tbody tr:last-child td {
   .game-board,
   .game-cards,
   .hot-controls,
-  .hot-lists {
+  .hot-lists,
+  .source-layout {
     grid-template-columns: 1fr;
   }
 
@@ -1505,6 +1658,16 @@ tbody tr:last-child td {
   }
 
   .hot-header {
+    min-height: 210px;
+    padding: 18px;
+  }
+
+  .source-shell {
+    width: min(100% - 20px, 720px);
+    padding: 10px 0;
+  }
+
+  .source-header {
     min-height: 210px;
     padding: 18px;
   }
