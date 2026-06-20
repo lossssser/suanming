@@ -417,12 +417,11 @@ function buildMessages(body) {
     {
       role: "system",
       content: [
-        "You are a cautious Liuyao divination chart reading assistant. ",
-        "Answer in Simplified Chinese. ",
-        "Analyze only from the chart provided by the user. ",
-        "Do not claim certainty, do not intimidate the user, and do not provide medical, legal, or investment conclusions. ",
-        "If important context is missing, say that month branch, useful-god selection, and real-world context are needed for a firmer reading.",
-        "Keep the answer concise, within about 700 Chinese characters.",
+        "你是谨慎的六爻学习参考解读助手。必须使用用户提供的机器排盘结果进行分析，不能假装没有盘面。",
+        "用户已经提供了本卦、变卦、日辰、空亡、六神、六亲、纳支、世应、动爻等字段时，不要反问用户补这些字段。",
+        "如果信息不足，只能指出缺少月建或现实背景会影响细断，但仍要基于已有盘面给出参考判断。",
+        "不要声称确定性，不要恐吓用户，不提供医疗、法律、投资等结论。",
+        "回答使用简体中文，控制在 900 字以内。",
       ].join(""),
     },
     {
@@ -438,39 +437,42 @@ function buildPrompt(body) {
   const movingLines = lines.filter((line) => line.moving);
 
   return [
-    "Please read this Liuyao chart and answer in Simplified Chinese.",
+    "请解读下面这份六爻机器排盘。注意：这些字段就是本次盘面，不要再要求用户补原卦、变卦、世应、六亲或硬币记录。",
     "",
-    `Question: ${body.question || chart.question || "not provided"}`,
-    `Cast time: ${chart.castTime || "not provided"}`,
-    `Day ganzhi: ${chart.dayGanzhi || "not provided"}`,
-    `Empty branches: ${(chart.emptyBranches || []).join("") || "not provided"}`,
+    "【基础信息】",
+    `所问事项：${body.question || chart.question || "未填写"}`,
+    `起卦时间：${chart.castTime || "未提供"}`,
+    `日辰：${chart.dayGanzhi || "未提供"}`,
+    `空亡：${(chart.emptyBranches || []).join("") || "未提供"}`,
     "",
-    formatHexagram("Original hexagram", chart.original),
-    formatHexagram("Changed hexagram", chart.changed),
-    `Moving lines: ${movingLines.length ? movingLines.map((line) => `${line.index}`).join(", ") : "none"}`,
+    "【卦象】",
+    formatHexagram("本卦", chart.original),
+    formatHexagram("变卦", chart.changed),
+    `动爻：${movingLines.length ? movingLines.map((line) => `${line.index}爻`).join("、") : "无"}`,
     "",
-    "Line details, top to bottom:",
+    "【爻位明细，自上而下】",
     ...lines.slice().reverse().map(formatLine),
+    body.chartText ? ["", "【前端生成的可读盘面】", body.chartText].join("\n") : "",
     "",
-    "Use this structure:",
-    "1. Chart overview",
-    "2. Useful god and key lines",
-    "3. Generating, controlling, moving, and changing relations",
-    "4. Trend judgment",
-    "5. Practical advice",
+    "请按以下结构输出：",
+    "1. 卦象总览：本卦、变卦、世应与动爻的整体气势。",
+    "2. 用神与关键爻：根据所问事项选择可能的用神；如果问题过泛，请说明只能粗看。",
+    "3. 生克动变：结合六亲、纳支五行、世应、动爻和空亡。",
+    "4. 趋势判断：给出谨慎参考，不作确定断言。",
+    "5. 建议：给出可执行建议，并提醒仅供学习参考、相信科学。",
     "",
-    "Please keep the answer concise and practical.",
+    "禁止输出“缺少原卦、变卦、世应、六亲排布”等反问，因为上面已经提供。",
   ].join("\n");
 }
 
 function formatHexagram(label, hexagram = {}) {
-  return `${label}: ${hexagram.name || "unknown"} (${hexagram.number || "?"}), palace ${hexagram.palace || "?"}${hexagram.palaceElement || "?"}, stage ${hexagram.palaceStage || "?"}`;
+  return `${label}：${hexagram.name || "未知"}（${hexagram.number || "?"}），${hexagram.palace || "?"}宫${hexagram.palaceElement || "?"}，${hexagram.palaceStage || "?"}`;
 }
 
 function formatLine(line) {
   const marker = line.marker ? ` ${line.marker}` : "";
-  const moving = line.moving ? " moving" : "";
-  return `${line.index}: ${line.spirit || ""} ${line.relation || ""} ${line.branch || ""}${line.element || ""} ${line.symbol || ""}${marker}${moving} -> ${line.changedSymbol || ""}`;
+  const moving = line.moving ? " 动爻" : "";
+  return `${line.index}爻：${line.spirit || ""} ${line.relation || ""} ${line.branch || ""}${line.element || ""} ${line.symbol || ""}${marker}${moving}，变为 ${line.changedSymbol || ""}`;
 }
 
 function json(data, status = 200) {

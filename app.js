@@ -312,6 +312,7 @@ async function requestAiReading() {
         provider: aiProviderInput.value,
         question: chart.question,
         chart: chartToPayload(chart),
+        chartText: liuyaoChartText(chart),
       }),
     });
     const text = await response.text();
@@ -378,6 +379,23 @@ function chartToPayload(chart) {
       marker: line.marker,
     })),
   };
+}
+
+function liuyaoChartText(chart) {
+  return [
+    `所问事项：${chart.question}`,
+    `起卦时间：${chart.castTime}`,
+    `日辰：${chart.dayGanzhi}`,
+    `空亡：${chart.emptyBranches.join("")}`,
+    `本卦：${chart.original.name}（${chart.original.number}），${chart.original.palace}宫${chart.original.palaceElement}，${chart.original.palaceStage}`,
+    `变卦：${chart.changed.name}（${chart.changed.number}），${chart.changed.palace}宫${chart.changed.palaceElement}，${chart.changed.palaceStage}`,
+    "爻位自上而下：",
+    ...chart.lines.slice().reverse().map((line) => {
+      const marker = line.marker ? ` ${line.marker}` : "";
+      const moving = line.moving ? " 动爻" : "";
+      return `${line.index}爻 ${line.spirit} ${line.relation} ${line.branch}${line.element} ${line.symbol}${marker}${moving} -> ${line.changedSymbol}`;
+    }),
+  ].join("\n");
 }
 
 function clearAiPanel() {
