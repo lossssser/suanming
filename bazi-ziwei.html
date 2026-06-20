@@ -58,6 +58,15 @@
             </select>
           </label>
 
+          <label class="field wide">
+            <span>分析模式</span>
+            <select id="analysisMode">
+              <option value="bazi">八字独立分析</option>
+              <option value="ziwei">紫微独立分析</option>
+              <option value="zonghe" selected>八字 + 紫微综合印证</option>
+            </select>
+          </label>
+
           <div class="actions wide">
             <button class="primary" type="submit">生成排盘</button>
             <button id="sampleAstroButton" type="button">示例</button>
@@ -117,7 +126,7 @@
           <section class="astro-card">
             <header>
               <h2>学习参考解读</h2>
-              <button class="mini-button" id="astroAiButton" type="button">AI 深度解读</button>
+              <button class="mini-button" id="astroAiButton" type="button">按所选模式 AI 解读</button>
             </header>
             <div class="reading-box" id="astroReading"></div>
           </section>

@@ -89,6 +89,7 @@ function readInput() {
     hour,
     minute,
     calendarType: document.querySelector("#calendarType").value,
+    analysisMode: document.querySelector("#analysisMode").value,
     timezone: Number(document.querySelector("#timezone").value || 8),
   };
 }
@@ -168,7 +169,8 @@ function enrichChart(chart) {
       hour: CANG_GAN[chart.pillars.hour.zhi] || [],
     },
     ziwei,
-    reading: buildLocalReading(dayMaster, elementCounts, ziwei),
+    chartText: buildChartText(chart, dayMaster, elementCounts, ziwei),
+    reading: buildLocalReading(chart.input.analysisMode, dayMaster, elementCounts, ziwei),
   };
 }
 
@@ -181,6 +183,7 @@ function renderChart(chart) {
     ["性别", chart.input.gender === "male" ? "男" : "女"],
     ["公历", chart.solarText],
     ["农历", chart.lunarText],
+    ["分析模式", getModeLabel(chart.input.analysisMode)],
     ["排盘引擎", chart.engine === "lunar-typescript" ? "lunar-typescript" : "简化兜底"],
   ].map(([label, value]) => `<div><span>${label}</span><strong>${value}</strong></div>`).join("");
 
@@ -238,7 +241,11 @@ async function requestAiReading() {
     const response = await fetch(ASTRO_AI_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chart: lastChart }),
+      body: JSON.stringify({
+        mode: lastChart.input.analysisMode,
+        chart: lastChart,
+        chartText: lastChart.chartText,
+      }),
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || `请求失败：HTTP ${response.status}`);
@@ -248,7 +255,7 @@ async function requestAiReading() {
     astroReading.insertAdjacentHTML("beforeend", "<p>AI 接口暂不可用，已显示本地学习参考解读。</p>");
   } finally {
     aiButton.disabled = false;
-    aiButton.textContent = "AI 深度解读";
+    aiButton.textContent = "按所选模式 AI 解读";
   }
 }
 
@@ -275,18 +282,70 @@ function buildZiweiFrame(chart) {
   return { mingIndex, shenIndex, palaces };
 }
 
-function buildLocalReading(dayMaster, counts, ziwei) {
+function buildLocalReading(mode, dayMaster, counts, ziwei) {
   const strongest = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || "-";
   const weakest = Object.entries(counts).sort((a, b) => a[1] - b[1])[0]?.[0] || "-";
   const mingPalace = ziwei.palaces.find((palace) => palace.isMing);
   const shenPalace = ziwei.palaces.find((palace) => palace.isShen);
 
+  const common = "本结果仅供学习参考。传统术数内容不具备科学预测确定性，请相信科学，理性使用。";
+  if (mode === "bazi") {
+    return [
+      `当前选择八字独立分析。日主为 ${dayMaster}${ELEMENT_BY_GAN[dayMaster] || ""}，可先从日主五行、月令和十神组合入手。`,
+      `五行统计中，${strongest}相对较多，${weakest}相对较少。这里是学习版粗略统计，不等同完整旺衰定论。`,
+      common,
+    ];
+  }
+  if (mode === "ziwei") {
+    return [
+      `当前选择紫微独立分析。命宫落 ${mingPalace?.branch || "-"}，身宫落 ${shenPalace?.branch || "-"}。`,
+      "当前网页端展示的是十二宫学习框架，完整主星、辅星、生年四化与大限需要后续接入原仓算法层。",
+      common,
+    ];
+  }
   return [
-    `日主为 ${dayMaster}${ELEMENT_BY_GAN[dayMaster] || ""}，可先从日主五行与月令环境入手做学习分析。`,
-    `当前盘面五行统计中，${strongest}相对较多，${weakest}相对较少。这里是天干地支的学习版粗略统计，不等同完整旺衰定论。`,
-    `紫微框架中，命宫落 ${mingPalace?.branch || "-"}，身宫落 ${shenPalace?.branch || "-"}，可作为后续学习十二宫主题的入口。`,
-    "本结果仅供学习参考。传统术数内容不具备科学预测确定性，请相信科学，理性使用。",
+    `当前选择综合印证。八字侧日主为 ${dayMaster}${ELEMENT_BY_GAN[dayMaster] || ""}，紫微侧命宫落 ${mingPalace?.branch || "-"}。`,
+    `五行统计中，${strongest}相对较多，${weakest}相对较少；身宫落 ${shenPalace?.branch || "-"}，可作为两盘交叉对照入口。`,
+    "综合印证应分别看八字主轴、紫微主轴，再比较两者同向、互补或冲突。",
+    common,
   ];
+}
+
+function buildChartText(chart, dayMaster, counts, ziwei) {
+  const pillars = chart.pillars;
+  const line = (label, key) => {
+    const pillar = pillars[key];
+    const cang = (CANG_GAN[pillar.zhi] || []).join("、") || "-";
+    return `${label}: ${pillar.gan}${pillar.zhi} 十神=${key === "day" ? "日主" : getShiShen(dayMaster, pillar.gan)} 藏干=${cang}`;
+  };
+  return [
+    "【基本信息】",
+    `姓名: ${chart.input.name}`,
+    `性别: ${chart.input.gender === "male" ? "男" : "女"}`,
+    `公历: ${chart.solarText}`,
+    `农历: ${chart.lunarText}`,
+    `分析模式: ${getModeLabel(chart.input.analysisMode)}`,
+    `排盘引擎: ${chart.engine}`,
+    "",
+    "【八字四柱】",
+    line("年柱", "year"),
+    line("月柱", "month"),
+    line("日柱", "day"),
+    line("时柱", "hour"),
+    `日主: ${dayMaster}${ELEMENT_BY_GAN[dayMaster] || ""}`,
+    `五行统计: 木${counts["木"] || 0} 火${counts["火"] || 0} 土${counts["土"] || 0} 金${counts["金"] || 0} 水${counts["水"] || 0}`,
+    "",
+    "【紫微十二宫学习框架】",
+    ...ziwei.palaces.map((palace) => `${palace.name}: ${palace.branch}${palace.isMing ? " 命宫" : ""}${palace.isShen ? " 身宫" : ""}`),
+    "",
+    "【声明】当前网页端是学习版实现，紫微部分为宫位框架，不等同完整专业安星盘。",
+  ].join("\n");
+}
+
+function getModeLabel(mode) {
+  if (mode === "bazi") return "八字独立分析";
+  if (mode === "ziwei") return "紫微独立分析";
+  return "八字 + 紫微综合印证";
 }
 
 function countElements(pillars) {
