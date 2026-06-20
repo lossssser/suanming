@@ -62,6 +62,7 @@ const LINE_OPTIONS = [
 ];
 const AI_ENDPOINT = "https://api.shxgjqaq.com";
 const AI_TIMEOUT_MS = 75000;
+const AI_READING_ENABLED = false;
 const HISTORY_KEY = "suanming_reading_history_v1";
 const HISTORY_LIMIT = 20;
 
@@ -104,7 +105,7 @@ function init() {
     randomize();
     render();
   });
-  aiButton.addEventListener("click", requestAiReading);
+  aiButton.addEventListener("click", handleDisabledAiReading);
   clearHistoryButton.addEventListener("click", clearHistory);
   historyList.addEventListener("click", handleHistoryClick);
   document.querySelector("#clearButton").addEventListener("click", () => {
@@ -291,6 +292,11 @@ function renderLines(chart) {
 }
 
 async function requestAiReading() {
+  if (!AI_READING_ENABLED) {
+    handleDisabledAiReading();
+    return;
+  }
+
   const chart = render();
   aiPanel.hidden = false;
   aiStatus.textContent = "请求中";
@@ -340,6 +346,12 @@ async function requestAiReading() {
     clearTimeout(slowNoticeId);
     aiButton.disabled = false;
   }
+}
+
+function handleDisabledAiReading() {
+  aiPanel.hidden = false;
+  aiStatus.textContent = "制作中";
+  aiAnswer.textContent = "AI断卦功能还在制作中。当前可以先使用排盘、铜钱起卦和本地历史记录。";
 }
 
 function formatAiError(error) {
