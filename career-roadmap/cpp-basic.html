@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>C++ 基础语法 - 智能驾驶成长路线</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=20260623-cpp">
   </head>
   <body>
     <main class="lesson-page">
@@ -13,105 +13,231 @@
         <div>
           <p class="eyebrow">C++ Engineering · Chapter 01</p>
           <h1>C++ 基础语法</h1>
-          <p class="lead">先把工程开发里真正会用到的 C++ 基础打牢，再往多线程、性能分析、平台开发和测试框架推进。</p>
+          <p class="lead">这章不是为了背语法，而是把你在智驾 C++ 模块、HMI server、覆盖率测试和平台开发里会真正碰到的基础打牢。学完后，你应该能读懂一个模块的头文件、实现文件、对象所有权和常见接口设计。</p>
         </div>
       </header>
 
       <section class="lesson-layout">
         <article class="lesson-content">
           <nav class="chapter-nav" aria-label="章节目录">
-            <a href="#chapter-1">1. 语言基础</a>
-            <a href="#chapter-2">2. 对象与生命周期</a>
-            <a href="#chapter-3">3. 指针、引用、const</a>
-            <a href="#chapter-4">4. RAII 与资源管理</a>
-            <a href="#chapter-5">5. STL 常用容器</a>
-            <a href="#chapter-6">6. 现代 C++ 写法</a>
-            <a href="#chapter-7">7. 智驾工程练习</a>
+            <a href="#chapter-1">1. 学习目标</a>
+            <a href="#chapter-2">2. 工程结构</a>
+            <a href="#chapter-3">3. 类型与接口</a>
+            <a href="#chapter-4">4. 对象生命周期</a>
+            <a href="#chapter-5">5. 指针引用 const</a>
+            <a href="#chapter-6">6. RAII</a>
+            <a href="#chapter-7">7. STL</a>
+            <a href="#chapter-8">8. 现代 C++</a>
+            <a href="#chapter-9">9. 智驾小项目</a>
           </nav>
 
           <section class="chapter" id="chapter-1">
-            <h2>1. 语言基础</h2>
-            <p>目标不是背语法，而是能读懂车端模块代码，知道变量、函数、类、命名空间、头文件和编译单元如何组织。</p>
+            <h2>1. 先明确：你要学到什么程度</h2>
+            <p>C++ 很大，不需要一开始就把模板元编程、协程、编译器细节全学完。你现在最该追求的是工程可用：能写稳定模块，能读懂别人代码，能定位崩溃，能写单测，能把代码接进 CMake 和 CI。</p>
+            <p>智能驾驶相关 C++ 代码通常围绕这些事情展开：接收输入数据，解析配置，维护模块状态，做业务计算，发布输出结果，记录日志，暴露调试信息。所有这些都离不开基础语法、生命周期、资源管理和容器使用。</p>
             <ul>
-              <li>掌握基本类型、作用域、函数声明与定义。</li>
-              <li>理解 `.h` 和 `.cpp` 的分工，避免重复定义。</li>
-              <li>熟悉命名空间、枚举、结构体、类的基本用法。</li>
+              <li>第一层：能看懂头文件、类、函数、命名空间、编译单元。</li>
+              <li>第二层：能判断对象归谁拥有，什么时候释放，接口是否可能传空。</li>
+              <li>第三层：能用 STL 和现代 C++ 写出简洁、可测、可维护的模块。</li>
+              <li>第四层：能把 C++ 代码和 gtest、CMake、覆盖率、gdb 串起来。</li>
             </ul>
-            <pre><code>namespace ads {
-enum class ModuleState { Init, Running, Error };
-
-struct Header {
-  uint64_t timestamp_ns{};
-  uint32_t sequence{};
-};
-}</code></pre>
+            <div class="interview-box">
+              <strong>面试表达</strong>
+              <p>不要说“我学过 C++ 基础”。可以说：我熟悉 C++ 模块化开发，能设计清晰的头文件接口，理解对象生命周期和资源管理，并能结合 gtest、CMake 和覆盖率做质量闭环。</p>
+            </div>
           </section>
 
           <section class="chapter" id="chapter-2">
-            <h2>2. 对象与生命周期</h2>
-            <p>C++ 工程里很多 bug 来自生命周期不清楚。要知道对象什么时候构造、什么时候析构、谁拥有它。</p>
-            <ul>
-              <li>构造函数、析构函数、拷贝构造、移动构造。</li>
-              <li>栈对象、堆对象、静态对象的生命周期差异。</li>
-              <li>所有权表达：值、引用、裸指针、智能指针。</li>
-            </ul>
+            <h2>2. `.h` 和 `.cpp`：先把工程结构看懂</h2>
+            <p>很多人学 C++ 时只写一个 main.cpp，进公司后看到几十个库、几百个头文件就懵。工程里 `.h` 通常表达“模块对外承诺”，`.cpp` 表达“模块内部实现”。你要习惯先看头文件，理解这个模块提供什么能力，再看实现细节。</p>
+            <p>头文件里适合放类声明、函数声明、结构体、枚举、必要的 include。实现文件里放函数具体逻辑、私有辅助函数、局部工具。不要把大量实现写进头文件，否则会增加编译时间，也容易造成重复定义。</p>
+            <pre><code>// module_health.h
+#pragma once
+
+#include &lt;cstdint&gt;
+#include &lt;string&gt;
+
+namespace ads {
+
+enum class ModuleState {
+  Init,
+  Running,
+  Timeout,
+  Error
+};
+
+struct ModuleStatus {
+  std::string name;
+  ModuleState state{ModuleState::Init};
+  uint64_t last_heartbeat_ms{0};
+};
+
+class ModuleHealthMonitor {
+ public:
+  void UpdateHeartbeat(const std::string& module_name, uint64_t now_ms);
+  ModuleStatus GetStatus(const std::string& module_name, uint64_t now_ms) const;
+};
+
+}  // namespace ads</code></pre>
+            <p>看这段头文件时，重点不是语法花样，而是接口含义：外部能更新心跳，也能查询状态；状态里有模块名、状态枚举和最近心跳时间。你要训练自己从接口里读出业务模型。</p>
+            <div class="practice-box">
+              <strong>练习任务</strong>
+              <p>找一个你以前写过的 Python 自动化脚本，把它拆成 C++ 风格的“头文件接口 + 实现文件”草稿。哪怕不编译，也要练习怎么设计模块边界。</p>
+            </div>
           </section>
 
           <section class="chapter" id="chapter-3">
-            <h2>3. 指针、引用、const</h2>
-            <p>智能驾驶模块经常传递大对象、消息帧、感知结果和配置对象。引用和 const 能让接口更清楚。</p>
+            <h2>3. 类型、枚举、结构体：让接口少一点歧义</h2>
+            <p>工程代码最怕“看起来能用，但含义不清”。比如一个函数返回 int，0 是成功还是失败？-1 是超时还是参数错误？一个字符串表示状态，拼错了怎么办？这些问题都可以通过更明确的类型来减少。</p>
+            <p>在智驾模块里，枚举常用于模块状态、错误码、驾驶模式、功能开关。结构体常用于把一组相关字段合在一起，比如 HMI 状态、轨迹摘要、覆盖率统计。类型设计得清楚，单测也会更好写。</p>
+            <pre><code>enum class ErrorCode {
+  Ok,
+  InvalidInput,
+  Timeout,
+  InternalError
+};
+
+struct CoverageSummary {
+  int total_lines{0};
+  int covered_lines{0};
+  double line_rate{0.0};
+
+  bool IsPass(double threshold) const {
+    return line_rate &gt;= threshold;
+  }
+};</code></pre>
+            <p>`enum class` 比普通 enum 更安全，因为它不会随便和 int 混用。结构体里可以带简单行为，比如 `IsPass`，这样判断逻辑不会散落在项目各处。</p>
             <ul>
-              <li>`const T&`：只读传参，避免拷贝。</li>
-              <li>`T*`：可能为空，适合表达可选对象或输出参数。</li>
-              <li>`std::shared_ptr` / `std::unique_ptr`：表达共享或独占所有权。</li>
+              <li>如果一个值只有固定几种状态，优先考虑 `enum class`。</li>
+              <li>如果多个字段总是一起传递，优先考虑 `struct`。</li>
+              <li>如果某个判断在多处使用，把它收进类型的方法里。</li>
             </ul>
-            <pre><code>void PublishFrame(const PerceptionFrame& frame);
-bool LoadConfig(const std::string& path, Config* output);</code></pre>
           </section>
 
           <section class="chapter" id="chapter-4">
-            <h2>4. RAII 与资源管理</h2>
-            <p>RAII 是 C++ 工程的核心习惯：资源跟对象生命周期绑定，离开作用域自动释放。</p>
-            <ul>
-              <li>文件句柄、锁、socket、内存都适合 RAII。</li>
-              <li>优先使用标准库对象管理资源。</li>
-              <li>避免手写成对的 open/close、new/delete。</li>
-            </ul>
-            <pre><code>std::lock_guard&lt;std::mutex&gt; lock(mutex_);
-UpdateSharedState();</code></pre>
+            <h2>4. 对象生命周期：C++ bug 的高发区</h2>
+            <p>C++ 和 Python 最大的区别之一，就是对象生命周期更需要你自己负责。一个对象什么时候创建，什么时候销毁，谁持有它，谁只是借用它，如果没想清楚，就容易出现空指针、悬空引用、重复释放、数据被提前销毁等问题。</p>
+            <p>先记住三个常见位置：栈对象会在作用域结束时自动析构；堆对象需要通过智能指针管理；静态对象生命周期很长，但初始化顺序和全局状态会带来复杂性。普通业务模块里，能用栈对象就先用栈对象，需要跨作用域再考虑智能指针。</p>
+            <pre><code>void RunOnce() {
+  ModuleHealthMonitor monitor;  // 栈对象，函数结束自动析构
+  monitor.UpdateHeartbeat("planning", 1000);
+}
+
+std::unique_ptr&lt;ModuleHealthMonitor&gt; CreateMonitor() {
+  return std::make_unique&lt;ModuleHealthMonitor&gt;();
+}</code></pre>
+            <p>`unique_ptr` 表示独占所有权：这个对象只有一个主人。`shared_ptr` 表示共享所有权：多个地方共同持有。不要为了省事到处用 `shared_ptr`，否则对象到底谁负责会变模糊，循环引用也会让资源释放不掉。</p>
+            <div class="practice-box">
+              <strong>练习任务</strong>
+              <p>写一个 `FrameBuffer` 类，内部保存最近 100 帧数据。要求：对象析构时自动释放资源；外部不能直接改内部容器；提供 `Push`、`Latest`、`Size` 三个接口。</p>
+            </div>
           </section>
 
           <section class="chapter" id="chapter-5">
-            <h2>5. STL 常用容器</h2>
-            <p>先熟练掌握最常用的容器和算法，再去看复杂模板。</p>
+            <h2>5. 指针、引用、const：接口设计的基本语法</h2>
+            <p>引用、指针、const 不是考试知识点，它们决定接口是否清楚。`const T&` 表示只读借用，适合传大对象且不需要拷贝；`T*` 常用于“可能为空”或“我要修改输出参数”；`T&` 表示一定存在且会被修改；值传递适合小对象或需要复制保存的对象。</p>
+            <pre><code>void PublishFrame(const PerceptionFrame& frame);       // 只读，不拷贝
+bool LoadConfig(const std::string& path, Config* out); // out 可能被写入
+void NormalizeTrajectory(Trajectory& trajectory);      // 必须存在，会修改
+ModuleStatus MakeStatus(std::string name);             // 需要保存一份 name</code></pre>
+            <p>`const` 的价值是把“不允许修改”写进接口。一个函数如果只是读取配置，就应该接收 `const Config&`。这样调用者放心，编译器也会帮你拦住误修改。</p>
             <ul>
-              <li>`std::vector`：连续内存，适合帧数据、点集、结果列表。</li>
-              <li>`std::unordered_map`：按 key 查询配置、状态、统计信息。</li>
-              <li>`std::deque`：适合滑动窗口、短历史缓存。</li>
-              <li>`std::algorithm`：排序、查找、过滤、转换。</li>
+              <li>读大对象：优先 `const T&`。</li>
+              <li>写输出：可以用 `T* out`，进入函数先判断是否为空。</li>
+              <li>必须修改且不能为空：用 `T&`。</li>
+              <li>需要转移所有权：用 `std::unique_ptr&lt;T&gt;`。</li>
+              <li>需要共享异步对象：谨慎使用 `std::shared_ptr&lt;T&gt;`。</li>
             </ul>
+            <div class="interview-box">
+              <strong>面试表达</strong>
+              <p>可以说：我会通过 const 引用、指针和智能指针表达接口语义，区分只读借用、可选对象、输出参数和所有权转移，减少生命周期不清造成的问题。</p>
+            </div>
           </section>
 
           <section class="chapter" id="chapter-6">
-            <h2>6. 现代 C++ 写法</h2>
-            <p>车端代码通常会使用 C++14/17。你需要熟悉工程里常见的现代写法。</p>
-            <ul>
-              <li>`auto`、范围 for、结构化绑定。</li>
-              <li>`std::optional` 表达可能不存在的值。</li>
-              <li>`std::variant` 表达有限类型集合。</li>
-              <li>lambda 用于回调、排序、过滤。</li>
-            </ul>
+            <h2>6. RAII：把资源交给对象生命周期管理</h2>
+            <p>RAII 是 C++ 工程里非常重要的思想：资源在对象构造时获得，在对象析构时释放。这样即使中途 return、抛异常或出现错误路径，资源也能自动释放。文件、锁、socket、临时目录、性能计时器，都可以用 RAII 思路管理。</p>
+            <pre><code>class ScopedTimer {
+ public:
+  explicit ScopedTimer(std::string name) : name_(std::move(name)) {
+    start_ = NowMs();
+  }
+
+  ~ScopedTimer() {
+    const auto cost = NowMs() - start_;
+    LOG_INFO(name_ + " cost=" + std::to_string(cost) + "ms");
+  }
+
+ private:
+  std::string name_;
+  uint64_t start_{0};
+};</code></pre>
+            <p>上面这个计时器就是 RAII：进入作用域创建对象，离开作用域自动打印耗时。你可以把它用在 HMI 状态聚合、覆盖率报告解析、数据回放处理等位置，快速发现慢步骤。</p>
+            <pre><code>void HandleFrame(const Frame& frame) {
+  ScopedTimer timer("HandleFrame");
+  Parse(frame);
+  UpdateState();
+  Publish();
+}</code></pre>
+            <p>锁也是典型 RAII。不要手写 `mutex.lock()` 和 `mutex.unlock()`，因为中间如果提前返回，锁可能释放不了。优先使用 `std::lock_guard` 或 `std::unique_lock`。</p>
           </section>
 
           <section class="chapter" id="chapter-7">
-            <h2>7. 智驾工程练习</h2>
-            <p>不要只刷语法题，要把语法放进智驾工程小任务里练。</p>
+            <h2>7. STL：先掌握工程里最高频的容器</h2>
+            <p>STL 不需要一口气全背。工程里最常见的是 `vector`、`unordered_map`、`deque`、`set`、`optional` 以及一些算法函数。你要知道它们适合什么场景，不适合什么场景。</p>
+            <ul>
+              <li>`std::vector`：连续内存，遍历快，适合障碍物列表、轨迹点、覆盖率行记录。</li>
+              <li>`std::unordered_map`：按 key 快速查询，适合模块名到状态、错误码到说明。</li>
+              <li>`std::deque`：两端插入删除方便，适合最近 N 帧缓存。</li>
+              <li>`std::set`：需要去重且有序时使用，比如错误码集合。</li>
+              <li>`std::optional`：表达可能没有值，比用特殊值更清楚。</li>
+            </ul>
+            <pre><code>std::unordered_map&lt;std::string, ModuleStatus&gt; status_by_module;
+status_by_module["planning"] = ModuleStatus{"planning", ModuleState::Running, 1000};
+
+std::optional&lt;ModuleStatus&gt; FindStatus(const std::string& name) {
+  const auto it = status_by_module.find(name);
+  if (it == status_by_module.end()) {
+    return std::nullopt;
+  }
+  return it-&gt;second;
+}</code></pre>
+            <p>容器选择的基本原则：先考虑数据规模、查询方式、是否需要顺序、是否频繁插入删除。别一上来追求复杂结构，能简单稳定解决问题最重要。</p>
+          </section>
+
+          <section class="chapter" id="chapter-8">
+            <h2>8. 现代 C++：写得更清楚，而不是更炫</h2>
+            <p>车端项目常见 C++14/17。现代 C++ 的目的不是把代码写得看不懂，而是减少样板、表达意图、降低错误概率。你先掌握 `auto`、范围 for、lambda、`optional`、`unique_ptr`、`make_unique`、结构化绑定就够用了。</p>
+            <pre><code>for (const auto& [module_name, status] : status_by_module) {
+  if (status.state == ModuleState::Timeout) {
+    timeout_modules.push_back(module_name);
+  }
+}
+
+std::sort(timeout_modules.begin(), timeout_modules.end(),
+          [](const auto& left, const auto& right) {
+            return left &lt; right;
+          });</code></pre>
+            <p>`auto` 适合类型很明显或类型很长的地方，不适合让读者猜类型。lambda 适合短小逻辑，比如排序规则、过滤规则、回调函数。如果 lambda 很长，就应该抽成普通函数。</p>
+            <div class="interview-box">
+              <strong>面试表达</strong>
+              <p>可以说：我使用现代 C++ 时会以可读性为前提，常用 RAII、智能指针、范围 for、lambda 和 optional 来表达所有权、遍历、回调和可选结果。</p>
+            </div>
+          </section>
+
+          <section class="chapter" id="chapter-9">
+            <h2>9. 智驾工程练习：把语法变成项目能力</h2>
+            <p>学 C++ 最怕只看教程不写工程。你可以围绕自己经历做 3 个小项目，这些项目不大，但非常适合放进简历或面试里讲。</p>
             <ol>
-              <li>写一个 `FrameBuffer`，保存最近 100 帧 HMI 状态。</li>
-              <li>写一个 `CoverageSummary`，读取覆盖率结果并生成统计。</li>
-              <li>写一个 `ModuleHealthMonitor`，跟踪模块状态和错误码。</li>
-              <li>给上述模块补 gtest 单元测试。</li>
+              <li>`ModuleHealthMonitor`：输入模块心跳和错误码，输出 HMI 展示状态。重点练枚举、结构体、unordered_map、const 接口、gtest。</li>
+              <li>`CoverageSummaryParser`：读取 lcov 或简化版覆盖率文本，统计行覆盖率和未覆盖文件。重点练文件读取、字符串处理、结构体、报告生成。</li>
+              <li>`FrameBuffer`：保存最近 N 帧数据，支持按时间戳查询最近一帧。重点练 deque、optional、对象生命周期和边界处理。</li>
             </ol>
+            <p>每个小项目都按同一个标准要求自己：有头文件、有实现文件、有 CMake、有 gtest、有 README、有覆盖率报告截图。这样你不是“学过 C++”，而是能展示一个完整工程闭环。</p>
+            <div class="practice-box">
+              <strong>阶段作业</strong>
+              <p>先做 `ModuleHealthMonitor`。第一天写接口和实现；第二天补 8 个 gtest；第三天接入 CMake；第四天生成覆盖率；第五天把项目故事整理成面试话术。</p>
+            </div>
           </section>
         </article>
 
@@ -130,6 +256,6 @@ UpdateSharedState();</code></pre>
       </section>
     </main>
 
-    <script src="notes.js"></script>
+    <script src="notes.js?v=20260623-cpp"></script>
   </body>
 </html>

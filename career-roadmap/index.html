@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>智能驾驶成长路线</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=20260623-cpp">
   </head>
   <body>
     <main class="page">
@@ -58,6 +58,17 @@
             <span>01</span>
             <h2>C++ 工程能力</h2>
           </header>
+          <div class="learning-path">
+            <h3>建议学习顺序</h3>
+            <p>先用 C++ 基础语法建立模块化开发意识，再学 ROS 数据流，随后补多线程、CMake、gtest、gdb 和覆盖率。这个顺序贴近真实工作：先能写模块，再能接工程，再能测试和定位问题。</p>
+            <ol>
+              <li>第 1 周：C++ 基础语法 + 一个 ModuleHealthMonitor 小项目。</li>
+              <li>第 2 周：ROS 常用语法 + topic 数据流排查表。</li>
+              <li>第 3 周：多线程、内存、性能分析 + 限长队列练习。</li>
+              <li>第 4 周：CMake + gtest + 覆盖率，把项目做成完整工程。</li>
+              <li>第 5 周：gdb/core dump，把崩溃定位和回归测试串起来。</li>
+            </ol>
+          </div>
           <div class="module-list">
             <a class="module module-link" href="cpp-basic.html">
               <h3>C++ 基础语法</h3>
