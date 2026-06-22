@@ -206,6 +206,32 @@ button.project-card {
   background: #eef6ff;
 }
 
+.project-card-career .project-visual {
+  background: #eef8f2;
+}
+
+.career-lanes {
+  width: min(46%, 190px);
+  display: grid;
+  gap: 10px;
+}
+
+.career-lanes span {
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0969da, rgba(9, 105, 218, 0.15));
+}
+
+.career-lanes span:nth-child(2) {
+  width: 78%;
+  background: linear-gradient(90deg, #1a7f37, rgba(26, 127, 55, 0.15));
+}
+
+.career-lanes span:nth-child(3) {
+  width: 58%;
+  background: linear-gradient(90deg, #9a6700, rgba(154, 103, 0, 0.15));
+}
+
 .project-glyph {
   display: inline-grid;
   width: 76px;

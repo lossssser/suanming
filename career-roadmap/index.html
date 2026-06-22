@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>智能驾驶成长路线</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Career Roadmap</p>
+          <h1>智能驾驶软件质量与工程效能方向</h1>
+          <p class="lead">具备 C++ 模块开发、Python 自动化、HMI Server、覆盖率测试和功能测试经验。</p>
+        </div>
+      </header>
+
+      <section class="direction-panel" aria-label="方向判断">
+        <article class="statement">
+          <h2>我最推荐的方向</h2>
+          <div class="statement-grid">
+            <section>
+              <h3>智驾测试开发 / 仿真评测平台</h3>
+              <p>这是你最顺的方向。现在智驾从规则栈走向端到端、大模型，但越复杂越需要评测、回归、仿真、场景库、指标体系。自动驾驶仿真开发、测试开发、评测平台岗位薪资空间还不错，自动驾驶仿真开发有 30-60k·15 薪的例子。</p>
+            </section>
+            <section>
+              <h3>C++ 智驾平台 / 中间件开发</h3>
+              <p>例如 DDS、SOME/IP、IPC、日志、诊断、HMI server、数据链路、模块通信、部署工具。这个方向比算法学历门槛低一些，更看工程能力。你做过 HMI server 和覆盖率，可以往车端软件平台 C++ 开发靠。</p>
+            </section>
+            <section>
+              <h3>算法工程化 / 模型部署 / 推理优化</h3>
+              <p>如果想学深度学习，别一上来卷感知算法研究。双非一本去卷纯算法岗，头部公司常常更偏硕士、博士和论文竞赛。更适合学模型怎么落地：ONNX、TensorRT、CUDA 基础、模型推理、感知结果评测、数据闭环。</p>
+            </section>
+          </div>
+        </article>
+
+        <article class="avoid">
+          <h2>不太建议主攻</h2>
+          <ul>
+            <li>纯感知算法研究</li>
+            <li>端到端大模型算法研究</li>
+            <li>规划控制核心算法研究</li>
+          </ul>
+          <p>不是说不能做，而是学历和履历不占优。端到端、大模型智驾岗位通常强调深度学习、LLM/VLM/VLA、规划算法经验，很多还偏硕士及以上。行业确实热端到端和物理 AI，但最拥挤的也是这个方向。</p>
+        </article>
+      </section>
+
+      <nav class="theme-nav" aria-label="学习主题">
+        <a href="#cpp">C++ 工程能力</a>
+        <a href="#platform">智驾通信和平台</a>
+        <a href="#simulation">测试开发和仿真</a>
+      </nav>
+
+      <section class="themes">
+        <article class="theme" id="cpp">
+          <header>
+            <span>01</span>
+            <h2>C++ 工程能力</h2>
+          </header>
+          <div class="module-list">
+            <a class="module module-link" href="cpp-basic.html">
+              <h3>C++ 基础语法</h3>
+              <p>对象生命周期、引用与指针、const、RAII、STL、现代 C++ 常用写法。</p>
+              <span>进入章节</span>
+            </a>
+            <a class="module module-link" href="lesson.html?topic=ros-common">
+              <h3>智能驾驶 ROS 常用语法</h3>
+              <p>节点、话题、服务、参数、消息定义、launch、常见数据流调试方式。</p>
+              <span>进入章节</span>
+            </a>
+            <a class="module module-link" href="lesson.html?topic=cpp-thread-memory-performance">
+              <h3>多线程、内存、性能分析</h3>
+              <p>线程同步、锁、条件变量、原子变量、内存泄漏、CPU 火焰图与性能瓶颈定位。</p>
+              <span>进入章节</span>
+            </a>
+            <a class="module module-link" href="lesson.html?topic=cmake">
+              <h3>CMake 语法、使用</h3>
+              <p>target、include、link、编译选项、依赖管理、工程组织与跨平台构建。</p>
+              <span>进入章节</span>
+            </a>
+            <a class="module module-link" href="lesson.html?topic=gtest">
+              <h3>gtest 语法、使用</h3>
+              <p>单测结构、fixture、断言、参数化测试、mock 思路、测试覆盖边界。</p>
+              <span>进入章节</span>
+            </a>
+            <a class="module module-link" href="lesson.html?topic=linux-gdb">
+              <h3>Linux 调试：gdb</h3>
+              <p>断点、栈回溯、变量查看、core dump、线程调试、常见崩溃定位流程。</p>
+              <span>进入章节</span>
+            </a>
+            <a class="module module-link" href="lesson.html?topic=coverage">
+              <h3>代码覆盖率</h3>
+              <p>gcov、lcov、llvm-cov 的使用、覆盖率报告生成、增量覆盖率与质量门禁。</p>
+              <span>进入章节</span>
+            </a>
+          </div>
+        </article>
+
+        <article class="theme" id="platform">
+          <header>
+            <span>02</span>
+            <h2>智驾通信和平台</h2>
+          </header>
+          <div class="module-list">
+            <a class="module module-link" href="lesson.html?topic=dds-someip">
+              <h3>DDS、SOME/IP</h3>
+              <p>介绍、核心知识点、应用使用：发布订阅、服务发现、QoS、车端通信链路。</p>
+              <span>进入章节</span>
+            </a>
+            <a class="module module-link" href="lesson.html?topic=ros2">
+              <h3>ROS2</h3>
+              <p>介绍、核心知识点、应用使用：节点通信、executor、QoS、bag、组件化部署。</p>
+              <span>进入章节</span>
+            </a>
+            <a class="module module-link" href="lesson.html?topic=protobuf">
+              <h3>protobuf</h3>
+              <p>介绍、核心知识点、应用使用：IDL、序列化、兼容性、跨模块接口协议。</p>
+              <span>进入章节</span>
+            </a>
+            <a class="module module-link" href="lesson.html?topic=hmi-backend">
+              <h3>HMI 与后端通信</h3>
+              <p>介绍、核心知识点、应用使用：状态同步、事件上报、可视化数据、接口稳定性。</p>
+              <span>进入章节</span>
+            </a>
+            <a class="module module-link" href="lesson.html?topic=logging-replay-record">
+              <h3>日志、回放、数据录制</h3>
+              <p>介绍、核心知识点、应用使用：日志分级、数据采集、回放定位、问题闭环。</p>
+              <span>进入章节</span>
+            </a>
+          </div>
+        </article>
+
+        <article class="theme" id="simulation">
+          <header>
+            <span>03</span>
+            <h2>测试开发和仿真</h2>
+          </header>
+          <div class="module-list">
+            <a class="module module-link" href="lesson.html?topic=python-automation">
+              <h3>Python 自动化框架</h3>
+              <p>框架分层、用例组织、数据驱动、日志报告、接口封装、回归执行。</p>
+              <span>进入章节</span>
+            </a>
+            <a class="module module-link" href="lesson.html?topic=pytest">
+              <h3>pytest</h3>
+              <p>fixture、参数化、mark、插件、报告生成、失败重跑与 CI 集成。</p>
+              <span>进入章节</span>
+            </a>
+            <a class="module module-link" href="lesson.html?topic=cicd">
+              <h3>CI/CD</h3>
+              <p>流水线设计、编译测试门禁、覆盖率门禁、制品管理、自动回归。</p>
+              <span>进入章节</span>
+            </a>
+            <a class="module module-link" href="lesson.html?topic=scenario-generation">
+              <h3>scenario 场景生成</h3>
+              <p>场景抽象、参数空间、边界条件、危险场景、KPI 指标与场景库维护。</p>
+              <span>进入章节</span>
+            </a>
+            <a class="module module-link" href="lesson.html?topic=rosbag-replay">
+              <h3>rosbag / 数据回放</h3>
+              <p>录制、裁剪、回放、时间同步、问题复现、数据集沉淀。</p>
+              <span>进入章节</span>
+            </a>
+            <a class="module module-link" href="lesson.html?topic=simulation-basic">
+              <h3>Carla / LGSVL / 仿真基础</h3>
+              <p>仿真环境、传感器配置、交通参与者、评测指标、自动化仿真回归。</p>
+              <span>进入章节</span>
+            </a>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

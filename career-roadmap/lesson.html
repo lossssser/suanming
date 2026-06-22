@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>学习章节 - 智能驾驶成长路线</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="lesson-page">
+      <header class="lesson-hero">
+        <a class="back-link" href="index.html">返回路线图</a>
+        <div>
+          <p class="eyebrow" id="lessonEyebrow">Learning Module</p>
+          <h1 id="lessonTitle">学习章节</h1>
+          <p class="lead" id="lessonLead">按章节学习，右侧记录自己的理解、问题和练习结果。</p>
+        </div>
+      </header>
+
+      <section class="lesson-layout">
+        <article class="lesson-content">
+          <nav class="chapter-nav" id="chapterNav" aria-label="章节目录"></nav>
+          <div id="lessonBody"></div>
+        </article>
+
+        <aside class="note-panel">
+          <header>
+            <h2>我的笔记</h2>
+            <span>自动保存在本浏览器</span>
+          </header>
+          <textarea id="lessonNotes" placeholder="今天学到了什么？哪里不懂？下一步要练什么？"></textarea>
+          <div class="note-actions">
+            <button id="saveNotes" type="button">保存笔记</button>
+            <button id="clearNotes" type="button">清空</button>
+          </div>
+          <p id="noteStatus">还没有保存。</p>
+        </aside>
+      </section>
+    </main>
+
+    <script src="lesson-data.js"></script>
+    <script src="notes.js"></script>
+  </body>
+</html>
