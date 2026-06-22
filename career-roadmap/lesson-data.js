@@ -500,6 +500,326 @@ function simpleTopic(eyebrow, title, lead, points, practice) {
   };
 }
 
+Object.assign(TOPICS, {
+  "dds-someip": {
+    eyebrow: "智驾通信和平台 · Middleware",
+    title: "DDS、SOME/IP",
+    lead: "DDS 和 SOME/IP 都是在解决车端模块通信问题，但它们的思路不同。DDS 更像高频数据分发系统，适合传感器、定位、感知、规划等连续数据流；SOME/IP 更像面向服务的车载通信，适合服务发现、请求响应、状态服务和车内以太网架构。",
+    chapters: [
+      {
+        title: "先分清两种通信模型",
+        body: [
+          "通信中间件的本质，是让模块不直接互相调用，而是通过统一的通信机制交换数据。这样做的好处是模块可以解耦，部署可以变化，测试可以替换某个模块的数据源。",
+          "DDS 常见模型是发布订阅：感知模块发布障碍物，规划模块订阅障碍物，HMI 订阅状态。SOME/IP 常见模型是服务：某个模块提供服务，另一个模块发现并调用它。面试时不要把它们混成一个名词，要能讲清楚适用场景。"
+        ],
+        points: [
+          "DDS：偏数据流，适合高频发布订阅",
+          "SOME/IP：偏服务通信，适合车载以太网服务化接口",
+          "发布订阅强调解耦，请求响应强调明确调用",
+          "测试开发要关注链路可观测、数据可替换、异常可复现"
+        ],
+        practice: "画一张通信图：感知、定位、规划、控制、HMI、日志模块分别交换什么数据，标注哪些适合 DDS，哪些适合 SOME/IP。"
+      },
+      {
+        title: "DDS 要重点理解 QoS",
+        body: [
+          "DDS 难点不只是会发布和订阅，而是 QoS。QoS 决定数据是否可靠、是否保留历史、是否要求实时性、订阅方晚启动能否收到旧数据。很多通信问题不是代码逻辑错，而是 QoS 不匹配。",
+          "比如规划轨迹可能只关心最新一帧，旧数据过期就没意义；配置或地图状态可能希望晚加入的订阅者也能拿到最近值。不同数据类型要选不同策略。"
+        ],
+        points: [
+          "Reliability：可靠传输还是尽力而为",
+          "History：只保留最新值还是保留队列",
+          "Durability：订阅者晚加入时是否能拿历史数据",
+          "Deadline：多久没收到数据算异常",
+          "Liveliness：发布者是否还活着"
+        ],
+        code: "// 伪代码：不要死背 API，重点理解配置意图\nQoS qos;\nqos.reliability = Reliable;\nqos.history_depth = 1;\nqos.deadline_ms = 100;\nCreateSubscriber(\"/planning/trajectory\", qos);",
+        practice: "为 3 类数据设计 QoS：HMI 状态、规划轨迹、诊断事件。说明为什么这样选。"
+      },
+      {
+        title: "SOME/IP 要理解服务发现和接口版本",
+        body: [
+          "SOME/IP 里很重要的概念是服务发现。客户端不是写死连接某个进程，而是发现某个服务是否可用，再调用对应方法或订阅事件。它适合车内服务化架构，也常和 AUTOSAR Adaptive 一起出现。",
+          "接口版本也很关键。车端系统多个模块可能由不同团队维护，接口升级不能随便破坏兼容。一个字段改名、枚举值变化、方法语义变化，都可能让下游模块出问题。"
+        ],
+        points: [
+          "Service ID / Method ID / Event ID 用于识别服务接口",
+          "服务发现决定服务是否可用、在哪里",
+          "接口版本要保持兼容，不能随意改变语义",
+          "测试要覆盖服务不可用、超时、返回错误、版本不匹配"
+        ],
+        practice: "设计一个 HMI 状态服务：列出服务名、方法、事件、错误码、版本升级策略。"
+      },
+      {
+        title: "通信问题怎么排查",
+        body: [
+          "通信问题排查要按链路走，不要直接猜业务逻辑。先确认发送方是否发布，再确认网络或中间件是否收到，再确认订阅方是否收到，再确认业务是否消费。每一层都要有观测手段。",
+          "常见问题包括：topic 或服务名不一致、QoS 不匹配、发布频率异常、时间戳错误、序列化失败、订阅方处理太慢导致队列堆积。"
+        ],
+        points: [
+          "查名称：topic、service、namespace、instance 是否一致",
+          "查频率：发布周期是否符合设计",
+          "查延迟：发送时间和接收时间是否差异过大",
+          "查字段：是否为空、单位是否一致、坐标系是否一致",
+          "查异常：服务不可用、超时、序列化失败是否有日志"
+        ],
+        interview: "我理解 DDS 和 SOME/IP 的通信模型差异，能从服务发现、QoS、接口版本、发布频率和消息字段入手定位车端模块通信问题。"
+      }
+    ]
+  },
+  ros2: {
+    eyebrow: "智驾通信和平台 · ROS2",
+    title: "ROS2",
+    lead: "ROS2 可以看作更工程化的 ROS：底层基于 DDS，支持 QoS、组件化、多线程 Executor 和更好的部署能力。你学 ROS2，不是为了只会跑 demo，而是为了理解现代智驾工具链里的节点通信、回放、仿真和评测系统。",
+    chapters: [
+      {
+        title: "ROS2 和 ROS1 最大差异",
+        body: [
+          "ROS1 更偏研究和快速原型，ROS2 更重视工程部署。ROS2 去掉了 ROS Master，底层使用 DDS 做发现和通信，因此 QoS 成为核心知识点。它更适合多机、实时性要求更高、工程边界更清楚的系统。",
+          "你可以把 ROS2 当成学习现代通信平台的入口：节点、topic、service、action 还是那些概念，但执行模型、QoS、组件化部署更接近真实工程。"
+        ],
+        points: [
+          "没有 ROS Master，底层依赖 DDS 发现",
+          "QoS 是一等公民",
+          "Executor 决定回调如何被调度",
+          "Component 支持进程内组合部署",
+          "rosbag2 用于数据记录和回放"
+        ],
+        practice: "整理 ROS1 和 ROS2 对比表：通信发现、QoS、启动方式、bag、组件化、工程部署。"
+      },
+      {
+        title: "Node、Topic、Service、Action",
+        body: [
+          "ROS2 里 Node 仍然是计算单元。Topic 适合连续异步数据，比如车辆状态、轨迹、感知结果。Service 适合短请求响应，比如查询配置、触发复位。Action 适合长任务，比如导航任务执行过程。",
+          "测试开发要学会判断接口设计是否合理。高频状态不适合做 service，长任务不适合普通 service，配置查询不一定需要 topic。接口选型会影响系统稳定性和可测性。"
+        ],
+        points: [
+          "Topic：异步数据流",
+          "Service：短请求响应",
+          "Action：长任务，带反馈和结果",
+          "Parameter：运行配置",
+          "Lifecycle Node：带状态管理的节点"
+        ],
+        code: "ros2 node list\nros2 topic list\nros2 topic hz /vehicle/status\nros2 topic echo /planning/trajectory\nros2 service list\nros2 param list",
+        practice: "为 HMI server 设计 ROS2 接口：哪些用 topic，哪些用 service，哪些参数可配置。"
+      },
+      {
+        title: "Executor 和回调调度",
+        body: [
+          "Executor 决定回调怎么执行。单线程 Executor 简单但可能被耗时回调阻塞；多线程 Executor 能并发处理，但要注意共享数据和线程安全。智驾系统里，订阅回调、定时器、服务回调可能同时发生。",
+          "一个常见坑是：在订阅回调里做了太重的处理，导致后续消息堆积。更好的做法是回调里快速取数据，放入队列，由工作线程处理。"
+        ],
+        points: [
+          "回调里少做耗时计算",
+          "多线程 Executor 要保护共享状态",
+          "Timer 适合周期性发布状态或检查超时",
+          "Callback Group 可以控制并发关系",
+          "测试要覆盖高频输入下是否堆积"
+        ],
+        practice: "设计一个 ROS2 状态节点：订阅模块心跳，定时发布聚合状态，说明哪些数据需要加锁。"
+      },
+      {
+        title: "rosbag2 和回放评测",
+        body: [
+          "rosbag2 是 ROS2 里非常重要的工程工具。它能把一次路测或仿真过程记录下来，后续用于复现问题、跑回归、比较算法版本。对测试开发和仿真评测平台来说，bag 是核心资产。",
+          "回放时要关注 topic 完整性、时间戳、播放速率、是否使用仿真时间。否则同一份数据在不同环境下可能跑出不同结果。"
+        ],
+        points: [
+          "录制前确认关键 topic 是否完整",
+          "回放时确认 use_sim_time",
+          "裁剪问题片段，减少回归成本",
+          "记录 bag 元信息：车辆、版本、场景、问题描述",
+          "回放后输出 KPI，形成自动评测"
+        ],
+        interview: "我理解 ROS2 的节点通信、QoS、Executor 和 rosbag2 回放机制，能把它用于智驾数据流排查和自动化回归评测。"
+      }
+    ]
+  },
+  protobuf: {
+    eyebrow: "智驾通信和平台 · Protocol",
+    title: "protobuf",
+    lead: "protobuf 是跨语言、强类型、可演进的接口描述方式。智驾平台里它常用于模块之间的数据协议、日志数据结构、HMI 状态接口和工具链数据交换。你要重点学会定义清晰接口，以及接口升级时如何保持兼容。",
+    chapters: [
+      {
+        title: "protobuf 解决什么问题",
+        body: [
+          "模块之间传数据，不能只靠口头约定。protobuf 用 `.proto` 文件把字段名、类型、编号和结构写下来，再生成 C++、Python 等语言的代码。这样前后端、工具链、测试脚本可以围绕同一份协议工作。",
+          "它比 JSON 更适合工程接口，因为字段类型明确、序列化效率高、二进制体积小，也更容易做版本兼容。"
+        ],
+        points: [
+          ".proto 是接口协议，不是某个语言的实现",
+          "message 表达结构体",
+          "enum 表达有限状态",
+          "字段编号比字段名更重要，不能随便改",
+          "生成代码后再在 C++/Python 中使用"
+        ],
+        code: "syntax = \"proto3\";\n\nmessage ModuleStatus {\n  string module_name = 1;\n  ModuleState state = 2;\n  uint64 timestamp_ms = 3;\n  string message = 4;\n}\n\nenum ModuleState {\n  MODULE_STATE_UNKNOWN = 0;\n  MODULE_STATE_RUNNING = 1;\n  MODULE_STATE_TIMEOUT = 2;\n  MODULE_STATE_ERROR = 3;\n}",
+        practice: "定义一个 HMI 状态 proto，包含驾驶模式、模块状态列表、错误码、时间戳。"
+      },
+      {
+        title: "字段设计和兼容性",
+        body: [
+          "protobuf 最容易踩坑的是兼容性。字段编号一旦发布就不能随便复用。删除字段时应该 reserved，避免未来有人复用旧编号导致解析混乱。新增字段通常是兼容的，老版本不认识会忽略。",
+          "接口设计时要区分必需信息和扩展信息。proto3 没有 required，这意味着业务代码要自己检查关键字段是否有效。"
+        ],
+        points: [
+          "不要修改已发布字段编号",
+          "删除字段后使用 reserved 保留编号",
+          "新增字段通常向前兼容",
+          "枚举第一个值建议是 UNKNOWN",
+          "业务层要处理默认值和缺失语义"
+        ],
+        code: "message HmiState {\n  reserved 8, 9;\n  reserved \"old_warning_text\";\n\n  uint64 timestamp_ms = 1;\n  DrivingMode mode = 2;\n  repeated ModuleStatus modules = 3;\n}",
+        practice: "模拟一次接口升级：给 HMI 状态新增一个 degrade_reason 字段，同时说明老版本如何处理。"
+      },
+      {
+        title: "在 C++ 和 Python 里怎么用",
+        body: [
+          "工程里常见模式是：C++ 车端模块生成或消费 protobuf，Python 自动化脚本解析日志或构造测试输入。你如果能同时理解 C++ 和 Python 使用方式，就能把平台开发和测试开发连起来。",
+          "要注意序列化失败、字段默认值、枚举未知值、跨版本解析。测试用例里应该覆盖缺字段、未知枚举、空 repeated、超大消息等情况。"
+        ],
+        code: "// C++ 伪代码\nHmiState state;\nstate.set_timestamp_ms(now_ms);\nstate.set_mode(DrivingMode::AUTO);\nstd::string bytes;\nstate.SerializeToString(&bytes);\n\n# Python 伪代码\nstate = HmiState()\nstate.ParseFromString(raw_bytes)\nprint(state.timestamp_ms)",
+        points: [
+          "C++ 负责高性能生产和消费",
+          "Python 适合自动化构造和分析",
+          "接口测试要覆盖异常数据",
+          "日志回放中要记录协议版本"
+        ]
+      },
+      {
+        title: "把 protobuf 做成面试亮点",
+        body: [
+          "不要只说“用过 protobuf”。你要能讲协议设计、版本兼容、跨语言工具链、自动化测试。比如：我定义了 HMI 状态协议，C++ 后端发布，Python 自动化脚本解析并校验关键字段，CI 中用协议样例做兼容性检查。",
+          "这就从工具使用变成了平台能力。"
+        ],
+        interview: "我能使用 protobuf 设计跨模块接口，理解字段编号、reserved、默认值和版本兼容，并能在 C++ 模块和 Python 自动化测试中完成序列化、解析和协议校验。"
+      }
+    ]
+  },
+  "hmi-backend": {
+    eyebrow: "智驾通信和平台 · HMI",
+    title: "HMI 与后端通信",
+    lead: "HMI 不是简单界面，它是用户看到智驾系统状态的窗口。后端通信要保证状态准确、及时、稳定、可解释。你做过 HMI server，这块可以包装成非常贴合岗位的项目经验。",
+    chapters: [
+      {
+        title: "HMI 后端到底负责什么",
+        body: [
+          "HMI 后端通常不直接做复杂算法，而是聚合多个模块状态，把它们转换成前端能展示、用户能理解的状态。它要处理模块心跳、错误码、驾驶模式、告警提示、降级原因、可视化数据等。",
+          "这类工作看似中间层，其实很考验工程能力：状态机设计、接口稳定性、通信链路、异常处理、日志、回放、自动化测试都在里面。"
+        ],
+        points: [
+          "聚合多个模块状态",
+          "把底层错误码转换成用户可理解提示",
+          "处理心跳超时和状态恢复",
+          "向前端提供稳定接口",
+          "记录关键事件用于复盘"
+        ],
+        practice: "列出 HMI server 输入和输出：输入来自哪些模块，输出给谁，关键字段有哪些。"
+      },
+      {
+        title: "状态机和防抖",
+        body: [
+          "HMI 状态不能乱跳。比如某个模块偶尔一帧超时，如果立刻显示严重故障，用户体验会很差；但如果真正故障又迟迟不显示，也会带来安全风险。所以需要状态机、超时阈值、防抖和恢复条件。",
+          "状态机要明确：正常、初始化、降级、故障、恢复中。每个状态进入和退出条件都要写清楚，并用测试覆盖。"
+        ],
+        points: [
+          "心跳超时 N 次才进入异常",
+          "恢复需要连续正常 M 次",
+          "严重故障可以立即上报",
+          "提示文案要和错误码解耦",
+          "状态变化要记录事件日志"
+        ],
+        code: "if (miss_count >= timeout_threshold) {\n  state = ModuleState::Timeout;\n}\nif (state == ModuleState::Timeout && normal_count >= recover_threshold) {\n  state = ModuleState::Running;\n}",
+        practice: "设计一个模块状态机，写出每个状态的进入条件、退出条件和需要记录的日志。"
+      },
+      {
+        title: "后端到前端的接口",
+        body: [
+          "HMI 前端关心的是稳定、清晰、低延迟的数据。后端不要把内部复杂结构原封不动丢给前端，而要整理成展示模型。比如模块状态、驾驶模式、告警列表、可视化轨迹、障碍物摘要。",
+          "接口要考虑兼容性。前端版本和后端版本不一定同步升级，所以新增字段要兼容，删除字段要谨慎，枚举值要有 unknown 兜底。"
+        ],
+        points: [
+          "展示模型和内部模型分离",
+          "接口字段要有单位和语义说明",
+          "枚举要预留 UNKNOWN",
+          "高频数据要节流，避免前端压力过大",
+          "关键事件要支持追踪和回放"
+        ],
+        practice: "设计一个 `/hmi/state` 接口响应结构，包含 mode、modules、warnings、timestamp。"
+      },
+      {
+        title: "如何讲你的 HMI server 经历",
+        body: [
+          "你已经做过 HMI server，这是很好的平台开发经历。包装时不要只说写接口，而要说：我负责 HMI 后端状态聚合和通信链路，处理模块状态、错误码、心跳超时和前端展示接口，并配合自动化测试保证状态转换可靠。",
+          "如果再补上 gtest、回放数据、日志定位，就能从普通开发描述升级成平台工程能力。"
+        ],
+        interview: "我做过 ADS HMI server 开发，理解 HMI 后端在状态聚合、错误码映射、心跳超时、接口兼容和前端展示中的作用，能通过日志、回放和自动化测试保证状态链路稳定。"
+      }
+    ]
+  },
+  "logging-replay-record": {
+    eyebrow: "智驾通信和平台 · Data",
+    title: "日志、回放、数据录制",
+    lead: "日志、回放和数据录制是智驾问题闭环的基础。没有数据，问题只能靠猜；有可复现数据，才能定位、修复、回归和沉淀场景库。",
+    chapters: [
+      {
+        title: "日志不是越多越好",
+        body: [
+          "日志的目标是帮助定位问题，不是把所有东西都打印出来。高频日志会影响性能，也会让真正关键的信息被淹没。好的日志应该带时间戳、模块名、事件类型、关键字段和 trace id。",
+          "日志分级也要清楚：INFO 记录关键流程，WARN 记录可恢复异常，ERROR 记录影响功能的错误，DEBUG 用于开发定位但线上要控制。"
+        ],
+        points: [
+          "每条关键日志要能回答：谁、何时、发生了什么",
+          "错误日志要带错误码和上下文",
+          "高频循环日志要采样或节流",
+          "状态变化要记录前后状态",
+          "日志格式尽量结构化，方便脚本分析"
+        ],
+        code: "LOG_WARN(\"module=planning event=heartbeat_timeout last_ms={} now_ms={} miss_count={}\",\n         last_heartbeat_ms, now_ms, miss_count);",
+        practice: "为 HMI 状态机设计 10 条关键日志，包括初始化、心跳、超时、恢复、错误码变化。"
+      },
+      {
+        title: "数据录制要先定义目的",
+        body: [
+          "录数据不是越全越好。全量录制成本高、体积大、回放慢。录制前要明确目的：是复现 HMI 异常、定位规划问题、验证感知输出，还是生成仿真回归数据。目的不同，录制 topic 和字段不同。",
+          "每份数据都应该有元信息：车辆、软件版本、地图版本、时间、场景描述、问题现象、关键 topic。没有元信息的数据，很快就会变成无法使用的垃圾资产。"
+        ],
+        points: [
+          "明确录制目标",
+          "选择关键 topic 和频率",
+          "记录版本、场景、问题描述",
+          "裁剪问题前后关键时间段",
+          "录制后做完整性校验"
+        ],
+        practice: "设计一张数据录制清单：为了复现 HMI 状态跳变，需要录哪些 topic、哪些日志、哪些版本信息。"
+      },
+      {
+        title: "回放是问题闭环的核心",
+        body: [
+          "回放的意义是把一次偶发问题变成可重复问题。只要能重复，就能定位；只要能定位，就能修复；只要能回放，就能做回归。测试开发和仿真评测平台的价值，就在于把这种闭环自动化。",
+          "回放要注意时间同步和外部依赖。比如模块依赖当前系统时间、远程服务、车辆配置，如果回放环境不一致，结果可能不稳定。"
+        ],
+        points: [
+          "使用仿真时间或统一时间源",
+          "固定配置和软件版本",
+          "回放前检查 topic 完整性",
+          "回放后输出 KPI 和关键状态",
+          "修复后把该数据加入回归集"
+        ],
+        practice: "设计一个回放验证流程：输入 bag，启动模块，计算 HMI 状态是否在预期时间内变化，输出报告。"
+      },
+      {
+        title: "数据资产和场景库",
+        body: [
+          "当日志、录制、回放形成流程后，就可以沉淀数据资产。比如把 cut-in、急刹、隧道、匝道、雨天、HMI 异常等数据分类，形成场景库。后续每次版本升级都可以自动回归这些场景。",
+          "这就是你可以跳到仿真评测平台的桥：你不只是会测试某个功能，而是能构建数据闭环和回归体系。"
+        ],
+        interview: "我理解智驾问题从日志定位、数据录制、回放复现到回归验证的闭环，能设计关键日志、录制清单、回放流程和数据资产管理方式。"
+      }
+    ]
+  }
+});
+
 const params = new URLSearchParams(location.search);
 const topicKey = params.get("topic") || "ros-common";
 const topic = TOPICS[topicKey] || TOPICS["ros-common"];
