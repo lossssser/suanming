@@ -113,6 +113,17 @@
             <span>02</span>
             <h2>智驾通信和平台</h2>
           </header>
+          <div class="learning-path learning-path-platform">
+            <h3>建议学习顺序</h3>
+            <p>这一块的目标是把你从“会写一个模块”推进到“理解模块之间怎么连起来”。先学通信模型，再学接口协议，再学 HMI 状态链路和日志回放，最后能说清楚一条车端数据链路怎么观测、怎么调试、怎么回归。</p>
+            <ol>
+              <li>第 1 周：DDS、SOME/IP，搞清发布订阅和请求响应的差异。</li>
+              <li>第 2 周：ROS2，理解 DDS、QoS、Executor 和组件化部署。</li>
+              <li>第 3 周：protobuf，练习定义跨模块接口和兼容升级。</li>
+              <li>第 4 周：HMI 与后端通信，做一个状态聚合小模块。</li>
+              <li>第 5 周：日志、回放、数据录制，把问题复现和闭环能力补上。</li>
+            </ol>
+          </div>
           <div class="module-list">
             <a class="module module-link" href="lesson.html?topic=dds-someip">
               <h3>DDS、SOME/IP</h3>
@@ -147,6 +158,17 @@
             <span>03</span>
             <h2>测试开发和仿真</h2>
           </header>
+          <div class="learning-path learning-path-simulation">
+            <h3>建议学习顺序</h3>
+            <p>这一块最贴近你涨薪路线：测试开发、仿真评测平台、场景库、CI 回归。先把 Python 自动化框架和 pytest 打牢，再把 CI/CD、场景生成、rosbag 回放和仿真指标串成一个完整评测闭环。</p>
+            <ol>
+              <li>第 1 周：Python 自动化框架，搭一个可执行、可记录、可扩展的测试骨架。</li>
+              <li>第 2 周：pytest，把 fixture、参数化、mark 和报告跑通。</li>
+              <li>第 3 周：CI/CD，把编译、测试、覆盖率和报告归档自动化。</li>
+              <li>第 4 周：scenario 场景生成，沉淀 cut-in、急刹、行人横穿等模板。</li>
+              <li>第 5 周：rosbag 回放 + 仿真基础，做一个可复现、可计算 KPI 的评测样例。</li>
+            </ol>
+          </div>
           <div class="module-list">
             <a class="module module-link" href="lesson.html?topic=python-automation">
               <h3>Python 自动化框架</h3>
