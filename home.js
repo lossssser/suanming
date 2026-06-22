@@ -6,11 +6,6 @@ const cards = Array.from(document.querySelectorAll(".tool-card"));
 searchInput.addEventListener("input", applySearch);
 searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  const query = getQuery();
-  if (query === "888") {
-    window.location.href = "cardgame.html";
-    return;
-  }
   applySearch();
 });
 
@@ -29,9 +24,7 @@ function applySearch() {
     if (matched) visibleCount += 1;
   });
 
-  if (query === "888") {
-    searchHint.textContent = "暗号正确，点击确定进入隐藏项目。";
-  } else if (query && visibleCount === 0) {
+  if (query && visibleCount === 0) {
     searchHint.textContent = "没有找到匹配的小工具。";
   } else {
     searchHint.textContent = "输入关键词可以筛选已有小工具。";
