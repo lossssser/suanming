@@ -210,6 +210,36 @@ button.project-card {
   background: #eef8f2;
 }
 
+.project-card-werewolf .project-visual {
+  background: #eef0ff;
+}
+
+.moon-mark {
+  position: relative;
+  width: min(46%, 170px);
+  height: 96px;
+}
+
+.moon-mark span:first-child {
+  position: absolute;
+  right: 22px;
+  top: 8px;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: #fff7cc;
+}
+
+.moon-mark span:last-child {
+  position: absolute;
+  right: 0;
+  top: 8px;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: #eef0ff;
+}
+
 .career-lanes {
   width: min(46%, 190px);
   display: grid;

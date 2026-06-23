@@ -4,3 +4,10 @@ CREATE TABLE IF NOT EXISTS posts (
   content TEXT NOT NULL,
   created_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS werewolf_rooms (
+  code TEXT PRIMARY KEY,
+  state_json TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);

@@ -1,0 +1,223 @@
+.wolf-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0;
+}
+
+.wolf-hero {
+  min-height: 260px;
+  padding: 30px;
+  border-radius: 8px;
+  color: #fff;
+  background:
+    linear-gradient(120deg, rgba(17, 24, 39, 0.94), rgba(76, 29, 149, 0.78)),
+    radial-gradient(circle at 80% 18%, rgba(255, 255, 255, 0.32), transparent 11%),
+    #111827;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+
+.back-home {
+  width: fit-content;
+  margin-bottom: auto;
+  color: rgba(255, 255, 255, 0.84);
+  text-decoration: none;
+}
+
+.wolf-hero p {
+  max-width: 760px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.wolf-panel,
+.wolf-sidebar > div {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow);
+}
+
+.wolf-panel {
+  margin-top: 16px;
+  padding: 18px;
+}
+
+.wolf-entry {
+  display: grid;
+  gap: 12px;
+}
+
+.wolf-entry label,
+.wolf-actions label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.wolf-entry input,
+.wolf-actions input,
+.action-area select {
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 10px;
+  color: var(--ink);
+  background: #fff;
+}
+
+.wolf-actions {
+  display: grid;
+  grid-template-columns: auto minmax(160px, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.wolf-room {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 16px;
+}
+
+.wolf-sidebar {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.wolf-sidebar > div {
+  padding: 16px;
+}
+
+.wolf-sidebar span,
+.role-card p,
+.phase-card p {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.room-code strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 34px;
+  letter-spacing: 0.08em;
+}
+
+.phase-card strong,
+.role-card strong {
+  display: block;
+  margin: 7px 0;
+  font-size: 22px;
+}
+
+.host-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.wolf-main {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+}
+
+.player-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.player-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+
+.player-card strong {
+  display: block;
+}
+
+.player-card span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.action-area {
+  display: grid;
+  gap: 12px;
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.result-box {
+  border: 1px solid rgba(9, 105, 218, 0.22);
+  border-radius: 8px;
+  padding: 12px;
+  background: #f6faff;
+  color: #24292f;
+  line-height: 1.7;
+}
+
+.event-log {
+  display: grid;
+  gap: 8px;
+}
+
+.event-log p {
+  margin: 0;
+  padding: 9px 10px;
+  border-radius: 6px;
+  color: var(--muted);
+  background: #f6f8fa;
+}
+
+.moon-mark {
+  position: relative;
+  width: min(46%, 170px);
+  height: 96px;
+}
+
+.moon-mark span:first-child {
+  position: absolute;
+  right: 22px;
+  top: 8px;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: #fff7cc;
+}
+
+.moon-mark span:last-child {
+  position: absolute;
+  right: 0;
+  top: 8px;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: #eef0ff;
+}
+
+.project-card-werewolf .project-visual {
+  background: #eef0ff;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 860px) {
+  .wolf-room,
+  .player-grid,
+  .wolf-actions {
+    grid-template-columns: 1fr;
+  }
+}

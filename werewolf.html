@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>一夜狼人杀 - 十三的小工具</title>
+    <link rel="stylesheet" href="styles.css?v=20260623-werewolf">
+    <link rel="stylesheet" href="werewolf.css?v=20260623-werewolf">
+  </head>
+  <body>
+    <main class="wolf-shell">
+      <header class="wolf-hero">
+        <a class="back-home" href="index.html">返回主页</a>
+        <p class="home-kicker">One Night Werewolf</p>
+        <h1>一夜狼人杀</h1>
+        <p>7 人在线房间，10 张角色牌：狼人 x2、爪牙、守夜人 x2、预言家、强盗、捣蛋鬼、酒鬼、失眠者。</p>
+      </header>
+
+      <section class="wolf-panel" id="entryPanel">
+        <div>
+          <h2>进入房间</h2>
+          <p>创建房间后把房间码发给朋友。所有人加入后，由房主发牌并推进夜晚流程。</p>
+        </div>
+        <div class="wolf-entry">
+          <label>
+            昵称
+            <input id="playerName" maxlength="18" placeholder="输入你的昵称">
+          </label>
+          <div class="wolf-actions">
+            <button class="primary" id="createRoom" type="button">创建房间</button>
+            <label>
+              房间码
+              <input id="roomCode" maxlength="8" placeholder="例如 ABC123">
+            </label>
+            <button id="joinRoom" type="button">加入房间</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="wolf-room hidden" id="roomPanel">
+        <aside class="wolf-sidebar">
+          <div class="room-code">
+            <span>房间码</span>
+            <strong id="currentRoom">------</strong>
+          </div>
+          <div class="phase-card">
+            <span>当前阶段</span>
+            <strong id="phaseName">等待开始</strong>
+            <p id="phaseHint">等 7 名玩家加入后，房主可以开始。</p>
+          </div>
+          <div class="role-card">
+            <span>你的初始身份</span>
+            <strong id="myRole">未发牌</strong>
+            <p id="myRoleHint">开始后这里会显示你的身份，白天投票按最终身份结算。</p>
+          </div>
+          <div class="host-actions" id="hostActions">
+            <button class="primary" id="startGame" type="button">开始发牌</button>
+            <button id="nextPhase" type="button">推进阶段</button>
+            <button id="resetGame" type="button">重开本房</button>
+          </div>
+        </aside>
+
+        <section class="wolf-main">
+          <div class="wolf-panel">
+            <h2>玩家</h2>
+            <div class="player-grid" id="players"></div>
+          </div>
+
+          <div class="wolf-panel">
+            <h2>本阶段操作</h2>
+            <div id="actionArea" class="action-area"></div>
+          </div>
+
+          <div class="wolf-panel">
+            <h2>公共记录</h2>
+            <div class="event-log" id="eventLog"></div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="werewolf.js?v=20260623-werewolf"></script>
+  </body>
+</html>
