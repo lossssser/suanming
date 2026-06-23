@@ -56,11 +56,11 @@ async function handlePosts(request, env) {
 
   if (request.method === "POST") {
     const body = await request.json().catch(() => ({}));
-    const nickname = cleanText(body.nickname || "娓稿", 24) || "娓稿";
+    const nickname = cleanText(body.nickname || "游客", 24) || "游客";
     const content = cleanText(body.content || "", 800);
 
     if (!content) {
-      return json({ error: "鐣欒█鍐呭涓嶈兘涓虹┖銆? }, 400);
+      return json({ error: "留言内容不能为空。" }, 400);
     }
 
     const createdAt = new Date().toISOString();
@@ -623,7 +623,7 @@ function scoreRepository(repo) {
     name: repo.name,
     fullName: repo.full_name,
     url: repo.html_url,
-    description: repo.description || "鏆傛棤绠€浠?,
+    description: repo.description || "暂无简介",
     language: repo.language || "Unknown",
     stars,
     forks,
@@ -740,11 +740,11 @@ function buildMessages(body) {
     {
       role: "system",
       content: [
-        "浣犳槸璋ㄦ厧鐨勫叚鐖诲涔犲弬鑰冭В璇诲姪鎵嬨€傚繀椤讳娇鐢ㄧ敤鎴锋彁渚涚殑鏈哄櫒鎺掔洏缁撴灉杩涜鍒嗘瀽锛屼笉鑳藉亣瑁呮病鏈夌洏闈€?,
-        "鐢ㄦ埛宸茬粡鎻愪緵浜嗘湰鍗︺€佸彉鍗︺€佹棩杈般€佺┖浜°€佸叚绁炪€佸叚浜层€佺撼鏀€佷笘搴斻€佸姩鐖荤瓑瀛楁鏃讹紝涓嶈鍙嶉棶鐢ㄦ埛琛ヨ繖浜涘瓧娈点€?,
-        "濡傛灉淇℃伅涓嶈冻锛屽彧鑳芥寚鍑虹己灏戞湀寤烘垨鐜板疄鑳屾櫙浼氬奖鍝嶇粏鏂紝浣嗕粛瑕佸熀浜庡凡鏈夌洏闈㈢粰鍑哄弬鑰冨垽鏂€?,
-        "涓嶈澹扮О纭畾鎬э紝涓嶈鎭愬悡鐢ㄦ埛锛屼笉鎻愪緵鍖荤枟銆佹硶寰嬨€佹姇璧勭瓑缁撹銆?,
-        "鍥炵瓟浣跨敤绠€浣撲腑鏂囷紝鎺у埗鍦?900 瀛椾互鍐呫€?,
+        "你是谨慎的六爻学习参考解读助手。",
+        "必须使用用户提供的机器排盘结果分析，不要反问用户补原卦、变卦、世应、六亲等已提供字段。",
+        "如果信息不足，可以说明缺少月建或现实背景会影响细断，但仍要基于已有盘面给参考判断。",
+        "不要声称确定性，不要恐吓用户，不提供医疗、法律、投资等结论。",
+        "回答使用简体中文，控制在 900 字以内。",
       ].join(""),
     },
     {
@@ -760,42 +760,42 @@ function buildPrompt(body) {
   const movingLines = lines.filter((line) => line.moving);
 
   return [
-    "璇疯В璇讳笅闈㈣繖浠藉叚鐖绘満鍣ㄦ帓鐩樸€傛敞鎰忥細杩欎簺瀛楁灏辨槸鏈鐩橀潰锛屼笉瑕佸啀瑕佹眰鐢ㄦ埛琛ュ師鍗︺€佸彉鍗︺€佷笘搴斻€佸叚浜叉垨纭竵璁板綍銆?,
+    "请解读下面这份六爻机器排盘。注意：这些字段就是本次盘面，不要再要求用户补原卦、变卦、世应、六亲或硬币记录。",
     "",
-    "銆愬熀纭€淇℃伅銆?,
-    `鎵€闂簨椤癸細${body.question || chart.question || "鏈～鍐?}`,
-    `璧峰崷鏃堕棿锛?{chart.castTime || "鏈彁渚?}`,
-    `鏃ヨ景锛?{chart.dayGanzhi || "鏈彁渚?}`,
-    `绌轰骸锛?{(chart.emptyBranches || []).join("") || "鏈彁渚?}`,
+    "【基础信息】",
+    `所问事项：${body.question || chart.question || "未填写"}`,
+    `起卦时间：${chart.castTime || "未提供"}`,
+    `日辰：${chart.dayGanzhi || "未提供"}`,
+    `空亡：${(chart.emptyBranches || []).join("") || "未提供"}`,
     "",
-    "銆愬崷璞°€?,
-    formatHexagram("鏈崷", chart.original),
-    formatHexagram("鍙樺崷", chart.changed),
-    `鍔ㄧ埢锛?{movingLines.length ? movingLines.map((line) => `${line.index}鐖籤).join("銆?) : "鏃?}`,
+    "【卦象】",
+    formatHexagram("本卦", chart.original),
+    formatHexagram("变卦", chart.changed),
+    `动爻：${movingLines.length ? movingLines.map((line) => `${line.index}爻`).join("、") : "无"}`,
     "",
-    "銆愮埢浣嶆槑缁嗭紝鑷笂鑰屼笅銆?,
+    "【爻位明细，自上而下】",
     ...lines.slice().reverse().map(formatLine),
-    body.chartText ? ["", "銆愬墠绔敓鎴愮殑鍙鐩橀潰銆?, body.chartText].join("\n") : "",
+    body.chartText ? ["", "【前端生成的可读盘面】", body.chartText].join("\n") : "",
     "",
-    "璇锋寜浠ヤ笅缁撴瀯杈撳嚭锛?,
-    "1. 鍗﹁薄鎬昏锛氭湰鍗︺€佸彉鍗︺€佷笘搴斾笌鍔ㄧ埢鐨勬暣浣撴皵鍔裤€?,
-    "2. 鐢ㄧ涓庡叧閿埢锛氭牴鎹墍闂簨椤归€夋嫨鍙兘鐨勭敤绁烇紱濡傛灉闂杩囨硾锛岃璇存槑鍙兘绮楃湅銆?,
-    "3. 鐢熷厠鍔ㄥ彉锛氱粨鍚堝叚浜层€佺撼鏀簲琛屻€佷笘搴斻€佸姩鐖诲拰绌轰骸銆?,
-    "4. 瓒嬪娍鍒ゆ柇锛氱粰鍑鸿皑鎱庡弬鑰冿紝涓嶄綔纭畾鏂█銆?,
-    "5. 寤鸿锛氱粰鍑哄彲鎵ц寤鸿锛屽苟鎻愰啋浠呬緵瀛︿範鍙傝€冦€佺浉淇＄瀛︺€?,
+    "请按以下结构输出：",
+    "1. 卦象总观：本卦、变卦、世应与动爻的整体气势。",
+    "2. 用神与关键爻：根据所问事项选择可能的用神；如果问题过泛，请说明只能粗看。",
+    "3. 生克动变：结合六亲、纳支五行、世应、动爻和空亡。",
+    "4. 趋势判断：给出谨慎参考，不作确定断言。",
+    "5. 建议：给出可执行建议，并提醒仅供学习参考、相信科学。",
     "",
-    "绂佹杈撳嚭鈥滅己灏戝師鍗︺€佸彉鍗︺€佷笘搴斻€佸叚浜叉帓甯冣€濈瓑鍙嶉棶锛屽洜涓轰笂闈㈠凡缁忔彁渚涖€?,
+    "禁止输出“缺少原卦、变卦、世应、六亲排布”等反问，因为上面已经提供。",
   ].join("\n");
 }
 
 function formatHexagram(label, hexagram = {}) {
-  return `${label}锛?{hexagram.name || "鏈煡"}锛?{hexagram.number || "?"}锛夛紝${hexagram.palace || "?"}瀹?{hexagram.palaceElement || "?"}锛?{hexagram.palaceStage || "?"}`;
+  return `${label}：${hexagram.name || "未知"}（${hexagram.number || "?"}），${hexagram.palace || "?"}宫${hexagram.palaceElement || "?"}，${hexagram.palaceStage || "?"}`;
 }
 
 function formatLine(line) {
   const marker = line.marker ? ` ${line.marker}` : "";
-  const moving = line.moving ? " 鍔ㄧ埢" : "";
-  return `${line.index}鐖伙細${line.spirit || ""} ${line.relation || ""} ${line.branch || ""}${line.element || ""} ${line.symbol || ""}${marker}${moving}锛屽彉涓?${line.changedSymbol || ""}`;
+  const moving = line.moving ? " 动爻" : "";
+  return `${line.index}爻：${line.spirit || ""} ${line.relation || ""} ${line.branch || ""}${line.element || ""} ${line.symbol || ""}${marker}${moving}，变为${line.changedSymbol || ""}`;
 }
 
 function json(data, status = 200) {
