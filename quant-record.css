@@ -114,7 +114,7 @@ h2 { margin: 0; font-size: 19px; letter-spacing: 0; }
 #recordForm {
   padding: 16px;
   display: grid;
-  grid-template-columns: 150px minmax(170px, 1fr) 170px repeat(4, minmax(125px, .7fr));
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
   gap: 13px;
   align-items: end;
 }
@@ -144,13 +144,14 @@ input[readonly] { background: #f6f8fa; }
 
 .table-panel header input { width: min(300px, 45%); }
 .table-scroll { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; min-width: 1120px; }
+table { width: 100%; border-collapse: collapse; min-width: 1210px; }
 th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; font-size: 13px; }
 th { color: var(--muted); background: #fbfcfd; white-space: nowrap; }
 td { max-width: 230px; }
 .code-cell { color: var(--accent); font-family: Consolas, monospace; font-weight: 700; }
 .positive { color: var(--positive); font-weight: 700; }
 .negative { color: var(--negative); font-weight: 700; }
+.pending-value { color: var(--muted); font-size: 12px; }
 .row-actions { display: flex; gap: 6px; white-space: nowrap; }
 .row-actions button { min-height: 30px; padding: 0 9px; font-size: 12px; }
 .empty-state { padding: 34px 16px; color: var(--muted); text-align: center; }

@@ -7,6 +7,7 @@ const fields = {
   name: document.querySelector("#tradeName"),
   code: document.querySelector("#tradeCode"),
   buyPrice: document.querySelector("#buyPrice"),
+  buyShares: document.querySelector("#buyShares"),
   sellPrice: document.querySelector("#sellPrice"),
   marketValue: document.querySelector("#marketValue"),
   remark: document.querySelector("#tradeRemark"),
@@ -51,10 +52,24 @@ notes.addEventListener("input", scheduleNotesSave);
 
 function saveRecord(event) {
   event.preventDefault();
-  const buyPrice = Number(fields.buyPrice.value);
-  const sellPrice = Number(fields.sellPrice.value);
-  if (!(buyPrice > 0) || !(sellPrice >= 0)) {
-    setStatus("请填写有效的买入价和卖出价。", true);
+  const buyPrice = optionalPositiveNumber(fields.buyPrice.value);
+  const sellPrice = optionalPositiveNumber(fields.sellPrice.value);
+  const buyShares = optionalPositiveNumber(fields.buyShares.value);
+
+  if (buyPrice == null && sellPrice == null) {
+    setStatus("买入价和卖出价至少填写一项。", true);
+    return;
+  }
+  if (fields.buyPrice.value !== "" && buyPrice == null) {
+    setStatus("买入价必须大于 0。", true);
+    return;
+  }
+  if (fields.sellPrice.value !== "" && sellPrice == null) {
+    setStatus("卖出价必须大于 0。", true);
+    return;
+  }
+  if (fields.buyShares.value !== "" && buyShares == null) {
+    setStatus("买入股数必须大于 0。", true);
     return;
   }
 
@@ -65,8 +80,9 @@ function saveRecord(event) {
     name: fields.name.value.trim(),
     code: fields.code.value.trim().toUpperCase(),
     buyPrice,
+    buyShares,
     sellPrice,
-    change: calculateChange(buyPrice, sellPrice),
+    change: isCompletedPrice(buyPrice, sellPrice) ? calculateChange(buyPrice, sellPrice) : null,
     marketValue: fields.marketValue.value === "" ? null : Number(fields.marketValue.value),
     remark: fields.remark.value.trim(),
     createdAt: oldRecord?.createdAt || new Date().toISOString(),
@@ -141,9 +157,10 @@ function render() {
     <td>${escapeHtml(item.date)}</td>
     <td>${escapeHtml(item.name)}</td>
     <td class="code-cell">${escapeHtml(item.code)}</td>
-    <td>${formatNumber(item.buyPrice, 4)}</td>
-    <td>${formatNumber(item.sellPrice, 4)}</td>
-    <td class="${item.change >= 0 ? "positive" : "negative"}">${formatPercent(item.change)}</td>
+    <td>${item.buyPrice == null ? '<span class="pending-value">待补充</span>' : formatNumber(item.buyPrice, 4)}</td>
+    <td>${item.buyShares == null ? '<span class="pending-value">待补充</span>' : formatNumber(item.buyShares, 0)}</td>
+    <td>${item.sellPrice == null ? '<span class="pending-value">待补充</span>' : formatNumber(item.sellPrice, 4)}</td>
+    <td class="${item.change == null ? "" : item.change >= 0 ? "positive" : "negative"}">${item.change == null ? '<span class="pending-value">待完成</span>' : formatPercent(item.change)}</td>
     <td>${item.marketValue == null ? "--" : formatMoney(item.marketValue)}</td>
     <td>${escapeHtml(item.remark || "--")}</td>
     <td><div class="row-actions">
@@ -164,17 +181,25 @@ function updateSummary() {
     latestMarketValue.textContent = "--";
     return;
   }
-  const average = records.reduce((sum, item) => sum + Number(item.change || 0), 0) / records.length;
-  averageChange.textContent = formatPercent(average);
-  averageChange.className = average >= 0 ? "positive" : "negative";
+  const completed = records.filter((item) => (
+    isCompletedPrice(item.buyPrice, item.sellPrice) && Number(item.buyShares) > 0
+  ));
+  const totalCost = completed.reduce((sum, item) => sum + item.buyPrice * item.buyShares, 0);
+  const totalProfit = completed.reduce((sum, item) => (
+    sum + (item.sellPrice - item.buyPrice) * item.buyShares
+  ), 0);
+  const allCompleted = completed.length === records.length;
+  const totalChange = allCompleted && totalCost > 0 ? totalProfit / totalCost * 100 : null;
+  averageChange.textContent = totalChange == null ? "--" : formatPercent(totalChange);
+  averageChange.className = totalChange == null ? "" : totalChange >= 0 ? "positive" : "negative";
   const latest = records.find((item) => item.marketValue != null);
   latestMarketValue.textContent = latest ? formatMoney(latest.marketValue) : "--";
 }
 
 function updateChangePreview() {
-  const buy = Number(fields.buyPrice.value);
-  const sell = Number(fields.sellPrice.value);
-  changeRate.value = buy > 0 && sell >= 0 ? formatPercent(calculateChange(buy, sell)) : "";
+  const buy = optionalPositiveNumber(fields.buyPrice.value);
+  const sell = optionalPositiveNumber(fields.sellPrice.value);
+  changeRate.value = isCompletedPrice(buy, sell) ? formatPercent(calculateChange(buy, sell)) : "待买卖价格齐全";
 }
 
 function scheduleNotesSave() {
@@ -201,10 +226,10 @@ function exportCsv() {
     return;
   }
   const rows = [
-    ["日期", "名字", "交易代码", "买入价", "卖出价", "涨幅", "卖出后市值", "备注"],
+    ["日期", "名字", "交易代码", "买入价", "买入股数", "卖出价", "涨幅", "卖出后市值", "备注"],
     ...records.map((item) => [
-      item.date, item.name, item.code, item.buyPrice, item.sellPrice,
-      formatPercent(item.change), item.marketValue ?? "", item.remark,
+      item.date, item.name, item.code, item.buyPrice ?? "", item.buyShares ?? "", item.sellPrice ?? "",
+      item.change == null ? "" : formatPercent(item.change), item.marketValue ?? "", item.remark,
     ]),
   ];
   const csv = "\uFEFF" + rows.map((row) => row.map(csvCell).join(",")).join("\r\n");
@@ -221,6 +246,16 @@ function persistRecords() {
 
 function calculateChange(buy, sell) {
   return ((sell - buy) / buy) * 100;
+}
+
+function isCompletedPrice(buy, sell) {
+  return Number(buy) > 0 && Number(sell) > 0;
+}
+
+function optionalPositiveNumber(value) {
+  if (String(value).trim() === "") return null;
+  const number = Number(value);
+  return Number.isFinite(number) && number > 0 ? number : null;
 }
 
 function formatPercent(value) {
