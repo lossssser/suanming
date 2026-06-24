@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>留言建议 - 十三的小工具</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="description" content="十三的小工具公开留言板，提交你希望增加的小工具和改进建议。">
+    <title>留言板 - 十三的小工具</title>
+    <link rel="stylesheet" href="styles.css?v=20260624-feedback">
   </head>
   <body>
     <main class="forum-shell">
@@ -12,37 +13,84 @@
         <a class="back-link" href="index.html">返回主页</a>
         <div>
           <p class="home-kicker">PUBLIC BOARD</p>
-          <h1>还想要什么小工具？</h1>
-          <p class="home-copy">把你的想法发成帖子，大家都能看到。比如塔罗、八字、抽签、每日运势，或者任何奇怪但好玩的工具。</p>
+          <h1>一起决定下一个小工具</h1>
+          <p class="home-copy">写下你想用的工具、玩法或改进建议。留言会公开展示，请勿填写手机号、微信号等个人隐私。</p>
         </div>
       </header>
 
-      <section class="post-composer">
+      <section class="post-composer" aria-labelledby="composerTitle">
+        <header class="composer-heading">
+          <div>
+            <p class="section-eyebrow">发布新帖</p>
+            <h2 id="composerTitle">说说你的想法</h2>
+          </div>
+          <span class="composer-note">无需登录</span>
+        </header>
+
+        <div class="composer-grid">
+          <label class="feedback-field">
+            <span>昵称</span>
+            <input id="postName" maxlength="24" type="text" autocomplete="nickname" placeholder="游客">
+          </label>
+          <label class="feedback-field">
+            <span>分类</span>
+            <select id="postCategory">
+              <option value="工具建议">工具建议</option>
+              <option value="功能改进">功能改进</option>
+              <option value="问题反馈">问题反馈</option>
+              <option value="其他">其他</option>
+            </select>
+          </label>
+        </div>
+
         <label class="feedback-field">
-          <span>昵称</span>
-          <input id="postName" maxlength="24" type="text" placeholder="游客">
+          <span>标题</span>
+          <input id="postTitle" maxlength="60" type="text" placeholder="用一句话概括你的建议">
         </label>
         <label class="feedback-field">
-          <span>想增加的小工具</span>
-          <textarea id="postContent" maxlength="800" rows="6" placeholder="写下你想要的小工具、玩法、按钮、风格或任何建议。"></textarea>
+          <span>详细内容</span>
+          <textarea id="postContent" maxlength="800" rows="7" placeholder="例如：希望增加一个每日习惯打卡工具，可以按月查看完成情况……"></textarea>
         </label>
+        <input id="postWebsite" class="honeypot-field" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+
         <div class="post-actions">
-          <p id="postStatus" class="feedback-status"></p>
+          <div>
+            <p id="postStatus" class="feedback-status" role="status" aria-live="polite"></p>
+            <span id="postCounter" class="post-counter">0 / 800</span>
+          </div>
           <button class="primary" id="submitPostButton" type="button">发布帖子</button>
         </div>
       </section>
 
-      <section class="posts-board">
+      <section class="posts-board" aria-labelledby="postsTitle">
         <header>
-          <h2>大家的留言</h2>
-          <button class="text-button" id="refreshPostsButton" type="button">刷新</button>
+          <div>
+            <p class="section-eyebrow">公开讨论</p>
+            <h2 id="postsTitle">大家的留言</h2>
+          </div>
+          <div class="board-tools">
+            <span id="postsCount" class="posts-count"></span>
+            <button class="text-button" id="refreshPostsButton" type="button">刷新</button>
+          </div>
         </header>
-        <div id="postsList" class="posts-list">
+
+        <div class="post-filters" id="postFilters" aria-label="按分类筛选">
+          <button class="filter-button is-active" type="button" data-category="">全部</button>
+          <button class="filter-button" type="button" data-category="工具建议">工具建议</button>
+          <button class="filter-button" type="button" data-category="功能改进">功能改进</button>
+          <button class="filter-button" type="button" data-category="问题反馈">问题反馈</button>
+          <button class="filter-button" type="button" data-category="其他">其他</button>
+        </div>
+
+        <div id="postsList" class="posts-list" aria-live="polite">
           <div class="history-empty">正在加载留言...</div>
+        </div>
+        <div class="load-more-wrap">
+          <button class="secondary-button" id="loadMoreButton" type="button" hidden>加载更多</button>
         </div>
       </section>
     </main>
 
-    <script src="feedback.js?v=20260619-public-posts"></script>
+    <script src="feedback.js?v=20260624-feedback"></script>
   </body>
 </html>

@@ -6,7 +6,11 @@
 
     const url = new URL(request.url);
     if (url.pathname === "/posts") {
-      return handlePosts(request, env);
+      try {
+        return await handlePosts(request, env, url);
+      } catch (error) {
+        return json({ error: error.message || "留言服务暂时不可用。" }, 500);
+      }
     }
 
     if (url.pathname === "/github-hot") {
@@ -40,38 +44,80 @@
   },
 };
 
-async function handlePosts(request, env) {
+const POST_CATEGORIES = new Set(["工具建议", "功能改进", "问题反馈", "其他"]);
+
+async function handlePosts(request, env, url) {
   if (!env.DB) {
-    return json({ error: "Missing D1 binding DB on this Worker." }, 500);
+    return json({ error: "留言数据库尚未连接，请检查 Worker 的 DB 绑定。" }, 500);
   }
 
   await ensurePostsTable(env.DB);
 
   if (request.method === "GET") {
-    const { results } = await env.DB.prepare(
-      "SELECT id, nickname, content, created_at FROM posts ORDER BY id DESC LIMIT 100",
-    ).all();
-    return json({ posts: results || [] });
+    const limit = Math.min(Math.max(Number(url.searchParams.get("limit")) || 20, 1), 50);
+    const before = Math.max(Number(url.searchParams.get("before")) || 0, 0);
+    const category = normalizePostCategory(url.searchParams.get("category"), true);
+    const conditions = [];
+    const bindings = [];
+
+    if (before) {
+      conditions.push("id < ?");
+      bindings.push(before);
+    }
+    if (category) {
+      conditions.push("category = ?");
+      bindings.push(category);
+    }
+
+    const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
+    const query = `SELECT id, nickname, title, category, content, created_at
+      FROM posts ${where} ORDER BY id DESC LIMIT ?`;
+    const { results } = await env.DB.prepare(query).bind(...bindings, limit + 1).all();
+    const rows = results || [];
+    const hasMore = rows.length > limit;
+    const posts = hasMore ? rows.slice(0, limit) : rows;
+
+    const countQuery = category
+      ? env.DB.prepare("SELECT COUNT(*) AS total FROM posts WHERE category = ?").bind(category)
+      : env.DB.prepare("SELECT COUNT(*) AS total FROM posts");
+    const countRow = await countQuery.first();
+
+    return json({
+      posts,
+      total: Number(countRow?.total || 0),
+      nextCursor: hasMore ? posts[posts.length - 1]?.id || null : null,
+    });
   }
 
   if (request.method === "POST") {
     const body = await request.json().catch(() => ({}));
+    if (cleanText(body.website || "", 120)) {
+      return json({ error: "提交未通过验证。" }, 400);
+    }
+
     const nickname = cleanText(body.nickname || "游客", 24) || "游客";
+    const title = cleanText(body.title || "", 60);
+    const category = normalizePostCategory(body.category);
     const content = cleanText(body.content || "", 800);
 
-    if (!content) {
-      return json({ error: "留言内容不能为空。" }, 400);
+    if (!title) {
+      return json({ error: "帖子标题不能为空。" }, 400);
+    }
+    if (content.length < 4) {
+      return json({ error: "详细内容至少需要 4 个字。" }, 400);
     }
 
     const createdAt = new Date().toISOString();
     const result = await env.DB.prepare(
-      "INSERT INTO posts (nickname, content, created_at) VALUES (?, ?, ?)",
-    ).bind(nickname, content, createdAt).run();
+      "INSERT INTO posts (nickname, title, category, content, created_at) VALUES (?, ?, ?, ?, ?)",
+    ).bind(nickname, title, category, content, createdAt).run();
 
     return json({
       post: {
         id: result.meta?.last_row_id,
         nickname,
+        title,
+        category,
         content,
         created_at: createdAt,
       },
@@ -86,10 +132,27 @@ async function ensurePostsTable(db) {
     `CREATE TABLE IF NOT EXISTS posts (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nickname TEXT NOT NULL,
+      title TEXT NOT NULL DEFAULT '留言建议',
+      category TEXT NOT NULL DEFAULT '其他',
       content TEXT NOT NULL,
       created_at TEXT NOT NULL
     )`,
   ).run();
+
+  const { results } = await db.prepare("PRAGMA table_info(posts)").all();
+  const columns = new Set((results || []).map((column) => column.name));
+  if (!columns.has("title")) {
+    await db.prepare("ALTER TABLE posts ADD COLUMN title TEXT NOT NULL DEFAULT '留言建议'").run();
+  }
+  if (!columns.has("category")) {
+    await db.prepare("ALTER TABLE posts ADD COLUMN category TEXT NOT NULL DEFAULT '其他'").run();
+  }
+}
+
+function normalizePostCategory(value, allowEmpty = false) {
+  const category = cleanText(value || "", 12);
+  if (allowEmpty && !category) return "";
+  return POST_CATEGORIES.has(category) ? category : "其他";
 }
 
 const WEREWOLF_ROLES = ["狼人", "狼人", "爪牙", "守夜人", "守夜人", "预言家", "强盗", "捣蛋鬼", "酒鬼", "失眠者"];
