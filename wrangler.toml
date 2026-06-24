@@ -1,4 +1,4 @@
-name = "suanming-api"
+name = "suanming"
 main = "worker.js"
 compatibility_date = "2026-06-16"
 
