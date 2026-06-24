@@ -6,6 +6,10 @@ const cards = Array.from(document.querySelectorAll(".tool-card"));
 searchInput.addEventListener("input", applySearch);
 searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
+  if (getQuery() === "868") {
+    window.location.href = "quant-record.html";
+    return;
+  }
   applySearch();
 });
 

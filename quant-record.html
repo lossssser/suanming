@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>量化测试数据记录</title>
+    <link rel="stylesheet" href="quant-record.css?v=20260625">
+  </head>
+  <body>
+    <main class="record-shell">
+      <header class="record-header">
+        <a href="index.html">返回主页</a>
+        <div>
+          <p>PRIVATE LOCAL WORKSPACE</p>
+          <h1>量化测试数据记录</h1>
+          <span>数据仅保存在当前浏览器，请定期导出 CSV 备份。</span>
+        </div>
+      </header>
+
+      <section class="summary-bar" aria-label="数据摘要">
+        <div><span>记录数</span><strong id="recordCount">0</strong></div>
+        <div><span>平均涨幅</span><strong id="averageChange">--</strong></div>
+        <div><span>最新市值</span><strong id="latestMarketValue">--</strong></div>
+        <div class="summary-actions">
+          <button id="exportButton" type="button">导出 CSV</button>
+          <button id="clearButton" class="danger-button" type="button">清空记录</button>
+        </div>
+      </section>
+
+      <section class="entry-panel">
+        <header>
+          <div>
+            <p>DATA ENTRY</p>
+            <h2 id="formTitle">新增交易记录</h2>
+          </div>
+          <button id="cancelEditButton" type="button" hidden>取消编辑</button>
+        </header>
+
+        <form id="recordForm">
+          <label>
+            <span>日期</span>
+            <input id="tradeDate" type="date" required>
+          </label>
+          <label>
+            <span>名字</span>
+            <input id="tradeName" type="text" maxlength="40" placeholder="策略或标的名称" required>
+          </label>
+          <label>
+            <span>交易代码</span>
+            <input id="tradeCode" type="text" maxlength="30" placeholder="例如 511880.SH" required>
+          </label>
+          <label>
+            <span>买入价</span>
+            <input id="buyPrice" type="number" min="0" step="0.0001" placeholder="0.0000" required>
+          </label>
+          <label>
+            <span>卖出价</span>
+            <input id="sellPrice" type="number" min="0" step="0.0001" placeholder="0.0000" required>
+          </label>
+          <label>
+            <span>涨幅</span>
+            <input id="changeRate" type="text" placeholder="自动计算" readonly>
+          </label>
+          <label>
+            <span>卖出后市值</span>
+            <input id="marketValue" type="number" min="0" step="0.01" placeholder="0.00">
+          </label>
+          <label class="remark-field">
+            <span>备注</span>
+            <input id="tradeRemark" type="text" maxlength="200" placeholder="测试条件、信号或异常说明">
+          </label>
+          <div class="form-actions">
+            <p id="formStatus" role="status"></p>
+            <button class="primary-button" type="submit">保存记录</button>
+          </div>
+        </form>
+      </section>
+
+      <div class="workspace-grid">
+        <section class="table-panel">
+          <header>
+            <div>
+              <p>RECORDS</p>
+              <h2>交易数据</h2>
+            </div>
+            <input id="recordSearch" type="search" placeholder="搜索名字或交易代码">
+          </header>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>日期</th>
+                  <th>名字</th>
+                  <th>交易代码</th>
+                  <th>买入价</th>
+                  <th>卖出价</th>
+                  <th>涨幅</th>
+                  <th>卖出后市值</th>
+                  <th>备注</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="recordRows"></tbody>
+            </table>
+          </div>
+          <div id="emptyRecords" class="empty-state">还没有记录，在上方录入第一条测试数据。</div>
+        </section>
+
+        <aside class="notes-panel">
+          <header>
+            <div>
+              <p>NOTEBOOK</p>
+              <h2>独立笔记</h2>
+            </div>
+            <span id="noteStatus">自动保存</span>
+          </header>
+          <textarea id="recordNotes" maxlength="20000" placeholder="记录测试思路、策略变化、观察结论、待验证问题……"></textarea>
+          <footer><span id="noteCounter">0 / 20000</span><button id="clearNotesButton" type="button">清空笔记</button></footer>
+        </aside>
+      </div>
+    </main>
+
+    <script src="quant-record.js?v=20260625"></script>
+  </body>
+</html>
