@@ -62,7 +62,7 @@ const LINE_OPTIONS = [
 ];
 const AI_ENDPOINT = "https://api.shxgjqaq.com";
 const AI_TIMEOUT_MS = 75000;
-const AI_READING_ENABLED = false;
+const AI_READING_ENABLED = true;
 const HISTORY_KEY = "suanming_reading_history_v1";
 const HISTORY_LIMIT = 20;
 
@@ -105,7 +105,7 @@ function init() {
     randomize();
     render();
   });
-  aiButton.addEventListener("click", handleDisabledAiReading);
+  aiButton.addEventListener("click", requestAiReading);
   clearHistoryButton.addEventListener("click", clearHistory);
   historyList.addEventListener("click", handleHistoryClick);
   document.querySelector("#clearButton").addEventListener("click", () => {
