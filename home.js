@@ -10,6 +10,10 @@ searchForm.addEventListener("submit", (event) => {
     window.location.href = "quant-record.html";
     return;
   }
+  if (getQuery() === "202") {
+    window.location.href = "trpg.html";
+    return;
+  }
   applySearch();
 });
 

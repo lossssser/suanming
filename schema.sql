@@ -33,3 +33,10 @@ CREATE TABLE IF NOT EXISTS quant_notes (
   content TEXT NOT NULL DEFAULT '',
   updated_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS trpg_rooms (
+  code TEXT PRIMARY KEY,
+  state_json TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);

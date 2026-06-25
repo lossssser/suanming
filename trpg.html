@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>AI 在线跑团</title>
+    <link rel="stylesheet" href="trpg.css?v=20260626">
+  </head>
+  <body>
+    <main class="trpg-shell">
+      <header class="trpg-hero">
+        <a href="index.html">返回主页</a>
+        <div>
+          <p>AI GAME MASTER</p>
+          <h1>AI 在线跑团</h1>
+          <span>DeepSeek 担任主持人。当前使用通用冒险框架，正式剧本将在后续接入。</span>
+        </div>
+      </header>
+
+      <section id="lobbyView" class="lobby-panel">
+        <header>
+          <div><p>ONLINE ROOM</p><h2>进入游戏</h2></div>
+          <span>房间会自动保存到云端</span>
+        </header>
+        <div class="lobby-grid">
+          <label><span>玩家昵称</span><input id="playerName" maxlength="18" placeholder="输入昵称"></label>
+          <label><span>房间码</span><input id="roomCodeInput" maxlength="8" placeholder="例如 AB12CD"></label>
+          <div class="lobby-actions">
+            <button id="createRoomButton" class="primary-button" type="button">创建房间</button>
+            <button id="joinRoomButton" type="button">加入房间</button>
+          </div>
+        </div>
+        <p id="lobbyStatus" class="status-text" role="status"></p>
+      </section>
+
+      <section id="gameView" class="game-view" hidden>
+        <nav class="mobile-tabs" aria-label="游戏面板">
+          <button class="is-active" data-tab="scene" type="button">剧情</button>
+          <button data-tab="players" type="button">玩家</button>
+          <button data-tab="character" type="button">角色</button>
+        </nav>
+
+        <div class="game-layout">
+          <aside class="side-panel players-panel" data-panel="players">
+            <header>
+              <div><p>ROOM</p><h2 id="roomCodeLabel">------</h2></div>
+              <button id="copyRoomButton" type="button" title="复制房间码">复制</button>
+            </header>
+            <div class="room-state">
+              <span id="gameStatusBadge">等待开始</span>
+              <small id="syncStatus">正在同步</small>
+            </div>
+            <div id="playersList" class="players-list"></div>
+            <div id="ownerControls" class="owner-controls" hidden>
+              <button id="startGameButton" class="primary-button" type="button">开始冒险</button>
+              <button id="pauseGameButton" type="button">暂停</button>
+              <button id="resetGameButton" class="danger-button" type="button">重开</button>
+            </div>
+            <button id="leaveRoomButton" class="leave-button" type="button">退出房间</button>
+          </aside>
+
+          <section class="story-panel" data-panel="scene">
+            <header>
+              <div><p>SCENE</p><h2 id="sceneTitle">等待冒险开始</h2></div>
+              <span id="turnHint">AI 主持</span>
+            </header>
+            <div id="messageList" class="message-list">
+              <div class="empty-message">创建或加入房间后，故事会显示在这里。</div>
+            </div>
+            <section id="pendingCheck" class="check-panel" hidden>
+              <div>
+                <strong id="checkTitle">等待检定</strong>
+                <p id="checkDescription"></p>
+              </div>
+              <button id="rollCheckButton" class="primary-button" type="button">投骰</button>
+            </section>
+            <form id="actionForm" class="action-composer">
+              <textarea id="actionInput" maxlength="800" rows="3" placeholder="描述你的行动或说出角色台词……"></textarea>
+              <div class="composer-tools">
+                <label>
+                  <span>快捷骰</span>
+                  <select id="quickDie">
+                    <option value="1D100">D100</option>
+                    <option value="1D20">D20</option>
+                    <option value="1D12">D12</option>
+                    <option value="1D10">D10</option>
+                    <option value="1D8">D8</option>
+                    <option value="1D6">D6</option>
+                    <option value="1D4">D4</option>
+                    <option value="2D6+3">2D6+3</option>
+                  </select>
+                </label>
+                <button id="quickRollButton" type="button">投骰</button>
+                <button id="sendActionButton" class="primary-button" type="submit">发送行动</button>
+              </div>
+              <p id="actionStatus" class="status-text" role="status"></p>
+            </form>
+          </section>
+
+          <aside class="side-panel character-panel" data-panel="character">
+            <div class="panel-tabs">
+              <button class="is-active" data-side-tab="card" type="button">人物卡</button>
+              <button data-side-tab="clues" type="button">线索</button>
+              <button data-side-tab="notes" type="button">笔记</button>
+            </div>
+
+            <section class="side-tab-content" data-side-content="card">
+              <label><span>角色名</span><input id="characterName" maxlength="30" placeholder="角色姓名"></label>
+              <div class="stat-grid">
+                <label><span>生命</span><input id="characterHp" type="number" min="0" max="999" value="10"></label>
+                <label><span>理智</span><input id="characterSan" type="number" min="0" max="999" value="10"></label>
+              </div>
+              <label><span>角色背景</span><textarea id="characterBackground" maxlength="1000" rows="5" placeholder="身份、性格、经历与目标"></textarea></label>
+              <label><span>技能</span><textarea id="characterSkills" maxlength="1000" rows="5" placeholder="每行一项，例如：侦查 60"></textarea></label>
+              <label><span>背包与道具</span><textarea id="characterInventory" maxlength="1000" rows="4"></textarea></label>
+              <button id="saveCharacterButton" class="primary-button" type="button">保存人物卡</button>
+              <p id="characterStatus" class="status-text"></p>
+            </section>
+
+            <section class="side-tab-content" data-side-content="clues" hidden>
+              <div id="cluesList" class="clues-list"></div>
+            </section>
+
+            <section class="side-tab-content notes-content" data-side-content="notes" hidden>
+              <textarea id="playerNotes" maxlength="10000" placeholder="只有你能看到的个人笔记……"></textarea>
+              <div><span id="notesStatus">自动保存</span><span id="notesCounter">0 / 10000</span></div>
+            </section>
+          </aside>
+        </div>
+      </section>
+    </main>
+    <script src="trpg.js?v=20260626"></script>
+  </body>
+</html>

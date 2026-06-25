@@ -83,6 +83,21 @@ DB
 
 Worker 会在第一次访问 `/posts` 时自动创建 `posts` 表。也可以手动执行 `schema.sql`。
 
+## AI 在线跑团
+
+主页搜索框输入暗号 `202` 可进入隐藏跑团项目。通用框架包含：
+
+- 多人云端房间与自动存档
+- DeepSeek AI 主持及 NPC
+- 玩家行动、公开消息、私人信息
+- D100/D20/D12/D10/D8/D6/D4 与骰子表达式
+- AI 发起检定并根据结果推进剧情
+- 人物卡、HP、理智、技能、道具
+- 私人线索、个人笔记
+- 最近消息、剧情摘要、永久事实三层记忆
+
+跑团使用同一个 D1 binding `DB` 和 Worker Secret `DEEPSEEK_API_KEY`。Worker 首次访问 `/trpg` 时会自动创建 `trpg_rooms` 表。
+
 如果不想用命令行，可以在 Cloudflare 控制台新建名为 `suanming-api` 的 Worker，把 `worker.js` 内容粘贴进去并部署。
 
 命令行部署方式：

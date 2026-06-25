@@ -25,6 +25,14 @@
       }
     }
 
+    if (url.pathname === "/trpg") {
+      try {
+        return await handleTrpg(request, env, url);
+      } catch (error) {
+        return json({ error: error.message || "跑团服务暂时不可用。" }, 500);
+      }
+    }
+
     if (url.pathname === "/werewolf") {
       try {
         return await handleWerewolf(request, env, url);
@@ -361,6 +369,487 @@ function optionalQuantNumber(value, allowZero = false) {
 function validIsoDate(value) {
   const text = String(value || "");
   return Number.isNaN(Date.parse(text)) ? "" : new Date(text).toISOString();
+}
+
+const TRPG_DEFAULT_SCENARIO = {
+  title: "雾港来信",
+  premise: "一座被浓雾包围的临海小镇寄出一封没有署名的求救信。玩家们因各自原因来到旧灯塔旅店，发现镇民正在刻意遗忘同一件事。",
+  tone: "现代悬疑、调查、轻度超自然。保持紧张感，但不使用猎奇血腥描写。",
+  opening: "傍晚六点，最后一班渡船靠上雾港。海风里有铁锈和潮木的气味。你们手中的求救信同时浮出一行此前没有出现的字：不要相信敲钟的人。",
+};
+
+async function handleTrpg(request, env, url) {
+  if (!env.DB) {
+    return json({ error: "跑团数据库尚未连接，请检查 Worker 的 DB 绑定。" }, 500);
+  }
+  await ensureTrpgTable(env.DB);
+
+  if (request.method === "GET") {
+    const code = normalizeRoomCode(url.searchParams.get("room"));
+    const playerId = cleanId(url.searchParams.get("playerId"));
+    const state = await loadTrpgRoom(env.DB, code);
+    if (!state) return json({ error: "房间不存在。" }, 404);
+    if (!state.players.some((player) => player.id === playerId)) {
+      return json({ error: "你尚未加入这个房间。" }, 403);
+    }
+    return json({ room: sanitizeTrpgState(state, playerId) });
+  }
+
+  if (request.method !== "POST") {
+    return json({ error: "Use GET or POST request." }, 405);
+  }
+
+  const body = await request.json().catch(() => ({}));
+  const action = String(body.action || "");
+  const playerId = cleanId(body.playerId);
+  if (!playerId) return json({ error: "缺少玩家标识。" }, 400);
+
+  if (action === "create") {
+    const name = cleanText(body.name || "调查员", 18) || "调查员";
+    const state = createTrpgRoom(playerId, name);
+    await saveTrpgRoom(env.DB, state);
+    return json({ room: sanitizeTrpgState(state, playerId) }, 201);
+  }
+
+  const code = normalizeRoomCode(body.room);
+  const state = await loadTrpgRoom(env.DB, code);
+  if (!state) return json({ error: "房间不存在。" }, 404);
+
+  if (action === "join") {
+    if (state.status === "ended") return json({ error: "房间已经结束，请让创建者重开。" }, 400);
+    const name = cleanText(body.name || "调查员", 18) || "调查员";
+    upsertTrpgPlayer(state, playerId, name);
+  } else {
+    requireTrpgPlayer(state, playerId);
+    if (action === "start") {
+      requireTrpgOwner(state, playerId);
+      if (state.status === "playing") return json({ error: "冒险已经开始。" }, 400);
+      state.status = "playing";
+      state.sceneTitle = "雾港码头";
+      addTrpgMessage(state, "system", "系统", "冒险开始，DeepSeek 已接管主持。");
+      await runTrpgAiTurn(state, env, {
+        trigger: "start",
+        actorId: playerId,
+        playerText: "请主持人宣读开场，并邀请每位玩家介绍角色。",
+      });
+    } else if (action === "send") {
+      requireTrpgPlaying(state);
+      if (state.pendingCheck) return json({ error: "请先完成当前检定。" }, 400);
+      const text = cleanMultiline(body.text || "", 800);
+      if (!text) return json({ error: "行动内容不能为空。" }, 400);
+      addTrpgMessage(state, "player", trpgPlayerName(state, playerId), text, { playerId });
+      await runTrpgAiTurn(state, env, { trigger: "action", actorId: playerId, playerText: text });
+    } else if (action === "roll") {
+      requireTrpgPlaying(state);
+      const expression = cleanDiceExpression(body.expression);
+      const checkId = cleanId(body.checkId);
+      const pending = state.pendingCheck;
+      if (pending && (!checkId || checkId !== pending.id)) {
+        return json({ error: "当前存在待完成的检定，请使用检定按钮投骰。" }, 400);
+      }
+      if (checkId) {
+        if (!pending || pending.id !== checkId) return json({ error: "检定已经失效。" }, 400);
+        if (pending.playerId !== playerId) return json({ error: "这不是你的检定。" }, 403);
+      }
+      const roll = rollDiceExpression(checkId && pending ? pending.expression : expression);
+      const label = pending ? `${pending.skill}检定` : "自由投骰";
+      addTrpgMessage(
+        state,
+        "roll",
+        "骰子",
+        `${trpgPlayerName(state, playerId)} 进行${label}：${roll.expression} = ${roll.detail}，总计 ${roll.total}`,
+        { playerId, roll },
+      );
+      state.pendingCheck = null;
+      await runTrpgAiTurn(state, env, {
+        trigger: "roll",
+        actorId: playerId,
+        playerText: `${label}结果：${roll.total}（${roll.expression}；${roll.detail}）`,
+        roll,
+        check: pending || null,
+      });
+    } else if (action === "saveCharacter") {
+      state.characters[playerId] = normalizeTrpgCard(body.card);
+      addTrpgMessage(state, "system", "系统", `${trpgPlayerName(state, playerId)} 更新了人物卡。`);
+    } else if (action === "saveNotes") {
+      state.notes[playerId] = String(body.notes || "").slice(0, 10000);
+    } else if (action === "pause") {
+      requireTrpgOwner(state, playerId);
+      state.status = "paused";
+      addTrpgMessage(state, "system", "系统", "冒险已暂停。");
+    } else if (action === "resume") {
+      requireTrpgOwner(state, playerId);
+      state.status = "playing";
+      addTrpgMessage(state, "system", "系统", "冒险继续。");
+    } else if (action === "reset") {
+      requireTrpgOwner(state, playerId);
+      resetTrpgRoom(state);
+    } else {
+      return json({ error: "未知操作。" }, 400);
+    }
+  }
+
+  state.updatedAt = new Date().toISOString();
+  await saveTrpgRoom(env.DB, state);
+  return json({ room: sanitizeTrpgState(state, playerId) });
+}
+
+async function ensureTrpgTable(db) {
+  await db.prepare(
+    `CREATE TABLE IF NOT EXISTS trpg_rooms (
+      code TEXT PRIMARY KEY,
+      state_json TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    )`,
+  ).run();
+}
+
+function createTrpgRoom(ownerId, ownerName) {
+  const now = new Date().toISOString();
+  return {
+    code: makeRoomCode(),
+    ownerId,
+    status: "lobby",
+    sceneTitle: "等待冒险开始",
+    players: [{ id: ownerId, name: ownerName, joinedAt: now }],
+    characters: {
+      [ownerId]: normalizeTrpgCard({ name: "", hp: 10, san: 10 }),
+    },
+    notes: { [ownerId]: "" },
+    clues: { [ownerId]: [] },
+    messages: [
+      makeTrpgMessage("system", "系统", "房间已创建。所有玩家加入并填写人物卡后，创建者可以开始冒险。"),
+    ],
+    pendingCheck: null,
+    memory: {
+      summary: "冒险尚未开始。",
+      facts: [],
+      hidden: [
+        "钟楼看守人并非真正敌人，他在阻止雾中存在通过钟声定位镇民。",
+        "求救信由旅店老板的女儿寄出，但她的名字正从所有记录中消失。",
+      ],
+    },
+    aiThinking: false,
+    scenario: TRPG_DEFAULT_SCENARIO,
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+function resetTrpgRoom(state) {
+  state.status = "lobby";
+  state.sceneTitle = "等待冒险开始";
+  state.characters = Object.fromEntries(
+    state.players.map((player) => [player.id, normalizeTrpgCard({ name: "", hp: 10, san: 10 })]),
+  );
+  state.notes = Object.fromEntries(state.players.map((player) => [player.id, ""]));
+  state.clues = Object.fromEntries(state.players.map((player) => [player.id, []]));
+  state.messages = [makeTrpgMessage("system", "系统", "房间已重开，等待创建者开始冒险。")];
+  state.pendingCheck = null;
+  state.memory = {
+    summary: "冒险尚未开始。",
+    facts: [],
+    hidden: createTrpgRoom(state.ownerId, "临时").memory.hidden,
+  };
+  state.aiThinking = false;
+}
+
+function upsertTrpgPlayer(state, playerId, name) {
+  const player = state.players.find((item) => item.id === playerId);
+  if (player) {
+    player.name = name;
+    return;
+  }
+  if (state.players.length >= 8) throw new Error("当前版本最多支持 8 名玩家。");
+  state.players.push({ id: playerId, name, joinedAt: new Date().toISOString() });
+  state.characters[playerId] = normalizeTrpgCard({ name: "", hp: 10, san: 10 });
+  state.notes[playerId] = "";
+  state.clues[playerId] = [];
+  addTrpgMessage(state, "system", "系统", `${name} 加入了房间。`);
+}
+
+async function runTrpgAiTurn(state, env, context) {
+  state.aiThinking = true;
+  try {
+    if (!env.DEEPSEEK_API_KEY) throw new Error("Worker 尚未配置 DEEPSEEK_API_KEY");
+    const messages = buildTrpgMessages(state, context);
+    const raw = await callDeepSeek(messages, env, { maxTokens: 1400, temperature: 0.8 });
+    const result = parseTrpgAiResult(raw);
+    applyTrpgAiResult(state, result, context.actorId);
+  } catch (error) {
+    addTrpgMessage(
+      state,
+      "system",
+      "系统",
+      `AI 主持本回合未能响应：${cleanText(error.message || "未知错误", 180)}。请稍后重新描述行动。`,
+    );
+  } finally {
+    state.aiThinking = false;
+  }
+}
+
+function buildTrpgMessages(state, context) {
+  const recentMessages = state.messages.slice(-24).map((message) => ({
+    type: message.type,
+    author: message.author,
+    content: message.content,
+  }));
+  const playerCards = state.players.map((player) => ({
+    id: player.id,
+    playerName: player.name,
+    character: state.characters[player.id] || {},
+  }));
+
+  return [
+    {
+      role: "system",
+      content: [
+        "你是多人在线文字跑团的唯一主持人和所有 NPC。请使用简体中文。",
+        "你必须公平、连贯、给玩家选择空间，不替玩家决定行动，不提前泄露隐藏秘密。",
+        "只有不确定且有代价的行动才要求检定。普通观察、交谈和合理行动直接推进。",
+        "当前没有正式剧本，请严格围绕提供的临时设定主持，不要跳出世界解释系统。",
+        "你的回复必须是单个 JSON 对象，不要使用 Markdown 代码块。",
+        '结构：{"narration":"给所有玩家看的主持内容","sceneTitle":"短场景名","check":null或{"skill":"技能名","expression":"1D100","difficulty":"普通","reason":"检定原因"},"clues":[{"playerId":"玩家ID或all","title":"线索标题","content":"线索内容"}],"privateMessages":[{"playerId":"玩家ID","content":"只有该玩家看见的信息"}],"statusUpdates":[{"playerId":"玩家ID","hp":10,"san":9,"reason":"变化原因"}],"facts":["新增永久事实"],"summary":"截至当前的简短剧情摘要","end":false}',
+        "check 一次只能给当前行动玩家；若无需检定必须为 null。",
+        "骰点发生后必须根据结果和难度清楚描述成功、失败或代价，并继续剧情。",
+      ].join("\n"),
+    },
+    {
+      role: "user",
+      content: JSON.stringify({
+        scenario: state.scenario,
+        sceneTitle: state.sceneTitle,
+        status: state.status,
+        players: playerCards,
+        memory: state.memory,
+        recentMessages,
+        currentEvent: context,
+      }),
+    },
+  ];
+}
+
+function parseTrpgAiResult(raw) {
+  const text = String(raw || "").trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+  try {
+    return JSON.parse(text);
+  } catch {
+    return {
+      narration: text || "雾气短暂遮住了视线，主持人没有给出有效回应，请再尝试一次行动。",
+      sceneTitle: "",
+      check: null,
+      clues: [],
+      facts: [],
+      summary: "",
+      end: false,
+    };
+  }
+}
+
+function applyTrpgAiResult(state, result, actorId) {
+  const narration = cleanMultiline(result.narration || "", 4000);
+  if (narration) addTrpgMessage(state, "gm", "AI 主持", narration);
+  const sceneTitle = cleanText(result.sceneTitle || "", 50);
+  if (sceneTitle) state.sceneTitle = sceneTitle;
+
+  state.pendingCheck = null;
+  if (result.check && typeof result.check === "object") {
+    state.pendingCheck = {
+      id: crypto.randomUUID(),
+      playerId: actorId,
+      skill: cleanText(result.check.skill || "行动", 30),
+      expression: cleanDiceExpression(result.check.expression || "1D100"),
+      difficulty: cleanText(result.check.difficulty || "普通", 20),
+      reason: cleanText(result.check.reason || "行动结果存在不确定性。", 160),
+      createdAt: new Date().toISOString(),
+    };
+  }
+
+  for (const clue of Array.isArray(result.clues) ? result.clues.slice(0, 8) : []) {
+    const targets = clue.playerId === "all"
+      ? state.players.map((player) => player.id)
+      : [cleanId(clue.playerId) || actorId];
+    for (const targetId of targets) {
+      if (!state.clues[targetId]) continue;
+      const item = {
+        id: crypto.randomUUID(),
+        title: cleanText(clue.title || "新线索", 60),
+        content: cleanMultiline(clue.content || "", 800),
+        createdAt: new Date().toISOString(),
+      };
+      state.clues[targetId].push(item);
+      addTrpgMessage(state, "system", "系统", `${trpgPlayerName(state, targetId)} 获得了线索：${item.title}`, {
+        privateTo: targetId,
+      });
+    }
+  }
+
+  for (const message of Array.isArray(result.privateMessages) ? result.privateMessages.slice(0, 8) : []) {
+    const targetId = cleanId(message.playerId);
+    if (!state.characters[targetId]) continue;
+    const content = cleanMultiline(message.content || "", 1000);
+    if (content) addTrpgMessage(state, "gm", "AI 主持 · 私密", content, { privateTo: targetId });
+  }
+
+  for (const update of Array.isArray(result.statusUpdates) ? result.statusUpdates.slice(0, 8) : []) {
+    const targetId = cleanId(update.playerId);
+    const card = state.characters[targetId];
+    if (!card) continue;
+    if (update.hp != null) card.hp = clampNumber(update.hp, 0, 999, card.hp);
+    if (update.san != null) card.san = clampNumber(update.san, 0, 999, card.san);
+    const reason = cleanText(update.reason || "状态发生变化", 100);
+    addTrpgMessage(
+      state,
+      "system",
+      "系统",
+      `${trpgPlayerName(state, targetId)}：HP ${card.hp}，SAN ${card.san}（${reason}）`,
+    );
+  }
+
+  const newFacts = Array.isArray(result.facts)
+    ? result.facts.map((item) => cleanText(item, 300)).filter(Boolean)
+    : [];
+  state.memory.facts = Array.from(new Set([...state.memory.facts, ...newFacts])).slice(-80);
+  const summary = cleanMultiline(result.summary || "", 2000);
+  if (summary) state.memory.summary = summary;
+  if (result.end === true) {
+    state.status = "ended";
+    state.pendingCheck = null;
+    addTrpgMessage(state, "system", "系统", "本次冒险已经结束。");
+  }
+}
+
+function sanitizeTrpgState(state, playerId) {
+  const messages = state.messages
+    .filter((message) => !message.privateTo || message.privateTo === playerId)
+    .slice(-120)
+    .map((message) => ({
+      ...message,
+      private: Boolean(message.privateTo),
+      privateTo: undefined,
+    }));
+  return {
+    code: state.code,
+    status: state.status,
+    sceneTitle: state.sceneTitle,
+    isOwner: state.ownerId === playerId,
+    aiThinking: Boolean(state.aiThinking),
+    players: state.players.map((player) => {
+      const card = state.characters[player.id] || {};
+      return {
+        id: player.id,
+        name: player.name,
+        isYou: player.id === playerId,
+        isOwner: player.id === state.ownerId,
+        characterName: card.name || "",
+        hp: Number(card.hp ?? 10),
+        san: Number(card.san ?? 10),
+      };
+    }),
+    messages,
+    pendingCheck: state.pendingCheck?.playerId === playerId ? state.pendingCheck : null,
+    myCharacter: state.characters[playerId] || normalizeTrpgCard({}),
+    myNotes: state.notes[playerId] || "",
+    myClues: state.clues[playerId] || [],
+    updatedAt: state.updatedAt,
+  };
+}
+
+function normalizeTrpgCard(card = {}) {
+  return {
+    name: cleanText(card.name || "", 30),
+    hp: clampNumber(card.hp, 0, 999, 10),
+    san: clampNumber(card.san, 0, 999, 10),
+    background: cleanMultiline(card.background || "", 1000),
+    skills: cleanMultiline(card.skills || "", 1000),
+    inventory: cleanMultiline(card.inventory || "", 1000),
+  };
+}
+
+function requireTrpgPlayer(state, playerId) {
+  if (!state.players.some((player) => player.id === playerId)) throw new Error("你不在这个房间中。");
+}
+
+function requireTrpgOwner(state, playerId) {
+  if (state.ownerId !== playerId) throw new Error("只有房间创建者可以执行此操作。");
+}
+
+function requireTrpgPlaying(state) {
+  if (state.status === "paused") throw new Error("冒险当前处于暂停状态。");
+  if (state.status !== "playing") throw new Error("冒险尚未开始。");
+  if (state.aiThinking) throw new Error("AI 主持正在处理上一项行动。");
+}
+
+function addTrpgMessage(state, type, author, content, options = {}) {
+  state.messages.push(makeTrpgMessage(type, author, content, options));
+  if (state.messages.length > 300) state.messages = state.messages.slice(-260);
+}
+
+function makeTrpgMessage(type, author, content, options = {}) {
+  return {
+    id: crypto.randomUUID(),
+    type,
+    author,
+    content: cleanMultiline(content || "", 5000),
+    playerId: options.playerId || "",
+    privateTo: options.privateTo || "",
+    roll: options.roll || null,
+    createdAt: new Date().toISOString(),
+  };
+}
+
+function cleanDiceExpression(value) {
+  let expression = String(value || "1D100").toUpperCase().replace(/\s+/g, "");
+  if (/^D\d/.test(expression)) expression = `1${expression}`;
+  if (!/^[1-9]\d?D(?:4|6|8|10|12|20|100)(?:[+-]\d{1,3})?$/.test(expression)) {
+    throw new Error("骰子表达式无效，示例：1D100、2D6+3。");
+  }
+  const count = Number(expression.match(/^(\d+)D/)[1]);
+  if (count > 20) throw new Error("一次最多投 20 枚骰子。");
+  return expression;
+}
+
+function rollDiceExpression(value) {
+  const expression = cleanDiceExpression(value);
+  const match = expression.match(/^(\d+)D(\d+)(?:([+-])(\d+))?$/);
+  const count = Number(match[1]);
+  const sides = Number(match[2]);
+  const modifier = match[3] ? Number(`${match[3]}${match[4]}`) : 0;
+  const rolls = [];
+  for (let index = 0; index < count; index += 1) {
+    rolls.push(crypto.getRandomValues(new Uint32Array(1))[0] % sides + 1);
+  }
+  const total = rolls.reduce((sum, item) => sum + item, 0) + modifier;
+  const detail = `${rolls.join(" + ")}${modifier ? ` ${modifier > 0 ? "+" : "-"} ${Math.abs(modifier)}` : ""}`;
+  return { expression, rolls, modifier, detail, total };
+}
+
+function trpgPlayerName(state, playerId) {
+  return state.players.find((player) => player.id === playerId)?.name || "未知玩家";
+}
+
+function clampNumber(value, min, max, fallback) {
+  const number = Number(value);
+  return Number.isFinite(number) ? Math.min(max, Math.max(min, number)) : fallback;
+}
+
+function cleanMultiline(value, maxLength) {
+  return String(value).replace(/\r\n/g, "\n").trim().slice(0, maxLength);
+}
+
+async function loadTrpgRoom(db, code) {
+  if (!code) return null;
+  const row = await db.prepare("SELECT state_json FROM trpg_rooms WHERE code = ?").bind(code).first();
+  return row ? JSON.parse(row.state_json) : null;
+}
+
+async function saveTrpgRoom(db, state) {
+  await db.prepare(
+    `INSERT INTO trpg_rooms (code, state_json, created_at, updated_at)
+     VALUES (?, ?, ?, ?)
+     ON CONFLICT(code) DO UPDATE SET state_json = excluded.state_json, updated_at = excluded.updated_at`,
+  ).bind(state.code, JSON.stringify(state), state.createdAt, state.updatedAt).run();
 }
 
 const WEREWOLF_ROLES = ["狼人", "狼人", "爪牙", "守夜人", "守夜人", "预言家", "强盗", "捣蛋鬼", "酒鬼", "失眠者"];
@@ -924,7 +1413,7 @@ function round(value, digits) {
   return Math.round(value * factor) / factor;
 }
 
-async function callDeepSeek(messages, env) {
+async function callDeepSeek(messages, env, options = {}) {
   if (!env.DEEPSEEK_API_KEY) {
     throw new Error("Missing DEEPSEEK_API_KEY secret on this Worker.");
   }
@@ -934,12 +1423,14 @@ async function callDeepSeek(messages, env) {
     apiKey: env.DEEPSEEK_API_KEY,
     model: env.DEEPSEEK_MODEL || "deepseek-chat",
     messages,
+    maxTokens: options.maxTokens,
+    temperature: options.temperature,
   });
 
   return data.choices?.[0]?.message?.content?.trim() || "DeepSeek returned no readable text.";
 }
 
-async function callOpenAI(messages, env) {
+async function callOpenAI(messages, env, options = {}) {
   if (!env.OPENAI_API_KEY) {
     throw new Error("Missing OPENAI_API_KEY secret on this Worker.");
   }
@@ -949,12 +1440,14 @@ async function callOpenAI(messages, env) {
     apiKey: env.OPENAI_API_KEY,
     model: env.OPENAI_MODEL || "gpt-4.1-mini",
     messages,
+    maxTokens: options.maxTokens,
+    temperature: options.temperature,
   });
 
   return data.choices?.[0]?.message?.content?.trim() || "OpenAI returned no readable text.";
 }
 
-async function postChatCompletion({ url, apiKey, model, messages }) {
+async function postChatCompletion({ url, apiKey, model, messages, maxTokens = 800, temperature = 0.7 }) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 45000);
 
@@ -970,8 +1463,8 @@ async function postChatCompletion({ url, apiKey, model, messages }) {
       body: JSON.stringify({
         model,
         messages,
-        temperature: 0.7,
-        max_tokens: 800,
+        temperature,
+        max_tokens: maxTokens,
       }),
     });
   } catch (error) {
