@@ -375,7 +375,11 @@ async function post(body) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  return readResponse(response);
+  const data = await readResponse(response);
+  if (!data.room) {
+    throw new Error("Cloudflare API Worker 尚未更新，请部署最新版 worker.js。");
+  }
+  return data;
 }
 
 async function readResponse(response) {
