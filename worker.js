@@ -17,6 +17,14 @@
       return handleGitHubHot(request, env, url);
     }
 
+    if (url.pathname === "/quant-data") {
+      try {
+        return await handleQuantData(request, env);
+      } catch (error) {
+        return json({ error: error.message || "量化记录服务暂时不可用。" }, 500);
+      }
+    }
+
     if (url.pathname === "/werewolf") {
       try {
         return await handleWerewolf(request, env, url);
@@ -153,6 +161,206 @@ function normalizePostCategory(value, allowEmpty = false) {
   const category = cleanText(value || "", 12);
   if (allowEmpty && !category) return "";
   return POST_CATEGORIES.has(category) ? category : "其他";
+}
+
+async function handleQuantData(request, env) {
+  if (!env.DB) {
+    return json({ error: "量化记录数据库尚未连接，请检查 Worker 的 DB 绑定。" }, 500);
+  }
+
+  await ensureQuantTables(env.DB);
+
+  if (request.method === "GET") {
+    const { results } = await env.DB.prepare(
+      `SELECT id, trade_date, name, code, buy_price, buy_shares, sell_price,
+        market_value, remark, created_at, updated_at
+       FROM quant_records
+       ORDER BY trade_date DESC, created_at DESC`,
+    ).all();
+    const note = await env.DB.prepare(
+      "SELECT content, updated_at FROM quant_notes WHERE id = 1",
+    ).first();
+
+    return json({
+      records: (results || []).map(quantRowToRecord),
+      notes: note?.content || "",
+      notesUpdatedAt: note?.updated_at || "",
+    });
+  }
+
+  if (request.method !== "POST") {
+    return json({ error: "Use GET or POST request." }, 405);
+  }
+
+  const body = await request.json().catch(() => ({}));
+  const action = String(body.action || "");
+
+  if (action === "saveRecord") {
+    const record = normalizeQuantRecord(body.record);
+    await upsertQuantRecord(env.DB, record);
+    return json({ record });
+  }
+
+  if (action === "deleteRecord") {
+    const id = cleanId(body.id);
+    if (!id) return json({ error: "记录 ID 无效。" }, 400);
+    await env.DB.prepare("DELETE FROM quant_records WHERE id = ?").bind(id).run();
+    return json({ ok: true });
+  }
+
+  if (action === "clearRecords") {
+    await env.DB.prepare("DELETE FROM quant_records").run();
+    return json({ ok: true });
+  }
+
+  if (action === "saveNotes") {
+    const content = String(body.content || "").slice(0, 20000);
+    const updatedAt = new Date().toISOString();
+    await env.DB.prepare(
+      `INSERT INTO quant_notes (id, content, updated_at) VALUES (1, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET content = excluded.content, updated_at = excluded.updated_at`,
+    ).bind(content, updatedAt).run();
+    return json({ notes: content, updatedAt });
+  }
+
+  if (action === "import") {
+    const records = Array.isArray(body.records) ? body.records.slice(0, 1000) : [];
+    for (const value of records) {
+      await upsertQuantRecord(env.DB, normalizeQuantRecord(value));
+    }
+    if (typeof body.notes === "string" && body.notes) {
+      const updatedAt = new Date().toISOString();
+      await env.DB.prepare(
+        `INSERT INTO quant_notes (id, content, updated_at) VALUES (1, ?, ?)
+         ON CONFLICT(id) DO UPDATE SET
+           content = CASE WHEN quant_notes.content = '' THEN excluded.content ELSE quant_notes.content END,
+           updated_at = excluded.updated_at`,
+      ).bind(body.notes.slice(0, 20000), updatedAt).run();
+    }
+    return json({ imported: records.length });
+  }
+
+  return json({ error: "Unknown action." }, 400);
+}
+
+async function ensureQuantTables(db) {
+  await db.prepare(
+    `CREATE TABLE IF NOT EXISTS quant_records (
+      id TEXT PRIMARY KEY,
+      trade_date TEXT NOT NULL,
+      name TEXT NOT NULL,
+      code TEXT NOT NULL,
+      buy_price REAL,
+      buy_shares REAL,
+      sell_price REAL,
+      market_value REAL,
+      remark TEXT NOT NULL DEFAULT '',
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    )`,
+  ).run();
+  await db.prepare(
+    `CREATE TABLE IF NOT EXISTS quant_notes (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      content TEXT NOT NULL DEFAULT '',
+      updated_at TEXT NOT NULL
+    )`,
+  ).run();
+}
+
+function normalizeQuantRecord(value = {}) {
+  const id = cleanId(value.id) || crypto.randomUUID();
+  const tradeDate = /^\d{4}-\d{2}-\d{2}$/.test(String(value.date || ""))
+    ? String(value.date)
+    : new Date().toISOString().slice(0, 10);
+  const name = cleanText(value.name || "", 40);
+  const code = cleanText(value.code || "", 30).toUpperCase();
+  const buyPrice = optionalQuantNumber(value.buyPrice);
+  const buyShares = optionalQuantNumber(value.buyShares);
+  const sellPrice = optionalQuantNumber(value.sellPrice);
+  const marketValue = optionalQuantNumber(value.marketValue, true);
+
+  if (!name || !code) throw new Error("名字和交易代码不能为空。");
+  if (buyPrice == null && sellPrice == null) throw new Error("买入价和卖出价至少填写一项。");
+
+  const now = new Date().toISOString();
+  return {
+    id,
+    date: tradeDate,
+    name,
+    code,
+    buyPrice,
+    buyShares,
+    sellPrice,
+    marketValue,
+    remark: cleanText(value.remark || "", 200),
+    createdAt: validIsoDate(value.createdAt) || now,
+    updatedAt: validIsoDate(value.updatedAt) || now,
+  };
+}
+
+async function upsertQuantRecord(db, record) {
+  await db.prepare(
+    `INSERT INTO quant_records (
+      id, trade_date, name, code, buy_price, buy_shares, sell_price,
+      market_value, remark, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET
+      trade_date = excluded.trade_date,
+      name = excluded.name,
+      code = excluded.code,
+      buy_price = excluded.buy_price,
+      buy_shares = excluded.buy_shares,
+      sell_price = excluded.sell_price,
+      market_value = excluded.market_value,
+      remark = excluded.remark,
+      updated_at = excluded.updated_at
+    WHERE excluded.updated_at >= quant_records.updated_at`,
+  ).bind(
+    record.id,
+    record.date,
+    record.name,
+    record.code,
+    record.buyPrice,
+    record.buyShares,
+    record.sellPrice,
+    record.marketValue,
+    record.remark,
+    record.createdAt,
+    record.updatedAt,
+  ).run();
+}
+
+function quantRowToRecord(row) {
+  const buyPrice = row.buy_price == null ? null : Number(row.buy_price);
+  const sellPrice = row.sell_price == null ? null : Number(row.sell_price);
+  return {
+    id: row.id,
+    date: row.trade_date,
+    name: row.name,
+    code: row.code,
+    buyPrice,
+    buyShares: row.buy_shares == null ? null : Number(row.buy_shares),
+    sellPrice,
+    change: buyPrice > 0 && sellPrice > 0 ? ((sellPrice - buyPrice) / buyPrice) * 100 : null,
+    marketValue: row.market_value == null ? null : Number(row.market_value),
+    remark: row.remark || "",
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+function optionalQuantNumber(value, allowZero = false) {
+  if (value == null || value === "") return null;
+  const number = Number(value);
+  if (!Number.isFinite(number)) return null;
+  if (allowZero ? number < 0 : number <= 0) return null;
+  return number;
+}
+
+function validIsoDate(value) {
+  const text = String(value || "");
+  return Number.isNaN(Date.parse(text)) ? "" : new Date(text).toISOString();
 }
 
 const WEREWOLF_ROLES = ["狼人", "狼人", "爪牙", "守夜人", "守夜人", "预言家", "强盗", "捣蛋鬼", "酒鬼", "失眠者"];

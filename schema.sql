@@ -13,3 +13,23 @@ CREATE TABLE IF NOT EXISTS werewolf_rooms (
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS quant_records (
+  id TEXT PRIMARY KEY,
+  trade_date TEXT NOT NULL,
+  name TEXT NOT NULL,
+  code TEXT NOT NULL,
+  buy_price REAL,
+  buy_shares REAL,
+  sell_price REAL,
+  market_value REAL,
+  remark TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS quant_notes (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  content TEXT NOT NULL DEFAULT '',
+  updated_at TEXT NOT NULL
+);

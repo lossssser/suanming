@@ -1,5 +1,7 @@
+const API_ENDPOINT = "https://api.shxgjqaq.com/quant-data";
 const RECORDS_KEY = "shisan_quant_test_records_v1";
 const NOTES_KEY = "shisan_quant_test_notes_v1";
+const MIGRATION_KEY = "shisan_quant_cloud_migrated_v1";
 
 const form = document.querySelector("#recordForm");
 const fields = {
@@ -29,12 +31,12 @@ const noteStatus = document.querySelector("#noteStatus");
 const noteCounter = document.querySelector("#noteCounter");
 const clearNotesButton = document.querySelector("#clearNotesButton");
 
-let records = loadJson(RECORDS_KEY, []);
+let records = [];
 let editingId = null;
 let noteTimer = null;
+let noteSaveVersion = 0;
 
 fields.date.value = localDate();
-notes.value = localStorage.getItem(NOTES_KEY) || "";
 updateChangePreview();
 updateNoteCounter();
 render();
@@ -50,7 +52,51 @@ clearNotesButton.addEventListener("click", clearNotes);
 recordRows.addEventListener("click", handleRowAction);
 notes.addEventListener("input", scheduleNotesSave);
 
-function saveRecord(event) {
+initializeCloudData();
+
+async function initializeCloudData() {
+  setStatus("正在连接云端...");
+  noteStatus.textContent = "正在同步";
+  setEditingEnabled(false);
+
+  try {
+    let cloud = await fetchCloudData();
+    const localRecords = loadJson(RECORDS_KEY, []);
+    const localNotes = localStorage.getItem(NOTES_KEY) || "";
+    const needsMigration = !localStorage.getItem(MIGRATION_KEY) && (localRecords.length || localNotes);
+
+    if (needsMigration) {
+      await apiRequest({
+        action: "import",
+        records: localRecords,
+        notes: localNotes,
+      });
+      localStorage.setItem(MIGRATION_KEY, new Date().toISOString());
+      cloud = await fetchCloudData();
+      setStatus(`已将本机 ${localRecords.length} 条旧记录迁移到云端。`);
+    } else {
+      setStatus("云端同步完成。");
+    }
+
+    records = cloud.records || [];
+    notes.value = cloud.notes || "";
+    cacheCloudData();
+    updateNoteCounter();
+    noteStatus.textContent = "云端已同步";
+    render();
+  } catch (error) {
+    records = loadJson(RECORDS_KEY, []);
+    notes.value = localStorage.getItem(NOTES_KEY) || "";
+    render();
+    updateNoteCounter();
+    setStatus(`云端连接失败：${error.message}`, true);
+    noteStatus.textContent = "云端连接失败";
+  } finally {
+    setEditingEnabled(true);
+  }
+}
+
+async function saveRecord(event) {
   event.preventDefault();
   const buyPrice = optionalPositiveNumber(fields.buyPrice.value);
   const sellPrice = optionalPositiveNumber(fields.sellPrice.value);
@@ -74,6 +120,7 @@ function saveRecord(event) {
   }
 
   const oldRecord = records.find((item) => item.id === editingId);
+  const isEditing = Boolean(editingId);
   const record = {
     id: editingId || makeId(),
     date: fields.date.value,
@@ -82,30 +129,38 @@ function saveRecord(event) {
     buyPrice,
     buyShares,
     sellPrice,
-    change: isCompletedPrice(buyPrice, sellPrice) ? calculateChange(buyPrice, sellPrice) : null,
     marketValue: fields.marketValue.value === "" ? null : Number(fields.marketValue.value),
     remark: fields.remark.value.trim(),
     createdAt: oldRecord?.createdAt || new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
 
-  if (editingId) {
-    records = records.map((item) => item.id === editingId ? record : item);
-  } else {
-    records.unshift(record);
+  setEditingEnabled(false);
+  setStatus("正在保存到云端...");
+  try {
+    const data = await apiRequest({ action: "saveRecord", record });
+    const saved = normalizeClientRecord(data.record);
+    const exists = records.some((item) => item.id === saved.id);
+    records = exists
+      ? records.map((item) => item.id === saved.id ? saved : item)
+      : [saved, ...records];
+    sortRecords();
+    cacheCloudData();
+    resetForm(false);
+    render();
+    setStatus(isEditing ? "记录已更新到云端。" : "记录已保存到云端。");
+  } catch (error) {
+    setStatus(`保存失败：${error.message}`, true);
+  } finally {
+    setEditingEnabled(true);
   }
-  persistRecords();
-  setStatus(editingId ? "记录已更新。" : "记录已保存。");
-  resetForm(false);
-  render();
 }
 
 function handleRowAction(event) {
   const button = event.target.closest("button[data-action]");
   if (!button) return;
-  const id = button.dataset.id;
-  if (button.dataset.action === "edit") editRecord(id);
-  if (button.dataset.action === "delete") deleteRecord(id);
+  if (button.dataset.action === "edit") editRecord(button.dataset.id);
+  if (button.dataset.action === "delete") deleteRecord(button.dataset.id);
 }
 
 function editRecord(id) {
@@ -121,20 +176,34 @@ function editRecord(id) {
   document.querySelector(".entry-panel").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function deleteRecord(id) {
-  if (!confirm("确定删除这条记录吗？")) return;
-  records = records.filter((item) => item.id !== id);
-  persistRecords();
-  if (editingId === id) resetForm();
-  render();
+async function deleteRecord(id) {
+  if (!confirm("确定删除这条云端记录吗？")) return;
+  setStatus("正在从云端删除...");
+  try {
+    await apiRequest({ action: "deleteRecord", id });
+    records = records.filter((item) => item.id !== id);
+    cacheCloudData();
+    if (editingId === id) resetForm();
+    render();
+    setStatus("记录已从云端删除。");
+  } catch (error) {
+    setStatus(`删除失败：${error.message}`, true);
+  }
 }
 
-function clearRecords() {
-  if (!records.length || !confirm("确定清空全部交易记录吗？此操作无法撤销。")) return;
-  records = [];
-  persistRecords();
-  resetForm();
-  render();
+async function clearRecords() {
+  if (!records.length || !confirm("确定清空全部云端交易记录吗？此操作无法撤销。")) return;
+  setStatus("正在清空云端记录...");
+  try {
+    await apiRequest({ action: "clearRecords" });
+    records = [];
+    cacheCloudData();
+    resetForm();
+    render();
+    setStatus("云端交易记录已清空。");
+  } catch (error) {
+    setStatus(`清空失败：${error.message}`, true);
+  }
 }
 
 function resetForm(clearStatus = true) {
@@ -181,6 +250,7 @@ function updateSummary() {
     latestMarketValue.textContent = "--";
     return;
   }
+
   const completed = records.filter((item) => (
     isCompletedPrice(item.buyPrice, item.sellPrice) && Number(item.buyShares) > 0
   ));
@@ -188,8 +258,10 @@ function updateSummary() {
   const totalProfit = completed.reduce((sum, item) => (
     sum + (item.sellPrice - item.buyPrice) * item.buyShares
   ), 0);
-  const allCompleted = completed.length === records.length;
-  const totalChange = allCompleted && totalCost > 0 ? totalProfit / totalCost * 100 : null;
+  const totalChange = completed.length === records.length && totalCost > 0
+    ? totalProfit / totalCost * 100
+    : null;
+
   averageChange.textContent = totalChange == null ? "--" : formatPercent(totalChange);
   averageChange.className = totalChange == null ? "" : totalChange >= 0 ? "positive" : "negative";
   const latest = records.find((item) => item.marketValue != null);
@@ -199,25 +271,41 @@ function updateSummary() {
 function updateChangePreview() {
   const buy = optionalPositiveNumber(fields.buyPrice.value);
   const sell = optionalPositiveNumber(fields.sellPrice.value);
-  changeRate.value = isCompletedPrice(buy, sell) ? formatPercent(calculateChange(buy, sell)) : "待买卖价格齐全";
+  changeRate.value = isCompletedPrice(buy, sell)
+    ? formatPercent(calculateChange(buy, sell))
+    : "待买卖价格齐全";
 }
 
 function scheduleNotesSave() {
   updateNoteCounter();
-  noteStatus.textContent = "保存中...";
+  noteStatus.textContent = "正在保存到云端...";
   clearTimeout(noteTimer);
-  noteTimer = setTimeout(() => {
-    localStorage.setItem(NOTES_KEY, notes.value);
-    noteStatus.textContent = "已自动保存";
-  }, 400);
+  const version = ++noteSaveVersion;
+  noteTimer = setTimeout(async () => {
+    try {
+      await apiRequest({ action: "saveNotes", content: notes.value });
+      if (version === noteSaveVersion) {
+        localStorage.setItem(NOTES_KEY, notes.value);
+        noteStatus.textContent = "云端已保存";
+      }
+    } catch (error) {
+      if (version === noteSaveVersion) noteStatus.textContent = `保存失败：${error.message}`;
+    }
+  }, 700);
 }
 
-function clearNotes() {
-  if (!notes.value || !confirm("确定清空右侧全部笔记吗？")) return;
+async function clearNotes() {
+  if (!notes.value || !confirm("确定清空云端全部笔记吗？")) return;
   notes.value = "";
-  localStorage.removeItem(NOTES_KEY);
-  noteStatus.textContent = "笔记已清空";
   updateNoteCounter();
+  noteStatus.textContent = "正在清空...";
+  try {
+    await apiRequest({ action: "saveNotes", content: "" });
+    localStorage.setItem(NOTES_KEY, "");
+    noteStatus.textContent = "云端笔记已清空";
+  } catch (error) {
+    noteStatus.textContent = `清空失败：${error.message}`;
+  }
 }
 
 function exportCsv() {
@@ -240,8 +328,57 @@ function exportCsv() {
   URL.revokeObjectURL(link.href);
 }
 
-function persistRecords() {
+async function fetchCloudData() {
+  const response = await fetch(API_ENDPOINT, { method: "GET", cache: "no-store" });
+  return readResponse(response);
+}
+
+async function apiRequest(body) {
+  const response = await fetch(API_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  return readResponse(response);
+}
+
+async function readResponse(response) {
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error || `HTTP ${response.status}`);
+  }
+  return data;
+}
+
+function normalizeClientRecord(record) {
+  const buyPrice = record.buyPrice == null ? null : Number(record.buyPrice);
+  const sellPrice = record.sellPrice == null ? null : Number(record.sellPrice);
+  return {
+    ...record,
+    buyPrice,
+    buyShares: record.buyShares == null ? null : Number(record.buyShares),
+    sellPrice,
+    change: isCompletedPrice(buyPrice, sellPrice) ? calculateChange(buyPrice, sellPrice) : null,
+    marketValue: record.marketValue == null ? null : Number(record.marketValue),
+  };
+}
+
+function cacheCloudData() {
   localStorage.setItem(RECORDS_KEY, JSON.stringify(records));
+  localStorage.setItem(NOTES_KEY, notes.value);
+}
+
+function sortRecords() {
+  records.sort((a, b) => (
+    String(b.date).localeCompare(String(a.date)) ||
+    String(b.createdAt).localeCompare(String(a.createdAt))
+  ));
+}
+
+function setEditingEnabled(enabled) {
+  Array.from(form.elements).forEach((element) => {
+    if (element !== cancelEditButton) element.disabled = !enabled;
+  });
 }
 
 function calculateChange(buy, sell) {
@@ -263,11 +400,17 @@ function formatPercent(value) {
 }
 
 function formatNumber(value, digits) {
-  return Number(value).toLocaleString("zh-CN", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+  return Number(value).toLocaleString("zh-CN", {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  });
 }
 
 function formatMoney(value) {
-  return Number(value).toLocaleString("zh-CN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return Number(value).toLocaleString("zh-CN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 }
 
 function csvCell(value) {
@@ -290,7 +433,9 @@ function localDate() {
 }
 
 function makeId() {
-  return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return crypto.randomUUID
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 function loadJson(key, fallback) {
@@ -303,6 +448,10 @@ function loadJson(key, fallback) {
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;",
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;",
   }[char]));
 }
