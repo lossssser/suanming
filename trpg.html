@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title>AI 在线跑团</title>
-    <link rel="stylesheet" href="trpg.css?v=20260626">
+    <title>死者的顿足舞 · AI 在线跑团</title>
+    <link rel="stylesheet" href="trpg.css?v=20260626-stomp">
   </head>
   <body>
     <main class="trpg-shell">
@@ -13,8 +13,8 @@
         <a href="index.html">返回主页</a>
         <div>
           <p>AI GAME MASTER</p>
-          <h1>AI 在线跑团</h1>
-          <span>DeepSeek 担任主持人。当前使用通用冒险框架，正式剧本将在后续接入。</span>
+          <h1>死者的顿足舞</h1>
+          <span>DeepSeek 担任守秘人。1925 年，纽约哈莱姆的爵士乐声唤醒了不该醒来的东西。</span>
         </div>
       </header>
 
@@ -32,6 +32,11 @@
           </div>
         </div>
         <p id="lobbyStatus" class="status-text" role="status"></p>
+      </section>
+
+      <section class="content-warning">
+        <strong>内容提示</strong>
+        <p>本模组包含历史种族歧视、枪击、死亡、复生尸体及理智损失。游戏将弱化猎奇描写，但保留悬疑和历史背景。基于用户提供的模组资料制作，仅供个人学习交流。</p>
       </section>
 
       <section id="gameView" class="game-view" hidden>
@@ -106,15 +111,18 @@
             </div>
 
             <section class="side-tab-content" data-side-content="card">
-              <label><span>角色名</span><input id="characterName" maxlength="30" placeholder="角色姓名"></label>
+              <section id="presetPicker" class="preset-picker">
+                <header><strong>选择预设调查员</strong><span>选择后锁定，本局不能重复</span></header>
+                <div id="presetList" class="preset-list"></div>
+              </section>
+              <label><span>角色名</span><input id="characterName" maxlength="30" placeholder="角色姓名" readonly></label>
               <div class="stat-grid">
-                <label><span>生命</span><input id="characterHp" type="number" min="0" max="999" value="10"></label>
-                <label><span>理智</span><input id="characterSan" type="number" min="0" max="999" value="10"></label>
+                <label><span>生命</span><input id="characterHp" type="number" readonly></label>
+                <label><span>理智</span><input id="characterSan" type="number" readonly></label>
               </div>
-              <label><span>角色背景</span><textarea id="characterBackground" maxlength="1000" rows="5" placeholder="身份、性格、经历与目标"></textarea></label>
-              <label><span>技能</span><textarea id="characterSkills" maxlength="1000" rows="5" placeholder="每行一项，例如：侦查 60"></textarea></label>
-              <label><span>背包与道具</span><textarea id="characterInventory" maxlength="1000" rows="4"></textarea></label>
-              <button id="saveCharacterButton" class="primary-button" type="button">保存人物卡</button>
+              <label><span>角色背景</span><textarea id="characterBackground" rows="5" readonly></textarea></label>
+              <label><span>属性与技能</span><textarea id="characterSkills" rows="8" readonly></textarea></label>
+              <label><span>背包与道具</span><textarea id="characterInventory" rows="4" readonly></textarea></label>
               <p id="characterStatus" class="status-text"></p>
             </section>
 
@@ -130,6 +138,6 @@
         </div>
       </section>
     </main>
-    <script src="trpg.js?v=20260626b"></script>
+    <script src="trpg.js?v=20260626-stomp"></script>
   </body>
 </html>

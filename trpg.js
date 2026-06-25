@@ -40,8 +40,8 @@ const characterSan = document.querySelector("#characterSan");
 const characterBackground = document.querySelector("#characterBackground");
 const characterSkills = document.querySelector("#characterSkills");
 const characterInventory = document.querySelector("#characterInventory");
-const saveCharacterButton = document.querySelector("#saveCharacterButton");
 const characterStatus = document.querySelector("#characterStatus");
+const presetList = document.querySelector("#presetList");
 const cluesList = document.querySelector("#cluesList");
 const playerNotes = document.querySelector("#playerNotes");
 const notesStatus = document.querySelector("#notesStatus");
@@ -68,7 +68,7 @@ leaveRoomButton.addEventListener("click", leaveRoom);
 actionForm.addEventListener("submit", sendAction);
 quickRollButton.addEventListener("click", () => rollDice(quickDie.value));
 rollCheckButton.addEventListener("click", rollPendingCheck);
-saveCharacterButton.addEventListener("click", saveCharacter);
+presetList.addEventListener("click", selectPreset);
 playerNotes.addEventListener("input", scheduleNotesSave);
 document.querySelector(".mobile-tabs").addEventListener("click", switchMobilePanel);
 document.querySelector(".panel-tabs").addEventListener("click", switchSideTab);
@@ -208,22 +208,15 @@ function resetRoom() {
   if (confirm("确定重开房间吗？聊天、人物卡和存档都会清空。")) runAction("reset");
 }
 
-async function saveCharacter() {
-  characterStatus.textContent = "正在保存...";
+async function selectPreset(event) {
+  const button = event.target.closest("[data-preset-id]");
+  if (!button || button.disabled || room?.status !== "lobby") return;
+  characterStatus.textContent = "正在锁定角色...";
   try {
-    await runAction("saveCharacter", {
-      card: {
-        name: characterName.value.trim(),
-        hp: Number(characterHp.value) || 0,
-        san: Number(characterSan.value) || 0,
-        background: characterBackground.value.trim(),
-        skills: characterSkills.value.trim(),
-        inventory: characterInventory.value.trim(),
-      },
-    });
-    characterStatus.textContent = "人物卡已保存到云端。";
+    await runAction("selectPreset", { presetId: button.dataset.presetId });
+    characterStatus.textContent = "角色已选择。开始前仍可改选未被占用的角色。";
   } catch {
-    characterStatus.textContent = "人物卡保存失败。";
+    characterStatus.textContent = "角色选择失败。";
   }
 }
 
@@ -271,6 +264,7 @@ function renderRoom() {
   }
 
   renderPendingCheck();
+  renderPresets();
   renderCharacter();
   renderClues();
 }
@@ -289,8 +283,24 @@ function renderPendingCheck() {
   const canRoll = check && check.playerId === playerId;
   pendingCheckPanel.hidden = !canRoll;
   if (!canRoll) return;
-  checkTitle.textContent = `${check.skill || "行动"}检定 · ${check.expression}`;
-  checkDescription.textContent = `${check.reason || "请投骰决定行动结果。"} 难度：${check.difficulty || "普通"}`;
+  checkTitle.textContent = `${check.skill || "行动"}检定 · D100 / ${check.target ?? "?"}`;
+  const diceText = check.bonusDice > 0
+    ? `奖励骰 ${check.bonusDice}`
+    : check.bonusDice < 0 ? `惩罚骰 ${Math.abs(check.bonusDice)}` : "无奖惩骰";
+  checkDescription.textContent = `${check.reason || "请投骰决定行动结果。"} 难度：${check.difficulty || "普通"}，${diceText}`;
+}
+
+function renderPresets() {
+  presetList.innerHTML = (room.presets || []).map((preset) => {
+    const selected = room.myPresetId === preset.id;
+    const disabled = preset.takenBy && !selected;
+    return `<button class="preset-card${selected ? " is-selected" : ""}" type="button"
+      data-preset-id="${escapeHtml(preset.id)}" ${disabled || room.status !== "lobby" ? "disabled" : ""}>
+      <strong>${escapeHtml(preset.name)}</strong>
+      <span>${escapeHtml(preset.age)} 岁 · ${escapeHtml(preset.occupation)}</span>
+      <span>${disabled ? `已由 ${escapeHtml(preset.takenBy)} 选择` : escapeHtml(preset.specialty)}</span>
+    </button>`;
+  }).join("");
 }
 
 function renderCharacter() {
@@ -303,10 +313,18 @@ function renderCharacter() {
   characterHp.value = card.hp ?? 10;
   characterSan.value = card.san ?? 10;
   characterBackground.value = card.background || "";
-  characterSkills.value = card.skills || "";
+  characterSkills.value = formatCharacterStats(card);
   characterInventory.value = card.inventory || "";
   playerNotes.value = room.myNotes || "";
   notesCounter.textContent = `${playerNotes.value.length} / 10000`;
+}
+
+function formatCharacterStats(card) {
+  const attributes = card.attributes || {};
+  const skills = card.skills || {};
+  const attributeText = Object.entries(attributes).map(([name, value]) => `${name} ${value}`).join(" · ");
+  const skillText = Object.entries(skills).map(([name, value]) => `${name} ${value}`).join("\n");
+  return [attributeText, skillText].filter(Boolean).join("\n\n");
 }
 
 function renderClues() {

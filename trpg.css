@@ -47,6 +47,9 @@ input:focus, textarea:focus, select:focus { border-color: var(--accent); outline
 .lobby-actions { display: flex; gap: 8px; }
 .status-text { min-height: 20px; margin: 0; color: var(--muted); font-size: 13px; }
 .lobby-panel > .status-text { padding: 0 18px 16px; }
+.content-warning { margin-top: 12px; padding: 13px 16px; border: 1px solid rgba(154,103,0,.32); border-radius: 8px; background: #fff8e6; }
+.content-warning strong { color: var(--gold); }
+.content-warning p { margin: 5px 0 0; color: var(--muted); line-height: 1.6; }
 
 .game-view { margin-top: 16px; }
 .game-layout { display: grid; grid-template-columns: 250px minmax(420px, 1fr) 340px; gap: 14px; align-items: stretch; }
@@ -88,6 +91,15 @@ input:focus, textarea:focus, select:focus { border-color: var(--accent); outline
 .panel-tabs button, .mobile-tabs button { flex: 1; border: 0; border-radius: 0; background: transparent; }
 .panel-tabs button.is-active, .mobile-tabs button.is-active { color: var(--accent); box-shadow: inset 0 -3px var(--accent); }
 .side-tab-content { padding: 14px; overflow-y: auto; display: grid; align-content: start; gap: 12px; }
+.preset-picker { display: grid; gap: 10px; }
+.preset-picker > header { display: flex; justify-content: space-between; gap: 8px; }
+.preset-picker > header span { color: var(--muted); font-size: 12px; }
+.preset-list { display: grid; gap: 8px; }
+.preset-card { width: 100%; min-height: 76px; padding: 10px; text-align: left; display: grid; gap: 4px; }
+.preset-card strong { color: var(--accent); }
+.preset-card span { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.preset-card.is-selected { border-color: var(--accent); background: #f2fbfa; box-shadow: inset 3px 0 var(--accent); }
+.preset-card:disabled { color: var(--muted); background: #f6f8fa; }
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .clues-list { display: grid; gap: 10px; }
 .clue-card { padding: 12px; border: 1px solid var(--line); border-radius: 7px; display: grid; gap: 6px; }

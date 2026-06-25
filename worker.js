@@ -371,11 +371,135 @@ function validIsoDate(value) {
   return Number.isNaN(Date.parse(text)) ? "" : new Date(text).toISOString();
 }
 
+const TRPG_PRESETS = [
+  {
+    id: "jessie",
+    name: "杰西·威廉姆斯",
+    age: 20,
+    occupation: "历史系学生",
+    specialty: "历史研究、图书馆调查与人际交往",
+    hp: 11,
+    san: 65,
+    attributes: { 力量: 45, 体质: 55, 体型: 55, 敏捷: 65, 外貌: 70, 智力: 75, 意志: 65, 教育: 65 },
+    skills: { 图书馆使用: 70, 历史: 75, 侦查: 55, 说服: 60, 心理学: 50, 聆听: 45, 闪避: 32, 斗殴: 30 },
+    background: "密斯卡托尼克大学历史系学生，未解之谜探索协会中最擅长整理旧档案的人。对被主流记录忽略的社区历史格外敏感。",
+    inventory: "笔记本、钢笔、袖珍相机、大学图书馆借阅证",
+  },
+  {
+    id: "nevada",
+    name: "内华达·琼斯",
+    age: 35,
+    occupation: "考古学教授",
+    specialty: "神秘学、考古、野外行动与古物判断",
+    hp: 13,
+    san: 60,
+    attributes: { 力量: 60, 体质: 65, 体型: 60, 敏捷: 55, 外貌: 50, 智力: 75, 意志: 60, 教育: 80 },
+    skills: { 考古学: 75, 神秘学: 60, 侦查: 60, 图书馆使用: 55, 攀爬: 50, 追踪: 45, 闪避: 27, 斗殴: 45 },
+    background: "考古学教授，习惯亲自验证传闻。把异常器物视作需要证据而非迷信的问题，但曾见过足以动摇这种信念的遗物。",
+    inventory: "手电筒、放大镜、皮革手套、便携工具包",
+  },
+  {
+    id: "lois",
+    name: "洛伊丝·卢索",
+    age: 19,
+    occupation: "工程系学生",
+    specialty: "机械维修、电气维修与快速分析",
+    hp: 10,
+    san: 70,
+    attributes: { 力量: 40, 体质: 50, 体型: 50, 敏捷: 70, 外貌: 60, 智力: 80, 意志: 70, 教育: 60 },
+    skills: { 机械维修: 75, 电气维修: 70, 侦查: 55, 科学工程: 65, 锁匠: 45, 急救: 40, 闪避: 35, 斗殴: 25 },
+    background: "年轻的工程系学生，擅长拆解机械结构。对乐器的构造和异常声学现象有天然兴趣，不轻易接受所谓魔法解释。",
+    inventory: "多用工具、线圈、绝缘胶带、小型测量仪",
+  },
+  {
+    id: "wentworth",
+    name: "温特沃夫·埃夫伯里",
+    age: 58,
+    occupation: "语言学教授",
+    specialty: "语言、密码、文献与学术知识",
+    hp: 10,
+    san: 55,
+    attributes: { 力量: 35, 体质: 45, 体型: 55, 敏捷: 45, 外貌: 55, 智力: 85, 意志: 55, 教育: 90 },
+    skills: { 语言学: 80, 图书馆使用: 80, 神秘学: 55, 历史: 65, 心理学: 55, 说服: 50, 闪避: 22, 斗殴: 20 },
+    background: "资深语言学教授，能辨识多种古代文字。阅历让他保持克制，但他也知道有些符号并不属于任何人类语言。",
+    inventory: "老花镜、词源笔记、手杖、装有参考书的皮包",
+  },
+  {
+    id: "keiko",
+    name: "惠子·凯恩",
+    age: 21,
+    occupation: "理科生",
+    specialty: "医学常识、化学分析与细致观察",
+    hp: 11,
+    san: 65,
+    attributes: { 力量: 45, 体质: 55, 体型: 50, 敏捷: 70, 外貌: 65, 智力: 80, 意志: 65, 教育: 65 },
+    skills: { 医学: 60, 急救: 70, 科学化学: 65, 侦查: 65, 聆听: 55, 心理学: 45, 闪避: 35, 斗殴: 25 },
+    background: "理科生，正在接受医学与化学训练。对尸体反应和药物影响有专业认识，习惯用观察结果挑战不合理的结论。",
+    inventory: "急救包、采样瓶、口罩、袖珍手电",
+  },
+];
+
 const TRPG_DEFAULT_SCENARIO = {
-  title: "雾港来信",
-  premise: "一座被浓雾包围的临海小镇寄出一封没有署名的求救信。玩家们因各自原因来到旧灯塔旅店，发现镇民正在刻意遗忘同一件事。",
-  tone: "现代悬疑、调查、轻度超自然。保持紧张感，但不使用猎奇血腥描写。",
-  opening: "傍晚六点，最后一班渡船靠上雾港。海风里有铁锈和潮木的气味。你们手中的求救信同时浮出一行此前没有出现的字：不要相信敲钟的人。",
+  title: "死者的顿足舞",
+  system: "COC 7版简化规则",
+  players: "2至5名",
+  setting: "1925年，纽约哈莱姆区",
+  tone: "爵士时代的都市调查与超自然恐怖。涉及历史种族歧视、枪击、死亡和复生尸体；避免猎奇渲染。",
+  premise: "调查员在斯默的天堂夜店目睹一名男子遭枪击后随爵士乐复生。线索逐渐指向落魄小号手勒罗伊·特纳与一支来历异常的四键小号。",
+  opening: "调查员们因一次约会或调查相聚在哈莱姆区斯默的天堂。俱乐部灯火辉煌，查理·约翰逊的天堂乐团正在演奏，角落桌边的陌生会计皮特·马努斯科似乎在等待某人。",
+  chapters: [
+    {
+      id: "club",
+      title: "斯默的天堂",
+      purpose: "营造爵士夜店氛围；让玩家认识马努斯科、特纳和乐团；枪手乔伊·拉松杀死马努斯科；音乐令死者短暂复生。",
+      criticalClues: ["枪手乘灰色帕卡德逃走", "复生与乐曲及特纳的小号存在关联", "查理·约翰逊将参加法耶特的葬礼"],
+    },
+    {
+      id: "investigation",
+      title: "次日调查",
+      purpose: "允许玩家调查警方、报纸、查理·约翰逊、特纳和街坊，不应因检定失败失去关键线索。",
+      criticalClues: ["验尸确认马努斯科第一枪就应死亡", "拉松是波纳托帮派打手", "特纳拥有一支异常四键小号", "法耶特葬礼是下一关键事件"],
+    },
+    {
+      id: "funeral",
+      title: "法耶特的葬礼",
+      purpose: "葬礼乐声令尸体复生；进行理智检定；明确特纳的演奏能唤醒死者。",
+      criticalClues: ["音乐停止后复生者倒下", "特纳逐渐意识到小号的力量", "特纳希望借此让亡故爱人归来"],
+    },
+    {
+      id: "trumpet",
+      title: "小号的秘密",
+      purpose: "调查四键小号、特纳经历和所谓赠予者；确认真正的路易斯·阿姆斯特朗从未赠送小号。",
+      criticalClues: ["小号有四个键和无法辨识的环形符号", "阿姆斯特朗否认见过特纳", "赠予者实际是奈亚拉托提普的伪装"],
+    },
+    {
+      id: "kidnapping",
+      title: "绑架与追踪",
+      purpose: "拉松与帮派绑架特纳；玩家追踪灰色帕卡德至西135街旧车库。",
+      criticalClues: ["绑匪沿西125街前往河滨道", "灰色帕卡德停在旧车库外"],
+    },
+    {
+      id: "climax",
+      title: "车库与墓园",
+      purpose: "波纳托逼迫特纳展示力量，暴力与复生引发失控；特纳逃向墓园并持续演奏。玩家必须阻止号声。",
+      endings: ["夺走或破坏小号并救下特纳", "杀死或制服特纳使号声停止", "特纳死亡后再次复生，灾难扩大", "玩家未能阻止，墓园死者踏上复仇之路"],
+    },
+  ],
+  keeperFacts: [
+    "小号由奈亚拉托提普伪装成路易斯·阿姆斯特朗赠给特纳。",
+    "天赋演奏者吹响小号时，音乐会唤起听见乐声的死者并驱使其复仇。",
+    "特纳起初不知道小号的力量，后来因想复活爱人而逐渐疯狂。",
+    "关键线索不能因一次失败检定永久丢失；失败应带来时间、风险或关系上的代价。",
+    "绑架只能在葬礼和主要调查信息出现后触发。",
+    "高潮前不要直接揭露奈亚拉托提普，只能给出无法解释的符号与身份矛盾。",
+  ],
+  importantNpcs: [
+    "勒罗伊·特纳：28岁，落魄而嗜酒的小号手，艺术/小号92，HP15，SAN39。",
+    "乔伊·拉松：24岁，波纳托手下打手，危险且狡诈，是枪击案凶手。",
+    "查理·约翰逊：39岁，友善的乐团领队，了解特纳，是重要线索来源。",
+    "罗杰·丹尼尔：31岁，联邦探员，循规蹈矩，可成为调查员盟友。",
+    "阿尔奇·波纳托：46岁，残忍的黑帮头目，想利用小号复生死者的能力。",
+  ],
 };
 
 async function handleTrpg(request, env, url) {
@@ -421,16 +545,26 @@ async function handleTrpg(request, env, url) {
     upsertTrpgPlayer(state, playerId, name);
   } else {
     requireTrpgPlayer(state, playerId);
-    if (action === "start") {
+    if (action === "selectPreset") {
+      if (state.status !== "lobby") return json({ error: "游戏开始后不能更换调查员。" }, 400);
+      selectTrpgPreset(state, playerId, cleanId(body.presetId));
+    } else if (action === "start") {
       requireTrpgOwner(state, playerId);
       if (state.status === "playing") return json({ error: "冒险已经开始。" }, 400);
+      if (state.players.length < 2 || state.players.length > 5) {
+        return json({ error: "《死者的顿足舞》需要 2 至 5 名玩家。" }, 400);
+      }
+      if (state.players.some((player) => !state.characters[player.id]?.presetId)) {
+        return json({ error: "所有玩家都选择预设调查员后才能开始。" }, 400);
+      }
       state.status = "playing";
-      state.sceneTitle = "雾港码头";
-      addTrpgMessage(state, "system", "系统", "冒险开始，DeepSeek 已接管主持。");
+      state.chapterId = "club";
+      state.sceneTitle = "斯默的天堂";
+      addTrpgMessage(state, "system", "系统", "《死者的顿足舞》开始，DeepSeek 已接管守秘人。");
       await runTrpgAiTurn(state, env, {
         trigger: "start",
         actorId: playerId,
-        playerText: "请主持人宣读开场，并邀请每位玩家介绍角色。",
+        playerText: "请依据剧本开场描述1925年哈莱姆的斯默的天堂，并邀请每位玩家介绍调查员。不要提前发生枪击，先给玩家交谈和观察的机会。",
       });
     } else if (action === "send") {
       requireTrpgPlaying(state);
@@ -441,7 +575,6 @@ async function handleTrpg(request, env, url) {
       await runTrpgAiTurn(state, env, { trigger: "action", actorId: playerId, playerText: text });
     } else if (action === "roll") {
       requireTrpgPlaying(state);
-      const expression = cleanDiceExpression(body.expression);
       const checkId = cleanId(body.checkId);
       const pending = state.pendingCheck;
       if (pending && (!checkId || checkId !== pending.id)) {
@@ -451,26 +584,41 @@ async function handleTrpg(request, env, url) {
         if (!pending || pending.id !== checkId) return json({ error: "检定已经失效。" }, 400);
         if (pending.playerId !== playerId) return json({ error: "这不是你的检定。" }, 403);
       }
-      const roll = rollDiceExpression(checkId && pending ? pending.expression : expression);
+      const roll = pending
+        ? rollCocCheck(pending.target, pending.difficulty, pending.bonusDice)
+        : rollDiceExpression(cleanDiceExpression(body.expression));
       const label = pending ? `${pending.skill}检定` : "自由投骰";
+      let rollText = pending
+        ? `${trpgPlayerName(state, playerId)} 进行${label}：D100 = ${roll.total} / ${pending.target}，${roll.outcomeLabel}`
+        : `${trpgPlayerName(state, playerId)} 进行${label}：${roll.expression} = ${roll.detail}，总计 ${roll.total}`;
+
+      let sanityLoss = 0;
+      if (pending?.sanLoss) {
+        const lossExpression = roll.success ? pending.sanLoss.success : pending.sanLoss.failure;
+        sanityLoss = rollLossExpression(lossExpression);
+        const card = state.characters[playerId];
+        card.san = Math.max(0, card.san - sanityLoss);
+        rollText += `；理智损失 ${sanityLoss}，当前 SAN ${card.san}`;
+      }
       addTrpgMessage(
         state,
         "roll",
         "骰子",
-        `${trpgPlayerName(state, playerId)} 进行${label}：${roll.expression} = ${roll.detail}，总计 ${roll.total}`,
+        rollText,
         { playerId, roll },
       );
       state.pendingCheck = null;
       await runTrpgAiTurn(state, env, {
         trigger: "roll",
         actorId: playerId,
-        playerText: `${label}结果：${roll.total}（${roll.expression}；${roll.detail}）`,
+        playerText: pending
+          ? `${label}结果：${roll.total}/${pending.target}，${roll.outcomeLabel}，理智损失${sanityLoss}`
+          : `${label}结果：${roll.total}（${roll.expression}；${roll.detail}）`,
         roll,
         check: pending || null,
       });
     } else if (action === "saveCharacter") {
-      state.characters[playerId] = normalizeTrpgCard(body.card);
-      addTrpgMessage(state, "system", "系统", `${trpgPlayerName(state, playerId)} 更新了人物卡。`);
+      return json({ error: "本模组使用锁定的预设调查员。" }, 400);
     } else if (action === "saveNotes") {
       state.notes[playerId] = String(body.notes || "").slice(0, 10000);
     } else if (action === "pause") {
@@ -512,10 +660,9 @@ function createTrpgRoom(ownerId, ownerName) {
     ownerId,
     status: "lobby",
     sceneTitle: "等待冒险开始",
+    chapterId: "lobby",
     players: [{ id: ownerId, name: ownerName, joinedAt: now }],
-    characters: {
-      [ownerId]: normalizeTrpgCard({ name: "", hp: 10, san: 10 }),
-    },
+    characters: {},
     notes: { [ownerId]: "" },
     clues: { [ownerId]: [] },
     messages: [
@@ -525,10 +672,7 @@ function createTrpgRoom(ownerId, ownerName) {
     memory: {
       summary: "冒险尚未开始。",
       facts: [],
-      hidden: [
-        "钟楼看守人并非真正敌人，他在阻止雾中存在通过钟声定位镇民。",
-        "求救信由旅店老板的女儿寄出，但她的名字正从所有记录中消失。",
-      ],
+      hidden: TRPG_DEFAULT_SCENARIO.keeperFacts.slice(),
     },
     aiThinking: false,
     scenario: TRPG_DEFAULT_SCENARIO,
@@ -540,9 +684,8 @@ function createTrpgRoom(ownerId, ownerName) {
 function resetTrpgRoom(state) {
   state.status = "lobby";
   state.sceneTitle = "等待冒险开始";
-  state.characters = Object.fromEntries(
-    state.players.map((player) => [player.id, normalizeTrpgCard({ name: "", hp: 10, san: 10 })]),
-  );
+  state.chapterId = "lobby";
+  state.characters = {};
   state.notes = Object.fromEntries(state.players.map((player) => [player.id, ""]));
   state.clues = Object.fromEntries(state.players.map((player) => [player.id, []]));
   state.messages = [makeTrpgMessage("system", "系统", "房间已重开，等待创建者开始冒险。")];
@@ -550,7 +693,7 @@ function resetTrpgRoom(state) {
   state.memory = {
     summary: "冒险尚未开始。",
     facts: [],
-    hidden: createTrpgRoom(state.ownerId, "临时").memory.hidden,
+    hidden: TRPG_DEFAULT_SCENARIO.keeperFacts.slice(),
   };
   state.aiThinking = false;
 }
@@ -561,12 +704,27 @@ function upsertTrpgPlayer(state, playerId, name) {
     player.name = name;
     return;
   }
-  if (state.players.length >= 8) throw new Error("当前版本最多支持 8 名玩家。");
+  if (state.players.length >= 5) throw new Error("《死者的顿足舞》最多支持 5 名玩家。");
   state.players.push({ id: playerId, name, joinedAt: new Date().toISOString() });
-  state.characters[playerId] = normalizeTrpgCard({ name: "", hp: 10, san: 10 });
   state.notes[playerId] = "";
   state.clues[playerId] = [];
   addTrpgMessage(state, "system", "系统", `${name} 加入了房间。`);
+}
+
+function selectTrpgPreset(state, playerId, presetId) {
+  const preset = TRPG_PRESETS.find((item) => item.id === presetId);
+  if (!preset) throw new Error("预设调查员不存在。");
+  const occupied = Object.entries(state.characters).find(
+    ([otherId, card]) => otherId !== playerId && card?.presetId === presetId,
+  );
+  if (occupied) throw new Error("这名调查员已经被其他玩家选择。");
+  state.characters[playerId] = normalizeTrpgCard({ ...preset, presetId });
+  addTrpgMessage(
+    state,
+    "system",
+    "系统",
+    `${trpgPlayerName(state, playerId)} 选择了调查员 ${preset.name}。`,
+  );
 }
 
 async function runTrpgAiTurn(state, env, context) {
@@ -608,9 +766,13 @@ function buildTrpgMessages(state, context) {
         "你是多人在线文字跑团的唯一主持人和所有 NPC。请使用简体中文。",
         "你必须公平、连贯、给玩家选择空间，不替玩家决定行动，不提前泄露隐藏秘密。",
         "只有不确定且有代价的行动才要求检定。普通观察、交谈和合理行动直接推进。",
-        "当前没有正式剧本，请严格围绕提供的临时设定主持，不要跳出世界解释系统。",
+        "必须严格按照《死者的顿足舞》的章节顺序、关键线索和守秘人事实主持，不要自行替换核心真相。",
+        "不要逐字复述剧本原文，要用自然的主持语言改写场景。",
+        "关键线索不能因检定失败而永久丢失；失败应产生时间、危险、关系或理智方面的代价。",
+        "只有当前章节目标完成后才能进入下一章节；绑架必须发生在葬礼和主要调查之后。",
+        "理智检定使用技能名“理智”，并提供 sanLoss，例如成功0、失败1D6。",
         "你的回复必须是单个 JSON 对象，不要使用 Markdown 代码块。",
-        '结构：{"narration":"给所有玩家看的主持内容","sceneTitle":"短场景名","check":null或{"skill":"技能名","expression":"1D100","difficulty":"普通","reason":"检定原因"},"clues":[{"playerId":"玩家ID或all","title":"线索标题","content":"线索内容"}],"privateMessages":[{"playerId":"玩家ID","content":"只有该玩家看见的信息"}],"statusUpdates":[{"playerId":"玩家ID","hp":10,"san":9,"reason":"变化原因"}],"facts":["新增永久事实"],"summary":"截至当前的简短剧情摘要","end":false}',
+        '结构：{"narration":"给所有玩家看的主持内容","sceneTitle":"短场景名","chapterId":"club/investigation/funeral/trumpet/kidnapping/climax","check":null或{"skill":"人物卡技能或属性名","difficulty":"普通/困难/极难","bonusDice":0,"reason":"检定原因","sanLoss":null或{"success":"0","failure":"1D6"}},"clues":[{"playerId":"玩家ID或all","title":"线索标题","content":"线索内容"}],"privateMessages":[{"playerId":"玩家ID","content":"只有该玩家看见的信息"}],"statusUpdates":[{"playerId":"玩家ID","hp":10,"san":9,"reason":"变化原因"}],"facts":["新增永久事实"],"summary":"截至当前的简短剧情摘要","end":false}',
         "check 一次只能给当前行动玩家；若无需检定必须为 null。",
         "骰点发生后必须根据结果和难度清楚描述成功、失败或代价，并继续剧情。",
       ].join("\n"),
@@ -619,6 +781,7 @@ function buildTrpgMessages(state, context) {
       role: "user",
       content: JSON.stringify({
         scenario: state.scenario,
+        currentChapter: state.chapterId,
         sceneTitle: state.sceneTitle,
         status: state.status,
         players: playerCards,
@@ -652,16 +815,25 @@ function applyTrpgAiResult(state, result, actorId) {
   if (narration) addTrpgMessage(state, "gm", "AI 主持", narration);
   const sceneTitle = cleanText(result.sceneTitle || "", 50);
   if (sceneTitle) state.sceneTitle = sceneTitle;
+  const chapterId = cleanId(result.chapterId);
+  if (state.scenario.chapters.some((chapter) => chapter.id === chapterId)) {
+    state.chapterId = chapterId;
+  }
 
   state.pendingCheck = null;
   if (result.check && typeof result.check === "object") {
+    const skill = cleanText(result.check.skill || "幸运", 30);
+    const target = getTrpgCheckTarget(state.characters[actorId], skill);
     state.pendingCheck = {
       id: crypto.randomUUID(),
       playerId: actorId,
-      skill: cleanText(result.check.skill || "行动", 30),
-      expression: cleanDiceExpression(result.check.expression || "1D100"),
-      difficulty: cleanText(result.check.difficulty || "普通", 20),
+      skill,
+      target,
+      expression: "1D100",
+      difficulty: normalizeCocDifficulty(result.check.difficulty),
+      bonusDice: clampNumber(result.check.bonusDice, -2, 2, 0),
       reason: cleanText(result.check.reason || "行动结果存在不确定性。", 160),
+      sanLoss: normalizeSanLoss(result.check.sanLoss),
       createdAt: new Date().toISOString(),
     };
   }
@@ -733,6 +905,7 @@ function sanitizeTrpgState(state, playerId) {
     code: state.code,
     status: state.status,
     sceneTitle: state.sceneTitle,
+    chapterId: state.chapterId || "lobby",
     isOwner: state.ownerId === playerId,
     aiThinking: Boolean(state.aiThinking),
     players: state.players.map((player) => {
@@ -749,6 +922,18 @@ function sanitizeTrpgState(state, playerId) {
     }),
     messages,
     pendingCheck: state.pendingCheck?.playerId === playerId ? state.pendingCheck : null,
+    myPresetId: state.characters[playerId]?.presetId || "",
+    presets: TRPG_PRESETS.map((preset) => {
+      const owner = state.players.find((player) => state.characters[player.id]?.presetId === preset.id);
+      return {
+        id: preset.id,
+        name: preset.name,
+        age: preset.age,
+        occupation: preset.occupation,
+        specialty: preset.specialty,
+        takenBy: owner?.name || "",
+      };
+    }),
     myCharacter: state.characters[playerId] || normalizeTrpgCard({}),
     myNotes: state.notes[playerId] || "",
     myClues: state.clues[playerId] || [],
@@ -758,13 +943,106 @@ function sanitizeTrpgState(state, playerId) {
 
 function normalizeTrpgCard(card = {}) {
   return {
+    presetId: cleanId(card.presetId),
     name: cleanText(card.name || "", 30),
+    age: clampNumber(card.age, 0, 120, 0),
+    occupation: cleanText(card.occupation || "", 50),
     hp: clampNumber(card.hp, 0, 999, 10),
     san: clampNumber(card.san, 0, 999, 10),
+    attributes: normalizeTrpgStats(card.attributes),
+    skills: normalizeTrpgStats(card.skills),
     background: cleanMultiline(card.background || "", 1000),
-    skills: cleanMultiline(card.skills || "", 1000),
     inventory: cleanMultiline(card.inventory || "", 1000),
   };
+}
+
+function normalizeTrpgStats(values) {
+  if (!values || typeof values !== "object" || Array.isArray(values)) return {};
+  return Object.fromEntries(
+    Object.entries(values)
+      .slice(0, 40)
+      .map(([name, value]) => [cleanText(name, 20), clampNumber(value, 0, 100, 0)])
+      .filter(([name]) => name),
+  );
+}
+
+function getTrpgCheckTarget(card, skill) {
+  if (!card) return 50;
+  if (skill === "理智") return clampNumber(card.san, 1, 99, 50);
+  if (skill === "幸运") return clampNumber(card.attributes?.意志, 1, 99, 50);
+  const direct = card.skills?.[skill] ?? card.attributes?.[skill];
+  if (direct != null) return clampNumber(direct, 1, 99, 50);
+  const match = [...Object.entries(card.skills || {}), ...Object.entries(card.attributes || {})]
+    .find(([name]) => name.includes(skill) || skill.includes(name));
+  return match ? clampNumber(match[1], 1, 99, 50) : 50;
+}
+
+function normalizeCocDifficulty(value) {
+  return ["普通", "困难", "极难"].includes(value) ? value : "普通";
+}
+
+function normalizeSanLoss(value) {
+  if (!value || typeof value !== "object") return null;
+  return {
+    success: normalizeLossExpression(value.success || "0"),
+    failure: normalizeLossExpression(value.failure || "0"),
+  };
+}
+
+function normalizeLossExpression(value) {
+  const expression = String(value || "0").toUpperCase().replace(/\s+/g, "");
+  return /^(?:0|\d{1,2}|[1-9]\d?D(?:3|4|6|8|10|12|20|100)(?:[+-]\d{1,2})?)$/.test(expression)
+    ? expression
+    : "0";
+}
+
+function rollLossExpression(expression) {
+  const normalized = normalizeLossExpression(expression);
+  if (/^\d+$/.test(normalized)) return Number(normalized);
+  return Math.max(0, rollDiceExpression(normalized).total);
+}
+
+function rollCocCheck(target, difficulty, bonusDice = 0) {
+  const unit = randomInt(0, 9);
+  const tensCount = 1 + Math.abs(bonusDice);
+  const candidates = [];
+  for (let index = 0; index < tensCount; index += 1) {
+    const tens = randomInt(0, 9);
+    candidates.push(tens === 0 && unit === 0 ? 100 : tens * 10 + unit);
+  }
+  const total = bonusDice > 0
+    ? Math.min(...candidates)
+    : bonusDice < 0 ? Math.max(...candidates) : candidates[0];
+  const threshold = difficulty === "极难"
+    ? Math.floor(target / 5)
+    : difficulty === "困难" ? Math.floor(target / 2) : target;
+  const critical = total === 1;
+  const fumble = total === 100 || (target < 50 && total >= 96);
+  const success = !fumble && (critical || total <= threshold);
+  const outcomeLabel = critical
+    ? "大成功"
+    : fumble ? "大失败"
+      : success
+        ? (total <= Math.floor(target / 5) ? "极难成功" : total <= Math.floor(target / 2) ? "困难成功" : "普通成功")
+        : "失败";
+  return {
+    expression: "1D100",
+    total,
+    candidates,
+    target,
+    difficulty,
+    bonusDice,
+    success,
+    critical,
+    fumble,
+    outcomeLabel,
+    detail: candidates.join(" / "),
+  };
+}
+
+function randomInt(min, max) {
+  const range = max - min + 1;
+  return min + crypto.getRandomValues(new Uint32Array(1))[0] % range;
 }
 
 function requireTrpgPlayer(state, playerId) {
@@ -802,7 +1080,7 @@ function makeTrpgMessage(type, author, content, options = {}) {
 function cleanDiceExpression(value) {
   let expression = String(value || "1D100").toUpperCase().replace(/\s+/g, "");
   if (/^D\d/.test(expression)) expression = `1${expression}`;
-  if (!/^[1-9]\d?D(?:4|6|8|10|12|20|100)(?:[+-]\d{1,3})?$/.test(expression)) {
+  if (!/^[1-9]\d?D(?:3|4|6|8|10|12|20|100)(?:[+-]\d{1,3})?$/.test(expression)) {
     throw new Error("骰子表达式无效，示例：1D100、2D6+3。");
   }
   const count = Number(expression.match(/^(\d+)D/)[1]);
