@@ -439,10 +439,58 @@ const TRPG_PRESETS = [
   },
 ];
 
+const TRPG_TOOTH_FAIRY_PRESETS = [
+  {
+    id: "caretaker",
+    name: "艾琳·惠特曼",
+    age: 27,
+    occupation: "家庭教师",
+    specialty: "照看孩子、讲故事、心理观察与交涉",
+    hp: 10,
+    san: 70,
+    attributes: { 力量: 40, 体质: 50, 体型: 50, 敏捷: 60, 外貌: 65, 智力: 70, 意志: 70, 教育: 75 },
+    skills: { 说服: 70, 心理学: 60, 聆听: 60, 侦查: 55, 图书馆使用: 55, 急救: 45, 神秘学: 25, 闪避: 30, 斗殴: 25 },
+    background: "受马修父母委托来家中照看孩子的家庭教师。你擅长让孩子安心，也习惯从孩子随口说出的童话里听出真正的恐惧。",
+    inventory: "故事书、钢笔、记事本、怀表、简易急救用品、重要之物：母亲留下的银质书签",
+  },
+  {
+    id: "medical-student",
+    name: "托马斯·里德",
+    age: 24,
+    occupation: "医学生",
+    specialty: "急救、医学判断、理性分析与体力行动",
+    hp: 12,
+    san: 60,
+    attributes: { 力量: 55, 体质: 60, 体型: 55, 敏捷: 55, 外貌: 50, 智力: 75, 意志: 60, 教育: 70 },
+    skills: { 医学: 60, 急救: 75, 侦查: 55, 聆听: 50, 科学药学: 50, 心理学: 40, 跳跃: 45, 闪避: 27, 斗殴: 40 },
+    background: "你是这家人的熟人，临时过来帮忙。你相信儿童噩梦多半来自饮食、压力或疾病，但今晚的症状很快会超出课本解释。",
+    inventory: "医学生包、绷带、听诊器、小手电、薄荷糖、重要之物：毕业前导师送的袖扣",
+  },
+  {
+    id: "folklorist",
+    name: "玛格丽特·布莱克",
+    age: 32,
+    occupation: "民俗研究者",
+    specialty: "童话、民间传说、神秘学与梦境联想",
+    hp: 11,
+    san: 65,
+    attributes: { 力量: 45, 体质: 55, 体型: 50, 敏捷: 60, 外貌: 60, 智力: 80, 意志: 65, 教育: 80 },
+    skills: { 神秘学: 70, 民俗学: 75, 图书馆使用: 70, 侦查: 55, 聆听: 50, 说服: 45, 博物学: 45, 闪避: 30, 斗殴: 25 },
+    background: "你研究儿童故事与民间信仰，正在收集美国本土的牙仙子传说。马修口中的黄牙齿和陌生绘本，让你隐约觉得这不只是童言童语。",
+    inventory: "民俗笔记、放大镜、铅笔、儿童故事剪报、重要之物：一本祖母留下的童话集",
+  },
+];
+
 const TRPG_DEFAULT_SCENARIO = {
+  id: "dead-stomp",
   title: "死者的顿足舞",
   system: "COC 7版简化规则",
   players: "2至5名",
+  minPlayers: 2,
+  maxPlayers: 5,
+  startChapter: "club",
+  startSceneTitle: "斯默的天堂",
+  sourceNote: "基于用户提供的《死者的顿足舞》资料做结构化私用改编。",
   setting: "1925年，纽约哈莱姆区",
   tone: "爵士时代的都市调查与超自然恐怖。涉及历史种族歧视、枪击、死亡和复生尸体；避免猎奇渲染。",
   premise: "调查员在斯默的天堂夜店目睹一名男子遭枪击后随爵士乐复生。线索逐渐指向落魄小号手勒罗伊·特纳与一支来历异常的四键小号。",
@@ -500,6 +548,90 @@ const TRPG_DEFAULT_SCENARIO = {
     "罗杰·丹尼尔：31岁，联邦探员，循规蹈矩，可成为调查员盟友。",
     "阿尔奇·波纳托：46岁，残忍的黑帮头目，想利用小号复生死者的能力。",
   ],
+  startPrompt: "请依据剧本开场描述1925年哈莱姆的斯默的天堂，并邀请每位玩家介绍调查员。不要提前发生枪击，先给玩家交谈和观察的机会。",
+};
+
+const TRPG_TOOTH_FAIRY_SCENARIO = {
+  id: "tooth-fairy",
+  title: "牙仙子",
+  system: "COC 7版简化规则",
+  players: "1至3名",
+  minPlayers: 1,
+  maxPlayers: 3,
+  startChapter: "babysitting",
+  startSceneTitle: "马修家的夜晚",
+  sourceNote: "基于布罗克方块创作的 COC7th 模组《牙仙子》v1.0 做结构化私用改编；保留作者署名，非商业学习交流使用。",
+  setting: "1926年2月28日，美国一户普通家庭与孩子的梦境菜园",
+  tone: "童话外壳下的梦境恐怖。包含儿童惊吓、牙齿、追逐、梦中死亡、迷魅鼠和理智损失；避免血腥猎奇描写，保护小马修的能动性。",
+  premise: "调查员受托照看六岁的马修。马修分享了据说来自牙仙子的糖果，夜里调查员随他进入以《彼得兔》为素材的梦境，并被伪装成牙仙子的迷魅鼠夺走重要之物。",
+  opening: "马修的父母外出，调查员需要监督他在晚上十点前睡觉。马修掉了一颗门牙，兴奋地谈起牙仙子，并把自己珍视的糖果分享给新朋友。",
+  chapters: [
+    {
+      id: "babysitting",
+      title: "睡前照看",
+      purpose: "建立现实场景；让马修分享糖果；让调查员注意换牙、牙仙子传说和房间里奇怪的假绘本。",
+      criticalClues: ["马修处于换牙期并相信牙仙子", "他分享的糖果来源异常", "床与墙缝隙里有一本无署名、画风别扭的假绘本"],
+    },
+    {
+      id: "dream-entry",
+      title: "入梦时分",
+      purpose: "调查员在坠落感中进入马修梦境；根据意志对抗决定能具现多少随身物品；确认马修也在寻找牙仙子。",
+      criticalClues: ["此处是马修的梦", "糖果让调查员被拉入梦境", "随身物品会按马修认知发生童话式变形"],
+    },
+    {
+      id: "tooth-fairy",
+      title: "你好，牙仙子",
+      purpose: "伪装成牙仙子的迷魅鼠登场，夺走马修的牙齿和调查员重要之物，引诱众人追赶。",
+      criticalClues: ["牙仙子手中有黄灿灿的玉米粒", "它能夺走象征性重要之物", "所谓惩罚是为了引诱调查员进入更深梦境"],
+    },
+    {
+      id: "mushroom-ring",
+      title: "蘑菇林与仙女环",
+      purpose: "让调查员选择穿越或绕开蘑菇圈；展示浅眠七十级阶梯的诱惑；给出幻梦境入口线索。",
+      criticalClues: ["仙女环与螺旋阶梯相连", "继续下行会通往浅眠七十级阶梯", "越过而不下行可获得短暂祝福"],
+    },
+    {
+      id: "garden",
+      title: "麦奎尼的菜园",
+      purpose: "开放式探索菜园，寻找大门离开梦境；可遭遇黄瓜架、醋栗丛、洋葱田老鼠、工具棚、池塘与猫。",
+      criticalClues: ["离开菜园会让马修的普通梦境结束", "大门是安全醒来的方向", "猫知道牙仙子的真相并暗示它们藏着尖牙"],
+    },
+    {
+      id: "chase",
+      title: "麦奎尼先生的追赶",
+      purpose: "用追逐和压力推动行动；麦奎尼是被迷魅鼠嫁接的恐惧，不应长期纠缠；必要时发起潜行、敏捷或理智检定。",
+      criticalClues: ["麦奎尼不会真正沟通", "直面其非人面容会造成理智损失", "迷魅鼠想逼迫调查员走阶梯或跳下悬崖"],
+    },
+    {
+      id: "ending",
+      title: "梦境出口",
+      purpose: "根据选择进入不同结局：大杉树下安全醒来、拾级而下进入幻梦境、天降馅饼、牙仙赠礼或一夜无梦。",
+      endings: ["从白色栅栏大门离开，取回重要之物并醒来", "走下七十级阶梯，接受纳什特与卡曼扎的判断", "跳入梦中悬崖，落入迷魅鼠陷阱", "在普通梦境中死亡后惊醒并失去重要之物", "未吃糖果则马修独自遭遇可怖牙仙赠礼"],
+    },
+  ],
+  keeperFacts: [
+    "牙仙子其实是一群伪装成小仙子的迷魅鼠，也叫祖各，来自普通梦与幻梦境之间。",
+    "马修读过一本仿照《彼得兔》的假绘本，绘本用秘法让读者更容易做带有启示的梦。",
+    "马修用玉米粒假装黄牙齿试探牙仙子，迷魅鼠真正感兴趣的是他异常的梦。",
+    "糖果能让吃下的人更容易被拉入梦境，也更容易被迷魅鼠进入梦中。",
+    "迷魅鼠夺走牙齿和重要之物，是为了诱导调查员追逐它们，走上浅眠七十级阶梯或跳下梦中悬崖。",
+    "离开菜园会结束马修的普通梦境，使迷魅鼠的干扰失败；关键线索不能因一次检定失败永久丢失。",
+    "如果调查员未吃糖果，不会入梦，但马修会在夜里独自遭遇牙仙赠礼。",
+  ],
+  importantNpcs: [
+    "小马修 Matthew：6岁，换牙期孩子，STR25 CON40 SIZ45 INT70 POW70 DEX55 APP50 EDU25 SAN70 HP9；潜行50、侦查40、聆听45、讲故事80、主动认错100。",
+    "麦奎尼先生 Mr. McGregor：故事反派与被利用的恐惧，STR50 CON45 SIZ60 INT60 POW45 DEX70 APP0 EDU50 HP10；斗殴40、耙45、侦查60、聆听80；直面非人面容 SC0/1D4。",
+    "伪装牙仙子的迷魅鼠：巴掌大的小仙子外形，面纱遮住触须和尖牙；真正目标是引诱猎物进入幻梦境。",
+    "菜园里的猫：懒散但敏锐，知道迷魅鼠计划的一部分，可能提示牙仙子无法真正带走属于调查员的东西。",
+    "菜园里的老鼠：熟悉菜园布局，不懂牙仙子真相，但可指出大门方向或分享仙女环传说。",
+    "纳什特与卡曼扎：浅眠七十级阶梯尽头的两位祭司，判断入梦者是否有资格继续进入幻梦境。",
+  ],
+  startPrompt: "请从1926年2月28日晚，调查员受托照看六岁马修开始。让马修分享糖果、谈到牙仙子和掉牙，并邀请玩家说明自己如何陪他度过睡前时间。不要直接入梦，先给玩家查看房间、绘本和与马修交谈的机会。",
+};
+
+const TRPG_SCENARIOS = {
+  "dead-stomp": { scenario: TRPG_DEFAULT_SCENARIO, presets: TRPG_PRESETS },
+  "tooth-fairy": { scenario: TRPG_TOOTH_FAIRY_SCENARIO, presets: TRPG_TOOTH_FAIRY_PRESETS },
 };
 
 async function handleTrpg(request, env, url) {
@@ -530,7 +662,7 @@ async function handleTrpg(request, env, url) {
 
   if (action === "create") {
     const name = cleanText(body.name || "调查员", 18) || "调查员";
-    const state = createTrpgRoom(playerId, name);
+    const state = createTrpgRoom(playerId, name, cleanId(body.scenarioId));
     await saveTrpgRoom(env.DB, state);
     return json({ room: sanitizeTrpgState(state, playerId) }, 201);
   }
@@ -550,21 +682,22 @@ async function handleTrpg(request, env, url) {
       selectTrpgPreset(state, playerId, cleanId(body.presetId));
     } else if (action === "start") {
       requireTrpgOwner(state, playerId);
+      const config = getTrpgScenarioConfig(state);
       if (state.status === "playing") return json({ error: "冒险已经开始。" }, 400);
-      if (state.players.length < 2 || state.players.length > 5) {
-        return json({ error: "《死者的顿足舞》需要 2 至 5 名玩家。" }, 400);
+      if (state.players.length < config.scenario.minPlayers || state.players.length > config.scenario.maxPlayers) {
+        return json({ error: `《${config.scenario.title}》需要 ${config.scenario.players}。` }, 400);
       }
       if (state.players.some((player) => !state.characters[player.id]?.presetId)) {
         return json({ error: "所有玩家都选择预设调查员后才能开始。" }, 400);
       }
       state.status = "playing";
-      state.chapterId = "club";
-      state.sceneTitle = "斯默的天堂";
-      addTrpgMessage(state, "system", "系统", "《死者的顿足舞》开始，DeepSeek 已接管守秘人。");
+      state.chapterId = config.scenario.startChapter;
+      state.sceneTitle = config.scenario.startSceneTitle;
+      addTrpgMessage(state, "system", "系统", `《${config.scenario.title}》开始，DeepSeek 已接管守秘人。`);
       await runTrpgAiTurn(state, env, {
         trigger: "start",
         actorId: playerId,
-        playerText: "请依据剧本开场描述1925年哈莱姆的斯默的天堂，并邀请每位玩家介绍调查员。不要提前发生枪击，先给玩家交谈和观察的机会。",
+        playerText: config.scenario.startPrompt,
       });
     } else if (action === "send") {
       requireTrpgPlaying(state);
@@ -653,11 +786,20 @@ async function ensureTrpgTable(db) {
   ).run();
 }
 
-function createTrpgRoom(ownerId, ownerName) {
+function getTrpgScenarioConfig(value = "") {
+  const scenarioId = typeof value === "object"
+    ? cleanId(value.scenarioId || value.scenario?.id || "dead-stomp")
+    : cleanId(value || "dead-stomp");
+  return TRPG_SCENARIOS[scenarioId] || TRPG_SCENARIOS["dead-stomp"];
+}
+
+function createTrpgRoom(ownerId, ownerName, scenarioId = "") {
   const now = new Date().toISOString();
+  const config = getTrpgScenarioConfig(scenarioId);
   return {
     code: makeRoomCode(),
     ownerId,
+    scenarioId: config.scenario.id,
     status: "lobby",
     sceneTitle: "等待冒险开始",
     chapterId: "lobby",
@@ -666,22 +808,23 @@ function createTrpgRoom(ownerId, ownerName) {
     notes: { [ownerId]: "" },
     clues: { [ownerId]: [] },
     messages: [
-      makeTrpgMessage("system", "系统", "房间已创建。所有玩家加入并填写人物卡后，创建者可以开始冒险。"),
+      makeTrpgMessage("system", "系统", `《${config.scenario.title}》房间已创建。所有玩家加入并选择人物卡后，创建者可以开始冒险。`),
     ],
     pendingCheck: null,
     memory: {
       summary: "冒险尚未开始。",
       facts: [],
-      hidden: TRPG_DEFAULT_SCENARIO.keeperFacts.slice(),
+      hidden: config.scenario.keeperFacts.slice(),
     },
     aiThinking: false,
-    scenario: TRPG_DEFAULT_SCENARIO,
+    scenario: config.scenario,
     createdAt: now,
     updatedAt: now,
   };
 }
 
 function resetTrpgRoom(state) {
+  const config = getTrpgScenarioConfig(state);
   state.status = "lobby";
   state.sceneTitle = "等待冒险开始";
   state.chapterId = "lobby";
@@ -693,18 +836,20 @@ function resetTrpgRoom(state) {
   state.memory = {
     summary: "冒险尚未开始。",
     facts: [],
-    hidden: TRPG_DEFAULT_SCENARIO.keeperFacts.slice(),
+    hidden: config.scenario.keeperFacts.slice(),
   };
+  state.scenario = config.scenario;
   state.aiThinking = false;
 }
 
 function upsertTrpgPlayer(state, playerId, name) {
+  const config = getTrpgScenarioConfig(state);
   const player = state.players.find((item) => item.id === playerId);
   if (player) {
     player.name = name;
     return;
   }
-  if (state.players.length >= 5) throw new Error("《死者的顿足舞》最多支持 5 名玩家。");
+  if (state.players.length >= config.scenario.maxPlayers) throw new Error(`《${config.scenario.title}》最多支持 ${config.scenario.maxPlayers} 名玩家。`);
   state.players.push({ id: playerId, name, joinedAt: new Date().toISOString() });
   state.notes[playerId] = "";
   state.clues[playerId] = [];
@@ -712,7 +857,8 @@ function upsertTrpgPlayer(state, playerId, name) {
 }
 
 function selectTrpgPreset(state, playerId, presetId) {
-  const preset = TRPG_PRESETS.find((item) => item.id === presetId);
+  const config = getTrpgScenarioConfig(state);
+  const preset = config.presets.find((item) => item.id === presetId);
   if (!preset) throw new Error("预设调查员不存在。");
   const occupied = Object.entries(state.characters).find(
     ([otherId, card]) => otherId !== playerId && card?.presetId === presetId,
@@ -748,6 +894,7 @@ async function runTrpgAiTurn(state, env, context) {
 }
 
 function buildTrpgMessages(state, context) {
+  const config = getTrpgScenarioConfig(state);
   const recentMessages = state.messages.slice(-24).map((message) => ({
     type: message.type,
     author: message.author,
@@ -758,6 +905,7 @@ function buildTrpgMessages(state, context) {
     playerName: player.name,
     character: state.characters[player.id] || {},
   }));
+  const chapterIds = config.scenario.chapters.map((chapter) => chapter.id).join("/");
 
   return [
     {
@@ -766,13 +914,14 @@ function buildTrpgMessages(state, context) {
         "你是多人在线文字跑团的唯一主持人和所有 NPC。请使用简体中文。",
         "你必须公平、连贯、给玩家选择空间，不替玩家决定行动，不提前泄露隐藏秘密。",
         "只有不确定且有代价的行动才要求检定。普通观察、交谈和合理行动直接推进。",
-        "必须严格按照《死者的顿足舞》的章节顺序、关键线索和守秘人事实主持，不要自行替换核心真相。",
+        `当前剧本是《${config.scenario.title}》。必须严格按照该剧本的章节顺序、关键线索和守秘人事实主持，不要自行替换核心真相。`,
         "不要逐字复述剧本原文，要用自然的主持语言改写场景。",
         "关键线索不能因检定失败而永久丢失；失败应产生时间、危险、关系或理智方面的代价。",
-        "只有当前章节目标完成后才能进入下一章节；绑架必须发生在葬礼和主要调查之后。",
+        "只有当前章节目标完成后才能进入下一章节。不要把后期真相提前讲给玩家。",
         "理智检定使用技能名“理智”，并提供 sanLoss，例如成功0、失败1D6。",
         "你的回复必须是单个 JSON 对象，不要使用 Markdown 代码块。",
-        '结构：{"narration":"给所有玩家看的主持内容","sceneTitle":"短场景名","chapterId":"club/investigation/funeral/trumpet/kidnapping/climax","check":null或{"skill":"人物卡技能或属性名","difficulty":"普通/困难/极难","bonusDice":0,"reason":"检定原因","sanLoss":null或{"success":"0","failure":"1D6"}},"clues":[{"playerId":"玩家ID或all","title":"线索标题","content":"线索内容"}],"privateMessages":[{"playerId":"玩家ID","content":"只有该玩家看见的信息"}],"statusUpdates":[{"playerId":"玩家ID","hp":10,"san":9,"reason":"变化原因"}],"facts":["新增永久事实"],"summary":"截至当前的简短剧情摘要","end":false}',
+        `chapterId 只能使用这些值之一：${chapterIds}。`,
+        '结构：{"narration":"给所有玩家看的主持内容","sceneTitle":"短场景名","chapterId":"当前剧本章节ID","check":null或{"skill":"人物卡技能或属性名","difficulty":"普通/困难/极难","bonusDice":0,"reason":"检定原因","sanLoss":null或{"success":"0","failure":"1D6"}},"clues":[{"playerId":"玩家ID或all","title":"线索标题","content":"线索内容"}],"privateMessages":[{"playerId":"玩家ID","content":"只有该玩家看见的信息"}],"statusUpdates":[{"playerId":"玩家ID","hp":10,"san":9,"reason":"变化原因"}],"facts":["新增永久事实"],"summary":"截至当前的简短剧情摘要","end":false}',
         "check 一次只能给当前行动玩家；若无需检定必须为 null。",
         "骰点发生后必须根据结果和难度清楚描述成功、失败或代价，并继续剧情。",
       ].join("\n"),
@@ -780,7 +929,7 @@ function buildTrpgMessages(state, context) {
     {
       role: "user",
       content: JSON.stringify({
-        scenario: state.scenario,
+        scenario: config.scenario,
         currentChapter: state.chapterId,
         sceneTitle: state.sceneTitle,
         status: state.status,
@@ -811,12 +960,13 @@ function parseTrpgAiResult(raw) {
 }
 
 function applyTrpgAiResult(state, result, actorId) {
+  const config = getTrpgScenarioConfig(state);
   const narration = cleanMultiline(result.narration || "", 4000);
   if (narration) addTrpgMessage(state, "gm", "AI 主持", narration);
   const sceneTitle = cleanText(result.sceneTitle || "", 50);
   if (sceneTitle) state.sceneTitle = sceneTitle;
   const chapterId = cleanId(result.chapterId);
-  if (state.scenario.chapters.some((chapter) => chapter.id === chapterId)) {
+  if (config.scenario.chapters.some((chapter) => chapter.id === chapterId)) {
     state.chapterId = chapterId;
   }
 
@@ -893,6 +1043,7 @@ function applyTrpgAiResult(state, result, actorId) {
 }
 
 function sanitizeTrpgState(state, playerId) {
+  const config = getTrpgScenarioConfig(state);
   const messages = state.messages
     .filter((message) => !message.privateTo || message.privateTo === playerId)
     .slice(-120)
@@ -904,6 +1055,9 @@ function sanitizeTrpgState(state, playerId) {
   return {
     code: state.code,
     status: state.status,
+    scenarioId: config.scenario.id,
+    scenarioTitle: config.scenario.title,
+    scenarioMeta: `${config.scenario.system} · ${config.scenario.players} · ${config.scenario.setting}`,
     sceneTitle: state.sceneTitle,
     chapterId: state.chapterId || "lobby",
     isOwner: state.ownerId === playerId,
@@ -923,7 +1077,7 @@ function sanitizeTrpgState(state, playerId) {
     messages,
     pendingCheck: state.pendingCheck?.playerId === playerId ? state.pendingCheck : null,
     myPresetId: state.characters[playerId]?.presetId || "",
-    presets: TRPG_PRESETS.map((preset) => {
+    presets: config.presets.map((preset) => {
       const owner = state.players.find((player) => state.characters[player.id]?.presetId === preset.id);
       return {
         id: preset.id,

@@ -37,7 +37,7 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .lobby-panel header p, .side-panel header p, .story-panel header p { color: var(--accent); }
 h2 { margin: 0; font-size: 20px; letter-spacing: 0; }
 .lobby-panel header span { color: var(--muted); font-size: 13px; }
-.lobby-grid { padding: 18px; display: grid; grid-template-columns: 1fr 1fr auto; gap: 14px; align-items: end; }
+.lobby-grid { padding: 18px; display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 14px; align-items: end; }
 label { min-width: 0; display: grid; gap: 7px; }
 label span { color: var(--muted); font-size: 13px; }
 input, textarea, select { width: 100%; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); background: #fff; }
@@ -111,6 +111,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--accent); outline
 .mobile-tabs { display: none; margin-bottom: 10px; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
 
 @media (max-width: 1050px) {
+  .lobby-grid { grid-template-columns: 1fr 1fr; }
   .game-layout { grid-template-columns: 220px minmax(0, 1fr); }
   .character-panel { grid-column: 1 / -1; min-height: 520px; }
   .notes-content textarea { min-height: 380px; }

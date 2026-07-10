@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title>死者的顿足舞 · AI 在线跑团</title>
-    <link rel="stylesheet" href="trpg.css?v=20260626-stomp">
+    <title>AI 在线跑团 · 十三的小工具</title>
+    <link rel="stylesheet" href="trpg.css?v=20260710-scenarios">
   </head>
   <body>
     <main class="trpg-shell">
@@ -13,8 +13,8 @@
         <a href="index.html">返回主页</a>
         <div>
           <p>AI GAME MASTER</p>
-          <h1>死者的顿足舞</h1>
-          <span>DeepSeek 担任守秘人。1925 年，纽约哈莱姆的爵士乐声唤醒了不该醒来的东西。</span>
+          <h1>AI 在线跑团</h1>
+          <span>DeepSeek 担任守秘人。创建房间时选择剧本，玩家进入后选择预设调查员开始冒险。</span>
         </div>
       </header>
 
@@ -25,6 +25,12 @@
         </header>
         <div class="lobby-grid">
           <label><span>玩家昵称</span><input id="playerName" maxlength="18" placeholder="输入昵称"></label>
+          <label><span>选择剧本</span>
+            <select id="scenarioSelect">
+              <option value="dead-stomp">死者的顿足舞</option>
+              <option value="tooth-fairy">牙仙子</option>
+            </select>
+          </label>
           <label><span>房间码</span><input id="roomCodeInput" maxlength="8" placeholder="例如 AB12CD"></label>
           <div class="lobby-actions">
             <button id="createRoomButton" class="primary-button" type="button">创建房间</button>
@@ -36,7 +42,7 @@
 
       <section class="content-warning">
         <strong>内容提示</strong>
-        <p>本模组包含历史种族歧视、枪击、死亡、复生尸体及理智损失。游戏将弱化猎奇描写，但保留悬疑和历史背景。基于用户提供的模组资料制作，仅供个人学习交流。</p>
+        <p>不同剧本可能包含梦境恐怖、死亡、追逐、枪击、理智损失等内容。系统只做结构化私用改编，不公开原始 PDF 或完整原文，仅供个人学习交流与非商业使用。</p>
       </section>
 
       <section id="gameView" class="game-view" hidden>
@@ -138,6 +144,6 @@
         </div>
       </section>
     </main>
-    <script src="trpg.js?v=20260626-stomp"></script>
+    <script src="trpg.js?v=20260710-scenarios"></script>
   </body>
 </html>

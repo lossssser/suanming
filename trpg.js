@@ -7,6 +7,7 @@ const playerId = getOrCreatePlayerId();
 const lobbyView = document.querySelector("#lobbyView");
 const gameView = document.querySelector("#gameView");
 const playerNameInput = document.querySelector("#playerName");
+const scenarioSelect = document.querySelector("#scenarioSelect");
 const roomCodeInput = document.querySelector("#roomCodeInput");
 const lobbyStatus = document.querySelector("#lobbyStatus");
 const createRoomButton = document.querySelector("#createRoomButton");
@@ -81,7 +82,7 @@ async function createRoom() {
   if (!name) return;
   setLobbyBusy(true, "正在创建云端房间...");
   try {
-    const data = await post({ action: "create", playerId, name });
+    const data = await post({ action: "create", playerId, name, scenarioId: scenarioSelect.value });
     enterRoom(data.room);
   } catch (error) {
     setLobbyBusy(false, error.message, true);
@@ -239,7 +240,7 @@ function renderRoom() {
   roomCodeLabel.textContent = room.code;
   gameStatusBadge.textContent = statusLabel(room.status);
   sceneTitle.textContent = room.sceneTitle || "未命名场景";
-  turnHint.textContent = room.aiThinking ? "AI 正在思考" : "AI 主持";
+  turnHint.textContent = room.aiThinking ? "AI 正在思考" : `${room.scenarioTitle || "AI"} · AI 主持`;
   ownerControls.hidden = !room.isOwner;
   startGameButton.hidden = !["lobby", "ended"].includes(room.status);
   pauseGameButton.hidden = !["playing", "paused"].includes(room.status);
@@ -253,6 +254,12 @@ function renderRoom() {
     <span>${escapeHtml(player.characterName || "尚未填写人物卡")} · HP ${player.hp} · SAN ${player.san}</span>
     ${player.isOwner ? '<span class="player-badge">房间创建者</span>' : ""}
   </article>`).join("");
+  if (room.scenarioTitle) {
+    playersList.insertAdjacentHTML("afterbegin", `<article class="player-item">
+      <strong>${escapeHtml(room.scenarioTitle)}</strong>
+      <span>${escapeHtml(room.scenarioMeta || "COC 7版简化规则")}</span>
+    </article>`);
+  }
 
   const signature = room.messages.map((message) => message.id).join("|");
   messageList.innerHTML = room.messages.length
