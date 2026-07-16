@@ -14,6 +14,10 @@ searchForm.addEventListener("submit", (event) => {
     window.location.href = "trpg.html";
     return;
   }
+  if (getQuery() === "13") {
+    window.location.href = "resume.html";
+    return;
+  }
   applySearch();
 });
 
