@@ -18,6 +18,10 @@ searchForm.addEventListener("submit", (event) => {
     window.location.href = "resume.html";
     return;
   }
+  if (getQuery() === "7788") {
+    window.location.href = "interview-7788.html";
+    return;
+  }
   applySearch();
 });
 
