@@ -148,7 +148,7 @@ p { margin: 8px 0 0; line-height: 1.75; }
   display: grid;
   gap: 12px;
 }
-.match-list article {
+.match-list article, .knowledge-grid article {
   padding: 16px;
   border: 1px solid #eaeef2;
   border-radius: 8px;
@@ -169,6 +169,21 @@ b { color: var(--ink); }
   background: var(--soft-green);
 }
 .script-card p { color: #1f3a25; }
+
+.knowledge-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.knowledge-grid article {
+  border-left: 4px solid var(--blue);
+}
+.knowledge-grid h3 {
+  color: var(--blue);
+}
+.knowledge-grid p {
+  color: var(--muted);
+}
 
 .project-talk {
   padding: 18px 0;
@@ -246,7 +261,7 @@ details p {
 }
 
 @media (max-width: 960px) {
-  .layout, .fit-grid, .strategy, .question-list {
+  .layout, .fit-grid, .strategy, .question-list, .knowledge-grid {
     grid-template-columns: 1fr;
   }
   .sticky { position: static; }
