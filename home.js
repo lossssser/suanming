@@ -22,6 +22,10 @@ searchForm.addEventListener("submit", (event) => {
     window.location.href = "interview-7788.html";
     return;
   }
+  if (getQuery() === "8877") {
+    window.location.href = "interview-ros2.html";
+    return;
+  }
   applySearch();
 });
 
