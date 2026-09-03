@@ -214,6 +214,36 @@ button.project-card {
   background: #eef0ff;
 }
 
+.project-card-piano .project-visual {
+  background: #f5efff;
+}
+
+.piano-keys {
+  width: min(46%, 190px);
+  height: 92px;
+  padding: 8px;
+  border: 1px solid #d9c8ff;
+  border-radius: 8px;
+  background: #241a3f;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+  align-items: end;
+}
+
+.piano-keys span {
+  height: 100%;
+  border-radius: 0 0 5px 5px;
+  background: #fff;
+}
+
+.piano-keys span:nth-child(2),
+.piano-keys span:nth-child(4) {
+  height: 62%;
+  align-self: start;
+  background: #4c1d95;
+}
+
 .moon-mark {
   position: relative;
   width: min(46%, 170px);
