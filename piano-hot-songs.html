@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>热门弹唱练习曲库 · 十三的小工具</title>
-    <link rel="stylesheet" href="piano-hot-songs.css?v=20260903">
+    <title>弹唱谱例库 · 十三的小工具</title>
+    <link rel="stylesheet" href="piano-hot-songs.css?v=20260903-score">
   </head>
   <body>
     <main class="page">
@@ -12,152 +12,114 @@
         <nav>
           <a href="index.html">返回主页</a>
           <a href="piano-vocal.html">弹唱教程</a>
+          <button type="button" onclick="window.print()">打印 / 导出 PDF</button>
         </nav>
         <section>
-          <p class="kicker">Popular Piano Vocal Practice</p>
-          <h1>热门弹唱练习曲库</h1>
+          <p class="kicker">Lead Sheet · 简谱 · 和弦 · 歌词对齐</p>
+          <h1>弹唱谱例库</h1>
           <p>
-            选了几首传唱度高、和弦进行清楚、适合练“左手低音 + 右手和弦 + 人声歌词”的曲子。
-            下面的音频是原创练习伴奏，只用于练拍子、和弦连接和唱词配合，不复制原曲旋律、歌词或正式编曲。
+            这里采用“和弦在上、简谱在中、歌词在下”的排版。你弹唱时先看和弦决定双手伴奏，
+            再看简谱确认人声旋律，最后把歌词按小节放进去。下面先做一首完整示范，后续你给我歌名或歌词，
+            我就按这个格式继续往里加。
           </p>
         </section>
       </header>
 
-      <section class="notice">
-        <strong>怎么用这一页</strong>
-        <p>
-          先听伴奏 1 遍数拍，再跟着伴奏念歌词，最后再唱。每首歌先只练一段主歌或副歌，
-          唱稳以后再自己加前奏、尾奏和右手填充。参考曲目来自公开热歌榜与高传唱度歌单，具体热度会随时间变化。
-        </p>
-      </section>
-
-      <section class="song-list" aria-label="热门弹唱练习曲目">
-        <article class="song-card">
-          <div class="song-head">
-            <div>
-              <p class="label">入门推荐</p>
-              <h2>《晴天》方向练习</h2>
-            </div>
-            <span>G 调 · 76 bpm</span>
-          </div>
-          <p>
-            适合练“稳定扫和弦感”。先用 G - D - Em - C 循环，左手只弹根音，
-            右手放在第 2、4 拍，嘴上注意句尾不要被右手带快。
-          </p>
-          <audio controls preload="metadata" src="assets/audio/qing-tian-practice.wav"></audio>
-          <ul>
-            <li>先练主歌：声音轻一点，伴奏不要太满。</li>
-            <li>副歌可以把右手改成四拍柱式和弦，情绪更撑得住。</li>
-          </ul>
-        </article>
-
-        <article class="song-card">
-          <div class="song-head">
-            <div>
-              <p class="label">流行律动</p>
-              <h2>《恋人》方向练习</h2>
-            </div>
-            <span>C 调 · 72 bpm</span>
-          </div>
-          <p>
-            适合练“和弦稳、人声自然”。C - G - Am - F 是非常常见的流行走向，
-            重点不是弹难，而是让每句歌词的重音落在舒服的位置。
-          </p>
-          <audio controls preload="metadata" src="assets/audio/lian-ren-practice.wav"></audio>
-          <ul>
-            <li>练习时把右手音量压低，别盖住人声。</li>
-            <li>如果唱到换和弦处会卡，单独循环那一小节。</li>
-          </ul>
-        </article>
-
-        <article class="song-card">
-          <div class="song-head">
-            <div>
-              <p class="label">抒情必练</p>
-              <h2>《我怀念的》方向练习</h2>
-            </div>
-            <span>F 调 · 68 bpm</span>
-          </div>
-          <p>
-            适合练“分解和弦 + 长句呼吸”。慢歌难点不是速度，而是每句拖长时拍子不散。
-            伴奏里用 F - C - Dm - Bb，练完以后你会更熟悉 F 调和 Bb 的手感。
-          </p>
-          <audio controls preload="metadata" src="assets/audio/wo-huai-nian-de-practice.wav"></audio>
-          <ul>
-            <li>先跟伴奏念词，找到每句该换气的位置。</li>
-            <li>右手分解和弦要平均，别在唱长音时越弹越快。</li>
-          </ul>
-        </article>
-
-        <article class="song-card">
-          <div class="song-head">
-            <div>
-              <p class="label">女生歌练法</p>
-              <h2>《情歌》方向练习</h2>
-            </div>
-            <span>C 调 · 70 bpm</span>
-          </div>
-          <p>
-            适合练“轻伴奏托人声”。用 C - G - Am - F 做八分分解，
-            唱的时候不要每个字都用力，句子的起伏比每个音准都更重要。
-          </p>
-          <audio controls preload="metadata" src="assets/audio/qing-ge-practice.wav"></audio>
-          <ul>
-            <li>主歌右手尽量稀疏，副歌再加密。</li>
-            <li>句尾可以加一两个经过音，但不要盖住下一句开头。</li>
-          </ul>
-        </article>
-
-        <article class="song-card">
-          <div class="song-head">
-            <div>
-              <p class="label">进阶转调</p>
-              <h2>《富士山下》方向练习</h2>
-            </div>
-            <span>D 调 · 66 bpm</span>
-          </div>
-          <p>
-            适合练“慢速换和弦和情绪控制”。D - A - Bm - G 的手型会用到黑键，
-            比 C 调更接近真实弹唱场景。先慢练，不要一开始就追原速。
-          </p>
-          <audio controls preload="metadata" src="assets/audio/fu-shi-shan-xia-practice.wav"></audio>
-          <ul>
-            <li>D 调要提前熟悉 F# 和 C#，别边唱边找键。</li>
-            <li>左手低音尽量稳，慢歌的低音一乱，整体就会塌。</li>
-          </ul>
-        </article>
-
-        <article class="song-card">
-          <div class="song-head">
-            <div>
-              <p class="label">慢歌控制</p>
-              <h2>《我不难过》方向练习</h2>
-            </div>
-            <span>C 调 · 64 bpm</span>
-          </div>
-          <p>
-            适合练“慢速不拖拍”。速度慢的时候更容易忽快忽慢，左手根音要像钟摆一样稳。
-            右手只做轻和弦，给人声留下空间。
-          </p>
-          <audio controls preload="metadata" src="assets/audio/wo-bu-nan-guo-practice.wav"></audio>
-          <ul>
-            <li>唱之前先完整弹 2 遍，确认呼吸位置。</li>
-            <li>每句最后一个字不要急着收，听伴奏进入下一小节。</li>
-          </ul>
-        </article>
-      </section>
-
-      <section class="sources">
-        <h2>选曲参考</h2>
-        <p>
-          曲目参考公开热歌榜和高传唱度弹唱曲目整理，练习页面只提供原创和弦伴奏。
-          可自行对照 QQ 音乐热歌榜、抖音热歌榜、网易云热歌榜更新曲目。
-        </p>
+      <section class="song-meta">
         <div>
-          <a href="https://y.qq.com/n/ryqq/toplist/26" target="_blank" rel="noreferrer">QQ 音乐热歌榜</a>
-          <a href="https://y.qq.com/n/ryqq/toplist/60" target="_blank" rel="noreferrer">QQ 音乐抖音榜</a>
-          <a href="https://music.163.com/discover/toplist" target="_blank" rel="noreferrer">网易云音乐排行榜</a>
+          <p class="label">原创示范曲</p>
+          <h2>《晚风练习曲》</h2>
+          <p>C 调 · 4/4 · 72 bpm · 适合练左手根音 + 右手柱式/分解和弦</p>
         </div>
+        <div class="meta-tags">
+          <span>C</span>
+          <span>G</span>
+          <span>Am</span>
+          <span>F</span>
+        </div>
+      </section>
+
+      <section class="guide">
+        <article>
+          <strong>左手</strong>
+          <p>每小节第 1 拍弹根音，第 3 拍弹五音或根音。初练只弹单音，稳了再加八度。</p>
+        </article>
+        <article>
+          <strong>右手</strong>
+          <p>先用柱式和弦：第 2、4 拍弹。再换成八分分解：1-5-3-5 / 1-5-3-5。</p>
+        </article>
+        <article>
+          <strong>人声</strong>
+          <p>歌词要跟下面每小节对齐。先念歌词，再唱旋律，最后再加完整伴奏。</p>
+        </article>
+      </section>
+
+      <section class="score-card">
+        <header class="score-title">
+          <div>
+            <h2>主歌 A</h2>
+            <p>先用轻声唱，右手不要抢人声。</p>
+          </div>
+          <span>1 = C</span>
+        </header>
+
+        <div class="score-line">
+          <div class="bar"><b>C</b><span class="notes">5 5 6 5</span><span class="lyrics">晚 风 轻 轻</span></div>
+          <div class="bar"><b>G</b><span class="notes">3 2 3 5</span><span class="lyrics">吹 过 窗 前</span></div>
+          <div class="bar"><b>Am</b><span class="notes">6 6 5 3</span><span class="lyrics">我 把 心 事</span></div>
+          <div class="bar"><b>F</b><span class="notes">2 3 2 1</span><span class="lyrics">放 在 琴 边</span></div>
+        </div>
+
+        <div class="score-line">
+          <div class="bar"><b>C</b><span class="notes">5 5 6 5</span><span class="lyrics">灯 光 慢 慢</span></div>
+          <div class="bar"><b>G</b><span class="notes">3 2 3 5</span><span class="lyrics">落 在 指 尖</span></div>
+          <div class="bar"><b>Am</b><span class="notes">6 5 3 2</span><span class="lyrics">每 个 和 弦</span></div>
+          <div class="bar"><b>F</b><span class="notes">2 3 2 1</span><span class="lyrics">都 不 用 赶</span></div>
+        </div>
+      </section>
+
+      <section class="score-card">
+        <header class="score-title">
+          <div>
+            <h2>副歌 B</h2>
+            <p>副歌可以加厚一点，右手改成每拍柱式和弦。</p>
+          </div>
+          <span>情绪推开</span>
+        </header>
+
+        <div class="score-line">
+          <div class="bar"><b>F</b><span class="notes">6 6 5 3</span><span class="lyrics">如 果 明 天</span></div>
+          <div class="bar"><b>G</b><span class="notes">5 5 3 2</span><span class="lyrics">还 有 微 光</span></div>
+          <div class="bar"><b>Em</b><span class="notes">3 5 6 5</span><span class="lyrics">我 就 慢 慢</span></div>
+          <div class="bar"><b>Am</b><span class="notes">6 5 3 2</span><span class="lyrics">把 梦 唱 完</span></div>
+        </div>
+
+        <div class="score-line">
+          <div class="bar"><b>F</b><span class="notes">6 6 5 3</span><span class="lyrics">不 怕 路 远</span></div>
+          <div class="bar"><b>G</b><span class="notes">5 3 2 1</span><span class="lyrics">也 不 慌 张</span></div>
+          <div class="bar"><b>C</b><span class="notes">1 2 3 5</span><span class="lyrics">让 这 首 歌</span></div>
+          <div class="bar"><b>C</b><span class="notes">3 2 1 -</span><span class="lyrics">陪 我 到 亮</span></div>
+        </div>
+      </section>
+
+      <section class="practice">
+        <h2>这首怎么练</h2>
+        <ol>
+          <li>先只弹和弦，左手每小节第 1 拍根音，右手第 2、4 拍和弦。</li>
+          <li>再只看歌词朗读，按每个小节四拍念，不要唱旋律。</li>
+          <li>然后照简谱唱旋律，钢琴只保留左手根音。</li>
+          <li>最后合起来：左手根音，右手柱式和弦，人声唱歌词。</li>
+          <li>如果想更像流行歌，把右手换成 C-G-E-G 这种八分分解。</li>
+        </ol>
+      </section>
+
+      <section class="practice">
+        <h2>换成真实歌曲时怎么排</h2>
+        <p>
+          你给我一首歌时，最好同时给：调号、速度、歌词、每句大概从第几拍开始。
+          我会按这种格式给你拆成主歌、副歌、桥段，每行保持 4 个小节，下面直接对齐歌词。
+          如果你只给歌名，我可以先做和弦与简谱框架，但完整歌词需要你提供。
+        </p>
       </section>
     </main>
   </body>
