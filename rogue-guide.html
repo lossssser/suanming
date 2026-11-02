@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="叶落初冬魔兽世界盗贼公开教学整理：刺杀、敏锐、大秘境训练与复盘。">
     <title>叶落初冬盗贼攻略整理 · 十三的小工具</title>
-    <link rel="stylesheet" href="rogue-guide.css?v=20261102">
+    <link rel="stylesheet" href="rogue-guide.css?v=20261102-subtlety">
   </head>
   <body>
     <main class="page">
@@ -21,7 +21,7 @@
             <h1>叶落初冬盗贼攻略整理</h1>
             <p class="lead">把叶师傅的公开教学拆成一条能执行的练习路线：先选专精，再练资源、窗口与副本节奏，最后用日志复盘。</p>
             <div class="meta">
-              <span>版本快照：正式服 12.1</span>
+              <span>版本快照：正式服 12.1.5</span>
               <span>更新：2026-11-02</span>
               <span>定位：大秘境 / PvE</span>
             </div>
@@ -31,7 +31,7 @@
 
       <section class="version-note">
         <strong>先看这一条</strong>
-        <p>职业数值、天赋和技能交互会随热修变化。本页整理的是训练框架，不替代叶落最新视频；涉及天赋串、属性断点和固定起手时，以当期视频、游戏内说明和实战模拟为准。</p>
+        <p>职业数值、天赋和技能交互会随热修变化。本页敏锐部分已参考叶落 10 月 25 日发布、玩家在 10 月 26 日集中讨论的《12.1.5 敏锐贼基础天赋讲解》，并补入 10 月 27 日热修后的版本状态。涉及天赋串、属性断点和固定起手时，仍以当期视频、游戏内说明和实战模拟为准。</p>
       </section>
 
       <div class="layout">
@@ -109,33 +109,144 @@
 
           <section class="panel" id="subtlety">
             <p class="section-no">04</p>
-            <h2>敏锐：围绕影舞做窗口判断</h2>
-            <p class="intro">叶落的 12.1 教学把单体与 AOE 分开讲，说明敏锐不能只背一套固定刀谱。随机触发和目标数量改变时，你要先看资源，再决定生成技与终结技。</p>
+            <h2>敏锐：12.1.5 输出优先级与分场景循环</h2>
+            <p class="intro">这一版敏锐不能只背一条固定刀谱。叶落 10 月 25 日的基础天赋讲解提供了机制框架；10 月 27 日热修回调了部分补偿性增伤，但资源、技能联动和循环判断没有因此推倒重来。下面先给优先级，再给不同场景的可执行循环。</p>
+
+            <div class="patch-timeline">
+              <article><b>10 月 25 日</b><span>叶落发布《12.1.5 敏锐贼基础天赋讲解》</span></article>
+              <i></i>
+              <article><b>10 月 27 日</b><span>官方热修回调部分敏锐补偿性增伤</span></article>
+              <i></i>
+              <article><b>当前结论</b><span>循环框架可继续使用，伤害结论需看热修后实战</span></article>
+            </div>
+
             <div class="window-board">
               <div class="window-title">一次爆发窗口的思考顺序</div>
               <div class="window-steps">
-                <span>目标数</span><i></i><span>连击点</span><i></i><span>能量</span><i></i><span>关键层数</span><i></i><span>终结技</span>
+                <span>怪能活多久</span><i></i><span>目标数</span><i></i><span>噬灭覆盖</span><i></i><span>能量 / 连击点</span><i></i><span>终结技</span>
               </div>
             </div>
-            <div class="compare">
+
+            <section class="priority-box">
+              <div class="priority-heading">
+                <div>
+                  <p>GLOBAL PRIORITY</p>
+                  <h3>通用输出优先级</h3>
+                </div>
+                <span>从上往下判断，不是固定施法序列</span>
+              </div>
+              <ol class="priority-list">
+                <li><b>机制、保命、打断优先。</b><span>死人没有循环；需要停手或离开近战时，先处理机制。</span></li>
+                <li><b>避免连击点与能量溢出。</b><span>接近满连击点先打终结技；即将能量封顶时先使用生成技。</span></li>
+                <li><b>噬灭优先于大爆发窗口。</b><span>目标能存活且噬灭可用时，先让噬灭覆盖目标，再开暗影之刃和影舞，使后续终结技获得复制收益。</span></li>
+                <li><b>暗影之刃接在噬灭之后。</b><span>大爆发不要在噬灭覆盖前提前倾泻；若怪即将死亡，则保留给下一波。</span></li>
+                <li><b>影分身在影舞内高连击点使用。</b><span>影分身可用时优先安排进舞内，并尽量吃到噬灭与主要增益窗口。</span></li>
+                <li><b>高连击点打对应终结技。</b><span>单体/少目标以刺骨处理优先目标；稳定多目标以黑火药为主。不要为了等满豆让资源溢出。</span></li>
+                <li><b>按目标数选择生成技。</b><span>影舞内用暗影打击；平稳单体用背刺；多目标用袖剑风暴。具体切换点受天赋与怪物密度影响。</span></li>
+              </ol>
+            </section>
+
+            <div class="decision-grid">
               <article>
-                <h3>单体</h3>
-                <ul>
-                  <li>爆发前避免连击点和能量溢出。</li>
-                  <li>影舞内优先保证高价值生成技与终结技数量。</li>
-                  <li>随机资源变化时，不为背固定顺序浪费高星终结。</li>
-                  <li>先在木桩上把每轮窗口按完整，再进副本处理机制。</li>
-                </ul>
+                <span>生成技</span>
+                <h3>我现在用什么攒点？</h3>
+                <p><b>影舞内：</b>暗影打击。</p>
+                <p><b>影舞外单体：</b>背刺。</p>
+                <p><b>稳定多目标：</b>袖剑风暴。</p>
               </article>
               <article>
-                <h3>AOE</h3>
-                <ul>
-                  <li>根据目标数切换攒点方式，不把单体手法原样搬进群怪。</li>
-                  <li>先判断怪群存活时间，短波次不必做完整铺垫。</li>
-                  <li>重要爆发与坦克拉怪节奏绑定，避免技能开在怪物移动途中。</li>
-                  <li>低目标数的极限细节收益有限，新手先保证基本循环。</li>
-                </ul>
+                <span>终结技</span>
+                <h3>我现在用什么消耗？</h3>
+                <p><b>影分身可用：</b>高连击点打影分身。</p>
+                <p><b>单体/优先目标：</b>刺骨。</p>
+                <p><b>稳定 3+ 目标：</b>黑火药。</p>
               </article>
+              <article>
+                <span>爆发技</span>
+                <h3>噬灭、暗刃、影舞怎么排？</h3>
+                <p>通常先噬灭，再暗影之刃，再进入影舞窗口。噬灭剩余时间不足以覆盖终结技时，不要为了照顺序硬开完整大爆发。</p>
+              </article>
+            </div>
+
+            <div class="scenario-section">
+              <div class="scenario-heading">
+                <p>SCENARIO ROTATIONS</p>
+                <h3>不同场景的输出循环</h3>
+              </div>
+
+              <article class="scenario-card">
+                <header><span>01</span><div><h4>纯单体 / Boss 木桩</h4><p>目标存活时间足够，完整打大爆发。</p></div></header>
+                <div class="rotation-line">
+                  <b>准备</b><span>潜行 → 预留能量，避免满豆进窗口</span><i></i>
+                  <b>爆发</b><span>噬灭 → 暗影之刃 → 影舞 → 暗影打击攒至高连击点</span><i></i>
+                  <b>终结</b><span>影分身可用则优先影分身；否则刺骨</span><i></i>
+                  <b>循环</b><span>暗影打击 → 高星终结，直到影舞结束</span>
+                </div>
+                <p class="scenario-note">关键：不要满连击点继续按暗影打击；影舞外用背刺攒点、高星刺骨，等待下一次窗口。</p>
+              </article>
+
+              <article class="scenario-card">
+                <header><span>02</span><div><h4>双目标 / 少目标顺劈</h4><p>保持对优先目标的单体压力，同时利用噬灭复制。</p></div></header>
+                <div class="rotation-line compact">
+                  <b>噬灭</b><span>尽量覆盖两个有效目标</span><i></i>
+                  <b>生成</b><span>影舞内仍以暗影打击为主；资源不足时按实战补袖剑风暴</span><i></i>
+                  <b>终结</b><span>影分身优先；其后通常向优先目标打刺骨</span>
+                </div>
+                <p class="scenario-note">低目标数的极限切换收益有限。新手先保证不溢出、噬灭覆盖和高星终结，不要为了复杂判断丢掉一个完整 GCD。</p>
+              </article>
+
+              <article class="scenario-card">
+                <header><span>03</span><div><h4>稳定 3+ 目标 AOE</h4><p>怪群聚拢且能活过一个完整影舞窗口。</p></div></header>
+                <div class="rotation-line">
+                  <b>准备</b><span>等坦克聚怪 → 选定优先目标 → 噬灭覆盖最多 3 个目标</span><i></i>
+                  <b>爆发</b><span>暗影之刃 → 影舞</span><i></i>
+                  <b>生成</b><span>袖剑风暴快速获取连击点；需要集中单体时穿插暗影打击</span><i></i>
+                  <b>终结</b><span>影分身优先；其余高星用黑火药</span>
+                </div>
+                <p class="scenario-note">不要在怪还分散或移动时开完整爆发。袖剑风暴负责快速供豆，黑火药负责稳定 AOE，影分身放进高价值窗口。</p>
+              </article>
+
+              <article class="scenario-card">
+                <header><span>04</span><div><h4>大怪带小怪 / 优先目标场景</h4><p>总伤不是唯一目标，需要尽快压掉危险怪。</p></div></header>
+                <div class="rotation-line compact">
+                  <b>生成</b><span>用袖剑风暴从小怪获得大量连击点</span><i></i>
+                  <b>倾泻</b><span>影分身与刺骨打向优先目标</span><i></i>
+                  <b>切换</b><span>只有在不影响危险怪击杀时，才用黑火药换取总量</span>
+                </div>
+                <p class="scenario-note">这是大秘境最常见的“借小怪供豆、向大怪倾泻”思路。伤害统计可能不如全程黑火药好看，但更有利于限时。</p>
+              </article>
+
+              <article class="scenario-card">
+                <header><span>05</span><div><h4>短命怪 / 本波即将结束</h4><p>怪活不到完整噬灭和大爆发窗口。</p></div></header>
+                <div class="rotation-line compact">
+                  <b>短波</b><span>影舞可用则快速袖剑风暴/暗影打击供豆 → 直接终结</span><i></i>
+                  <b>保留</b><span>噬灭、暗影之刃留给下一波完整怪群</span><i></i>
+                  <b>收尾</b><span>不在残血怪上重新做完整铺垫</span>
+                </div>
+                <p class="scenario-note">判断标准不是“技能亮没亮”，而是技能能否在目标死亡前兑现。少打一轮无效铺垫，下一波往往更强。</p>
+              </article>
+
+              <article class="scenario-card">
+                <header><span>06</span><div><h4>移动、转火与被迫离开近战</h4><p>保持 GCD 价值，同时不破坏下一轮窗口。</p></div></header>
+                <div class="rotation-line compact">
+                  <b>转火</b><span>暗影步快速贴目标，先确认新目标值得交爆发</span><i></i>
+                  <b>离场</b><span>提前打掉高星终结，避免带着满豆空跑</span><i></i>
+                  <b>回场</b><span>重新检查目标数、噬灭、能量与冷却，不从“记忆中的下一刀”继续</span>
+                </div>
+                <p class="scenario-note">机制打断循环后要重新走优先级判断。最常见的错误，是回到近战后继续背中断前的固定顺序。</p>
+              </article>
+            </div>
+
+            <div class="mistake-box">
+              <h3>敏锐最常见的 6 个损失点</h3>
+              <div>
+                <span>满豆继续攒点</span>
+                <span>噬灭后没及时倾泻</span>
+                <span>怪没聚齐就开影舞</span>
+                <span>短命怪交完整暗刃</span>
+                <span>只打黑火药不压优先怪</span>
+                <span>被机制打断后继续背刀谱</span>
+              </div>
             </div>
           </section>
 
@@ -187,6 +298,8 @@
             <p>本页是学习索引与个人整理，不代表主播本人，也不转载付费资料、宏包或插件包。要学具体天赋、属性和当期刀谱，请回到原作者最新内容。</p>
             <div class="source-grid">
               <a href="https://www.bilibili.com/list/121538100" target="_blank" rel="noreferrer"><b>Bilibili 视频主页</b><span>系统教学、键位、配装与实战视频</span></a>
+              <a href="https://search.bilibili.com/all?keyword=12.15%E6%95%8F%E9%94%90%E8%B4%BC%E5%9F%BA%E7%A1%80%E5%A4%A9%E8%B5%8B%E8%AE%B2%E8%A7%A3" target="_blank" rel="noreferrer"><b>10.25 / 10.26 敏锐基础讲解</b><span>搜索叶落《12.1.5 敏锐贼基础天赋讲解》</span></a>
+              <a href="https://worldofwarcraft.blizzard.com/en-us/news/24307310/" target="_blank" rel="noreferrer"><b>10 月 27 日官方热修</b><span>敏锐补偿性增伤回调的官方版本说明</span></a>
               <a href="https://jingxuan.douyin.com/m/video/7627957157069081865" target="_blank" rel="noreferrer"><b>12.1 教学索引</b><span>刺杀、敏锐单体与 AOE 教学入口</span></a>
               <a href="https://www.douyu.com/62081" target="_blank" rel="noreferrer"><b>斗鱼直播间 62081</b><span>叶落盗贼大秘境直播</span></a>
               <a href="https://www.huya.com/30255381" target="_blank" rel="noreferrer"><b>虎牙直播与回放</b><span>近期直播录像与盗贼实战</span></a>
