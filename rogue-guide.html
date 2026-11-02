@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="叶落初冬魔兽世界盗贼公开教学整理：刺杀、敏锐、大秘境训练与复盘。">
+    <title>叶落初冬盗贼攻略整理 · 十三的小工具</title>
+    <link rel="stylesheet" href="rogue-guide.css?v=20261102">
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <nav>
+          <a href="index.html">返回主页</a>
+          <a href="#sources">原教学入口</a>
+        </nav>
+        <div class="hero-content">
+          <img src="assets/images/ye-luo-avatar.jpg" alt="叶落初冬公开账号头像">
+          <div>
+            <p class="eyebrow">WORLD OF WARCRAFT · ROGUE</p>
+            <h1>叶落初冬盗贼攻略整理</h1>
+            <p class="lead">把叶师傅的公开教学拆成一条能执行的练习路线：先选专精，再练资源、窗口与副本节奏，最后用日志复盘。</p>
+            <div class="meta">
+              <span>版本快照：正式服 12.1</span>
+              <span>更新：2026-11-02</span>
+              <span>定位：大秘境 / PvE</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="version-note">
+        <strong>先看这一条</strong>
+        <p>职业数值、天赋和技能交互会随热修变化。本页整理的是训练框架，不替代叶落最新视频；涉及天赋串、属性断点和固定起手时，以当期视频、游戏内说明和实战模拟为准。</p>
+      </section>
+
+      <div class="layout">
+        <aside class="toc">
+          <div class="toc-inner">
+            <p>攻略目录</p>
+            <a href="#position">1. 叶落的教学思路</a>
+            <a href="#choose">2. 三系怎么选</a>
+            <a href="#assassination">3. 刺杀训练框架</a>
+            <a href="#subtlety">4. 敏锐训练框架</a>
+            <a href="#outlaw">5. 狂徒定位</a>
+            <a href="#dungeon">6. 大秘境实战</a>
+            <a href="#setup">7. 键位与界面</a>
+            <a href="#review">8. 复盘方法</a>
+            <a href="#sources">9. 原教学入口</a>
+          </div>
+        </aside>
+
+        <section class="content">
+          <section class="panel" id="position">
+            <p class="section-no">01</p>
+            <h2>先理解叶落的教学思路</h2>
+            <p>叶落的盗贼教学不是让你机械背一串按键，而是先弄清楚资源如何进入爆发窗口。真正决定伤害的通常不是“有没有按技能”，而是技能是否在正确的目标数、正确的能量与连击点状态、正确的增益窗口中使用。</p>
+            <div class="principles">
+              <article><b>不溢出</b><span>能量、连击点和关键层数都不要长期溢出。</span></article>
+              <article><b>不空窗</b><span>重要增益、毒药或流血保持合理覆盖。</span></article>
+              <article><b>不乱交</b><span>爆发前先看怪物存活时间与下一波路线。</span></article>
+              <article><b>不硬背</b><span>随机触发出现后，根据资源状态调整终结技。</span></article>
+            </div>
+          </section>
+
+          <section class="panel" id="choose">
+            <p class="section-no">02</p>
+            <h2>三系怎么选</h2>
+            <div class="spec-grid">
+              <article class="spec assassination">
+                <span>推荐入门</span>
+                <h3>刺杀</h3>
+                <p>围绕毒药、流血与爆发窗口管理。循环逻辑较容易拆解，适合先建立盗贼资源观。</p>
+                <b>适合：</b>愿意盯持续伤害、喜欢稳定规划的人。
+              </article>
+              <article class="spec subtlety">
+                <span>上限路线</span>
+                <h3>敏锐</h3>
+                <p>围绕暗影之舞与短爆发窗口倾泻资源。12.1 的随机资源让它更依赖临场判断。</p>
+                <b>适合：</b>喜欢爆发节奏、愿意练细节和复盘的人。
+              </article>
+              <article class="spec outlaw">
+                <span>机制路线</span>
+                <h3>狂徒</h3>
+                <p>节奏快、按键频繁，依赖增益与冷却管理。本轮整理以叶落近期刺杀、敏锐教学为主。</p>
+                <b>适合：</b>喜欢高频操作和临场响应的人。
+              </article>
+            </div>
+          </section>
+
+          <section class="panel" id="assassination">
+            <p class="section-no">03</p>
+            <h2>刺杀：先把覆盖率练稳定</h2>
+            <p class="intro">刺杀的第一阶段不是追求漂亮峰值，而是保证毒药、流血、连击点和爆发冷却形成稳定循环。</p>
+            <div class="training-flow">
+              <article><span>1</span><div><h3>进战前</h3><p>确认毒药、潜行、目标优先级和本波预计存活时间。不要进战后才找技能。</p></div></article>
+              <article><span>2</span><div><h3>建立持续伤害</h3><p>先让核心毒药与流血进入工作状态，再考虑倾泻终结技；短命小怪不要机械铺满。</p></div></article>
+              <article><span>3</span><div><h3>管理资源</h3><p>高连击点使用终结技，避免能量顶满。爆发前适度留能量，确保窗口开始后有技能可按。</p></div></article>
+              <article><span>4</span><div><h3>对齐爆发</h3><p>把主要伤害技能放进增益窗口，但先确认目标活得够久；怪快死时把资源留给下一波。</p></div></article>
+            </div>
+            <div class="checklist">
+              <h3>木桩合格线</h3>
+              <label><input type="checkbox"> 3 分钟内没有长时间能量溢出</label>
+              <label><input type="checkbox"> 主要持续伤害没有无意义断档</label>
+              <label><input type="checkbox"> 终结技没有频繁低星误按</label>
+              <label><input type="checkbox"> 每轮爆发前能说清楚自己在等什么</label>
+            </div>
+          </section>
+
+          <section class="panel" id="subtlety">
+            <p class="section-no">04</p>
+            <h2>敏锐：围绕影舞做窗口判断</h2>
+            <p class="intro">叶落的 12.1 教学把单体与 AOE 分开讲，说明敏锐不能只背一套固定刀谱。随机触发和目标数量改变时，你要先看资源，再决定生成技与终结技。</p>
+            <div class="window-board">
+              <div class="window-title">一次爆发窗口的思考顺序</div>
+              <div class="window-steps">
+                <span>目标数</span><i></i><span>连击点</span><i></i><span>能量</span><i></i><span>关键层数</span><i></i><span>终结技</span>
+              </div>
+            </div>
+            <div class="compare">
+              <article>
+                <h3>单体</h3>
+                <ul>
+                  <li>爆发前避免连击点和能量溢出。</li>
+                  <li>影舞内优先保证高价值生成技与终结技数量。</li>
+                  <li>随机资源变化时，不为背固定顺序浪费高星终结。</li>
+                  <li>先在木桩上把每轮窗口按完整，再进副本处理机制。</li>
+                </ul>
+              </article>
+              <article>
+                <h3>AOE</h3>
+                <ul>
+                  <li>根据目标数切换攒点方式，不把单体手法原样搬进群怪。</li>
+                  <li>先判断怪群存活时间，短波次不必做完整铺垫。</li>
+                  <li>重要爆发与坦克拉怪节奏绑定，避免技能开在怪物移动途中。</li>
+                  <li>低目标数的极限细节收益有限，新手先保证基本循环。</li>
+                </ul>
+              </article>
+            </div>
+          </section>
+
+          <section class="panel" id="outlaw">
+            <p class="section-no">05</p>
+            <h2>狂徒：先作为第三专精储备</h2>
+            <p>叶落近期公开内容明显更聚焦刺杀与敏锐，因此本页不冒充他的狂徒完整攻略。想练狂徒时，先掌握增益监控、剑刃乱舞覆盖、连击点不溢出和冷却缩减逻辑；等叶落发布对应当前版本的系统教学后，再补充具体循环。</p>
+          </section>
+
+          <section class="panel" id="dungeon">
+            <p class="section-no">06</p>
+            <h2>大秘境：伤害从路线理解开始</h2>
+            <div class="dungeon-grid">
+              <article><b>开怪前</b><p>看下一波目标数量、危险怪、是否需要留控和爆发。</p></article>
+              <article><b>开怪时</b><p>等坦克聚怪稳定再开大，先打优先级目标，不只看总伤。</p></article>
+              <article><b>战斗中</b><p>打断、致盲、肾击和保命是盗贼价值的一部分，不能为伤害停手。</p></article>
+              <article><b>收尾时</b><p>怪物低血量时减少无效铺垫，为下一波保留能量与关键冷却。</p></article>
+            </div>
+          </section>
+
+          <section class="panel" id="setup">
+            <p class="section-no">07</p>
+            <h2>键位与界面：让眼睛少跑一点</h2>
+            <ul class="plain-list">
+              <li><b>高频生成技、终结技：</b>放在最自然的主键区，不能每次抬手找键。</li>
+              <li><b>打断和控制：</b>固定在所有角色的同类键位，形成肌肉记忆。</li>
+              <li><b>爆发技能：</b>相邻但不要叠在容易误触的位置；保留独立按键便于拆轴。</li>
+              <li><b>界面中心：</b>只显示能量、连击点、关键增益、目标持续伤害和重要冷却。</li>
+              <li><b>WA 与宏：</b>先理解它解决什么问题，再导入；版本变化后必须重新核对。</li>
+            </ul>
+          </section>
+
+          <section class="panel" id="review">
+            <p class="section-no">08</p>
+            <h2>每次只复盘一个问题</h2>
+            <div class="review-list">
+              <article><b>资源</b><span>能量和连击点溢出了几次？为什么？</span></article>
+              <article><b>覆盖</b><span>核心持续伤害在哪里断了？目标当时是否值得续？</span></article>
+              <article><b>爆发</b><span>大技能是否打在完整怪群和增益窗口中？</span></article>
+              <article><b>功能</b><span>漏了哪些打断、控制、佯攻或保命？</span></article>
+              <article><b>路线</b><span>哪一波因为不熟路线导致爆发空转？</span></article>
+            </div>
+            <p class="tip">建议顺序：先活着并完成机制，再保证资源不溢出，然后提高覆盖率，最后才优化极限窗口。</p>
+          </section>
+
+          <section class="panel sources" id="sources">
+            <p class="section-no">09</p>
+            <h2>叶落原教学入口</h2>
+            <p>本页是学习索引与个人整理，不代表主播本人，也不转载付费资料、宏包或插件包。要学具体天赋、属性和当期刀谱，请回到原作者最新内容。</p>
+            <div class="source-grid">
+              <a href="https://www.bilibili.com/list/121538100" target="_blank" rel="noreferrer"><b>Bilibili 视频主页</b><span>系统教学、键位、配装与实战视频</span></a>
+              <a href="https://jingxuan.douyin.com/m/video/7627957157069081865" target="_blank" rel="noreferrer"><b>12.1 教学索引</b><span>刺杀、敏锐单体与 AOE 教学入口</span></a>
+              <a href="https://www.douyu.com/62081" target="_blank" rel="noreferrer"><b>斗鱼直播间 62081</b><span>叶落盗贼大秘境直播</span></a>
+              <a href="https://www.huya.com/30255381" target="_blank" rel="noreferrer"><b>虎牙直播与回放</b><span>近期直播录像与盗贼实战</span></a>
+            </div>
+            <p class="credit">头像取自叶落初冬公开 Bilibili 账号，仅用于指向原作者与内容归属。</p>
+          </section>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

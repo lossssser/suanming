@@ -210,6 +210,44 @@ button.project-card {
   background: #eef8f2;
 }
 
+.project-card-rogue .project-visual {
+  color: #dbe9a9;
+  background: #171c18;
+}
+
+.project-card-rogue .project-glyph {
+  border-color: rgba(183, 219, 66, .45);
+  color: #789b13;
+  background: #f8faef;
+}
+
+.rogue-mark {
+  position: relative;
+  width: min(46%, 180px);
+  height: 92px;
+}
+
+.rogue-mark span {
+  position: absolute;
+  left: 50%;
+  width: 18px;
+  height: 82px;
+  border-radius: 2px 2px 9px 9px;
+  background: linear-gradient(#d5e7a0, #789b13);
+  transform-origin: 50% 76%;
+}
+
+.rogue-mark span:nth-child(1) { transform: translateX(-50%) rotate(-42deg); }
+.rogue-mark span:nth-child(2) { transform: translateX(-50%) rotate(42deg); }
+.rogue-mark span:nth-child(3) {
+  left: calc(50% - 6px);
+  top: 59px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #d2a64a;
+}
+
 .project-card-werewolf .project-visual {
   background: #eef0ff;
 }
