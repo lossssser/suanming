@@ -210,6 +210,36 @@ button.project-card {
   background: #eef8f2;
 }
 
+.project-card-algorithm .project-visual {
+  color: #e8f4ff;
+  background: #17243a;
+}
+
+.project-card-algorithm .project-glyph {
+  border-color: rgba(126, 186, 255, 0.5);
+  color: #79b8ff;
+}
+
+.algorithm-steps {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+}
+
+.algorithm-steps span {
+  min-width: 42px;
+  padding: 8px 6px;
+  border: 1px solid rgba(121, 184, 255, 0.42);
+  border-radius: 5px;
+  color: #d8ebff;
+  background: rgba(255, 255, 255, 0.06);
+  font: 700 12px/1 Consolas, monospace;
+  text-align: center;
+}
+
+.algorithm-steps span:nth-child(2) { transform: translateY(-10px); }
+.algorithm-steps span:nth-child(3) { transform: translateY(-20px); }
+
 .project-card-rogue .project-visual {
   color: #dbe9a9;
   background: #171c18;

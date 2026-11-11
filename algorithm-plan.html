@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="面向 C++ 求职者的 LeetCode Hot 100 十周学习计划与详细教案。">
+    <title>LeetCode Hot 100 教案 · 十三的小工具</title>
+    <link rel="stylesheet" href="algorithm-plan.css?v=20261111">
+  </head>
+  <body>
+    <main class="page-shell">
+      <nav class="topbar">
+        <a class="back-link" href="index.html">← 返回主页</a>
+        <span id="saveState" class="save-state">进度自动保存在当前浏览器</span>
+      </nav>
+
+      <header class="hero">
+        <div>
+          <p class="eyebrow">C++17 · 面试算法训练</p>
+          <h1>LeetCode Hot 100 教案</h1>
+          <p class="hero-copy">目标不是背下 100 份答案，而是掌握十几种可迁移的解题模式。每道题都要完成识别、推导、编码、口述和复习五个环节。</p>
+        </div>
+        <div class="hero-stats" aria-label="计划概览">
+          <div><strong>10</strong><span>周系统训练</span></div>
+          <div><strong>100</strong><span>道经典题</span></div>
+          <div><strong>90</strong><span>分钟 / 天</span></div>
+          <div><strong>1-3-7-14</strong><span>复习节奏</span></div>
+        </div>
+      </header>
+
+      <div class="dashboard">
+        <div class="main-column">
+          <section class="panel">
+            <h2>先学方法，再刷题</h2>
+            <p class="panel-intro">每道题固定执行四步。卡住 20 分钟后可以看提示，但看完必须关掉答案重新写，第二天再裸写一次。</p>
+            <div class="method-grid">
+              <div class="method-step"><strong>01 识别</strong><p>从输入规模、关键词和数据结构判断算法模式。</p></div>
+              <div class="method-step"><strong>02 推导</strong><p>先说暴力解法，再找重复计算和可维护状态。</p></div>
+              <div class="method-step"><strong>03 编码</strong><p>使用 C++17 独立实现，主动处理空输入和边界。</p></div>
+              <div class="method-step"><strong>04 复盘</strong><p>口述复杂度、错误点，并按 1-3-7-14 重写。</p></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2>10 周路线</h2>
+            <div class="week-list">
+              <div class="week-row"><span class="week-number">第 1 周</span><div><h3>哈希、双指针与滑动窗口</h3><p>建立“用空间换时间”和维护区间状态的直觉。</p></div><span class="week-count">10 题</span></div>
+              <div class="week-row"><span class="week-number">第 2 周</span><div><h3>子串、数组与矩阵</h3><p>前缀和、区间合并、原地修改和矩阵模拟。</p></div><span class="week-count">10 题</span></div>
+              <div class="week-row"><span class="week-number">第 3 周</span><div><h3>链表</h3><p>虚拟头结点、快慢指针、反转和合并。</p></div><span class="week-count">12 题</span></div>
+              <div class="week-row"><span class="week-number">第 4 周</span><div><h3>二叉树基础</h3><p>递归定义、遍历、层序搜索和结构判断。</p></div><span class="week-count">11 题</span></div>
+              <div class="week-row"><span class="week-number">第 5 周</span><div><h3>二叉树进阶与图论</h3><p>路径问题、公共祖先、DFS、BFS 和拓扑排序。</p></div><span class="week-count">10 题</span></div>
+              <div class="week-row"><span class="week-number">第 6 周</span><div><h3>回溯与二分</h3><p>选择树、剪枝、边界二分和旋转数组。</p></div><span class="week-count">13 题</span></div>
+              <div class="week-row"><span class="week-number">第 7 周</span><div><h3>栈、单调栈与堆</h3><p>最近更大元素、区间贡献和 Top K。</p></div><span class="week-count">9 题</span></div>
+              <div class="week-row"><span class="week-number">第 8 周</span><div><h3>贪心与一维动态规划</h3><p>局部最优证明、状态定义和转移顺序。</p></div><span class="week-count">12 题</span></div>
+              <div class="week-row"><span class="week-number">第 9 周</span><div><h3>多维动态规划与技巧</h3><p>网格、字符串匹配、位运算和原地算法。</p></div><span class="week-count">13 题</span></div>
+              <div class="week-row"><span class="week-number">第 10 周</span><div><h3>错题重刷与模拟面试</h3><p>按薄弱模块组卷，完成 45 分钟编码与口述。</p></div><span class="week-count">3 轮</span></div>
+            </div>
+          </section>
+
+          <section class="panel" id="week1">
+            <h2>第 1 周详细教案</h2>
+            <p class="panel-intro">本周不是追求题量，而是学会三件事：什么时候用哈希、什么时候左右指针移动、窗口扩大与收缩由什么条件控制。</p>
+
+            <div class="day-block">
+              <div class="day-head"><h3>Day 1 · 哈希表建立映射</h3><span>2 题 · 约 90 分钟</span></div>
+              <div class="lesson-list">
+                <details class="lesson" open>
+                  <summary><span class="lesson-title"><strong>1. 两数之和</strong><span>哈希表 · 补数查询</span></span><span class="difficulty">简单</span></summary>
+                  <div class="lesson-content">
+                    <div class="lesson-grid">
+                      <div class="lesson-note"><h4>识别信号</h4><p>需要寻找两个元素满足固定关系，并返回原下标。暴力枚举是 O(n²)，说明可以缓存已经见过的数字。</p></div>
+                      <div class="lesson-note"><h4>推导</h4><p>遍历到 x 时，只需知道 target-x 是否出现过。先查询再写入，可以避免同一个元素被使用两次。</p></div>
+                    </div>
+<pre><code>vector&lt;int&gt; twoSum(vector&lt;int&gt;& nums, int target) {
+    unordered_map&lt;int, int&gt; seen;
+    for (int i = 0; i &lt; nums.size(); ++i) {
+        int need = target - nums[i];
+        if (seen.count(need)) return {seen[need], i};
+        seen[nums[i]] = i;
+    }
+    return {};
+}</code></pre>
+                    <div class="lesson-grid">
+                      <div class="lesson-note"><h4>复杂度</h4><p>平均时间 O(n)，空间 O(n)。哈希表最坏情况可能退化，但面试通常讨论平均复杂度。</p></div>
+                      <div class="lesson-note"><h4>易错点</h4><ul><li>写入后再查询会匹配到自己。</li><li>不要排序，排序后原下标会丢失。</li><li>说明重复数字如何处理。</li></ul></div>
+                    </div>
+                    <div class="lesson-actions"><a class="problem-link" href="https://leetcode.cn/problems/two-sum/" target="_blank" rel="noreferrer">打开题目</a><select class="status-select" data-problem="two-sum" aria-label="两数之和掌握状态"><option value="todo">未开始</option><option value="practicing">练习中</option><option value="mastered">已掌握</option></select><span class="review-date">复习：明天、第 3、7、14 天</span></div>
+                  </div>
+                </details>
+
+                <details class="lesson">
+                  <summary><span class="lesson-title"><strong>49. 字母异位词分组</strong><span>哈希表 · 设计稳定键</span></span><span class="difficulty medium">中等</span></summary>
+                  <div class="lesson-content">
+                    <div class="lesson-grid"><div class="lesson-note"><h4>识别信号</h4><p>要求把“本质相同、顺序不同”的对象归组，关键不是遍历，而是为同一类对象构造相同的键。</p></div><div class="lesson-note"><h4>两种键</h4><p>排序后的字符串简单可靠；26 个字母的频次数组可做到总字符数 O(L)，但要避免拼接歧义。</p></div></div>
+<pre><code>vector&lt;vector&lt;string&gt;&gt; groupAnagrams(vector&lt;string&gt;& strs) {
+    unordered_map&lt;string, vector&lt;string&gt;&gt; groups;
+    for (const string& s : strs) {
+        string key = s;
+        sort(key.begin(), key.end());
+        groups[key].push_back(s);
+    }
+    vector&lt;vector&lt;string&gt;&gt; ans;
+    for (auto& [_, group] : groups) ans.push_back(move(group));
+    return ans;
+}</code></pre>
+                    <div class="lesson-grid"><div class="lesson-note"><h4>复杂度</h4><p>设字符串平均长度 k，共 n 个：时间 O(n·k log k)，额外空间 O(nk)。</p></div><div class="lesson-note"><h4>面试表达</h4><p>先说明“分组问题要找等价类的规范表示”，再比较排序键与计数键。</p></div></div>
+                    <div class="lesson-actions"><a class="problem-link" href="https://leetcode.cn/problems/group-anagrams/" target="_blank" rel="noreferrer">打开题目</a><select class="status-select" data-problem="group-anagrams"><option value="todo">未开始</option><option value="practicing">练习中</option><option value="mastered">已掌握</option></select></div>
+                  </div>
+                </details>
+              </div>
+            </div>
+
+            <div class="day-block">
+              <div class="day-head"><h3>Day 2 · 集合与连续区间</h3><span>1 题 + 重写 Day 1</span></div>
+              <div class="lesson-list">
+                <details class="lesson"><summary><span class="lesson-title"><strong>128. 最长连续序列</strong><span>哈希集合 · 只从区间起点出发</span></span><span class="difficulty medium">中等</span></summary><div class="lesson-content"><div class="lesson-grid"><div class="lesson-note"><h4>核心观察</h4><p>排序能做但为 O(n log n)。放入集合后，只有 x-1 不存在的 x 才是连续段起点，从起点向右扩展即可。</p></div><div class="lesson-note"><h4>为什么是 O(n)</h4><p>虽然有嵌套循环，但每个数最多作为某一连续段成员被访问一次，不是每个起点都重复扫描。</p></div></div><pre><code>int longestConsecutive(vector&lt;int&gt;& nums) {
+    unordered_set&lt;int&gt; values(nums.begin(), nums.end());
+    int best = 0;
+    for (int x : values) {
+        if (values.count(x - 1)) continue;
+        int current = x, length = 1;
+        while (values.count(current + 1)) {
+            ++current;
+            ++length;
+        }
+        best = max(best, length);
+    }
+    return best;
+}</code></pre><div class="lesson-actions"><a class="problem-link" href="https://leetcode.cn/problems/longest-consecutive-sequence/" target="_blank" rel="noreferrer">打开题目</a><select class="status-select" data-problem="longest-consecutive"><option value="todo">未开始</option><option value="practicing">练习中</option><option value="mastered">已掌握</option></select></div></div></details>
+              </div>
+            </div>
+
+            <div class="day-block">
+              <div class="day-head"><h3>Day 3 · 同向与相向双指针</h3><span>2 题</span></div>
+              <div class="lesson-list">
+                <details class="lesson"><summary><span class="lesson-title"><strong>283. 移动零</strong><span>同向双指针 · 维护已处理区</span></span><span class="difficulty">简单</span></summary><div class="lesson-content"><div class="lesson-grid"><div class="lesson-note"><h4>循环不变量</h4><p>[0, slow) 始终保存已经遇到的全部非零元素，并保持原相对顺序；fast 负责扫描未知区域。</p></div><div class="lesson-note"><h4>原地要求</h4><p>先把非零数压到前面，再把剩余位置补零。这样逻辑比频繁交换更容易证明。</p></div></div><pre><code>void moveZeroes(vector&lt;int&gt;& nums) {
+    int slow = 0;
+    for (int x : nums) {
+        if (x != 0) nums[slow++] = x;
+    }
+    while (slow &lt; nums.size()) nums[slow++] = 0;
+}</code></pre><div class="lesson-actions"><a class="problem-link" href="https://leetcode.cn/problems/move-zeroes/" target="_blank" rel="noreferrer">打开题目</a><select class="status-select" data-problem="move-zeroes"><option value="todo">未开始</option><option value="practicing">练习中</option><option value="mastered">已掌握</option></select></div></div></details>
+                <details class="lesson"><summary><span class="lesson-title"><strong>11. 盛最多水的容器</strong><span>相向双指针 · 淘汰不可能更优的一侧</span></span><span class="difficulty medium">中等</span></summary><div class="lesson-content"><div class="lesson-grid"><div class="lesson-note"><h4>移动依据</h4><p>面积由短板决定。宽度变小已不可避免，移动长板不会提高当前短板，因此只能移动短板寻找更高边界。</p></div><div class="lesson-note"><h4>证明重点</h4><p>不是“凭感觉夹逼”。要说明被短板固定的所有更窄组合都不可能超过当前面积，因此可以安全淘汰短板。</p></div></div><pre><code>int maxArea(vector&lt;int&gt;& height) {
+    int left = 0, right = height.size() - 1, ans = 0;
+    while (left &lt; right) {
+        ans = max(ans, min(height[left], height[right]) * (right - left));
+        if (height[left] &lt; height[right]) ++left;
+        else --right;
+    }
+    return ans;
+}</code></pre><div class="lesson-actions"><a class="problem-link" href="https://leetcode.cn/problems/container-with-most-water/" target="_blank" rel="noreferrer">打开题目</a><select class="status-select" data-problem="container-water"><option value="todo">未开始</option><option value="practicing">练习中</option><option value="mastered">已掌握</option></select></div></div></details>
+              </div>
+            </div>
+
+            <div class="day-block">
+              <div class="day-head"><h3>Day 4 · 排序后的双指针</h3><span>1 题</span></div>
+              <div class="lesson-list"><details class="lesson"><summary><span class="lesson-title"><strong>15. 三数之和</strong><span>排序 + 固定一个数 + 双指针</span></span><span class="difficulty medium">中等</span></summary><div class="lesson-content"><div class="lesson-grid"><div class="lesson-note"><h4>降维</h4><p>排序后固定 nums[i]，问题变成在右侧有序区间中寻找和为 -nums[i] 的两个数。</p></div><div class="lesson-note"><h4>去重位置</h4><p>i 与前一个相同则跳过；找到答案后，left 和 right 都要跨过连续重复值。不要用 set 掩盖去重逻辑。</p></div></div><pre><code>vector&lt;vector&lt;int&gt;&gt; threeSum(vector&lt;int&gt;& nums) {
+    sort(nums.begin(), nums.end());
+    vector&lt;vector&lt;int&gt;&gt; ans;
+    for (int i = 0; i + 2 &lt; nums.size(); ++i) {
+        if (nums[i] &gt; 0) break;
+        if (i &gt; 0 && nums[i] == nums[i - 1]) continue;
+        int left = i + 1, right = nums.size() - 1;
+        while (left &lt; right) {
+            long long sum = (long long)nums[i] + nums[left] + nums[right];
+            if (sum &lt; 0) ++left;
+            else if (sum &gt; 0) --right;
+            else {
+                ans.push_back({nums[i], nums[left], nums[right]});
+                int a = nums[left], b = nums[right];
+                while (left &lt; right && nums[left] == a) ++left;
+                while (left &lt; right && nums[right] == b) --right;
+            }
+        }
+    }
+    return ans;
+}</code></pre><div class="lesson-actions"><a class="problem-link" href="https://leetcode.cn/problems/3sum/" target="_blank" rel="noreferrer">打开题目</a><select class="status-select" data-problem="three-sum"><option value="todo">未开始</option><option value="practicing">练习中</option><option value="mastered">已掌握</option></select></div></div></details></div>
+            </div>
+
+            <div class="day-block">
+              <div class="day-head"><h3>Day 5 · 滑动窗口</h3><span>2 题</span></div>
+              <div class="lesson-list">
+                <details class="lesson"><summary><span class="lesson-title"><strong>3. 无重复字符的最长子串</strong><span>可变窗口 · 维护无重复条件</span></span><span class="difficulty medium">中等</span></summary><div class="lesson-content"><div class="lesson-grid"><div class="lesson-note"><h4>窗口定义</h4><p>[left, right] 始终是不含重复字符的合法窗口。right 扩张；若字符重复，left 直接跳到该字符上次位置之后。</p></div><div class="lesson-note"><h4>关键保护</h4><p>left 只能向右移动，所以更新时使用 max(left, last[c] + 1)，防止被窗口外的旧位置拉回去。</p></div></div><pre><code>int lengthOfLongestSubstring(string s) {
+    vector&lt;int&gt; last(256, -1);
+    int left = 0, best = 0;
+    for (int right = 0; right &lt; s.size(); ++right) {
+        left = max(left, last[(unsigned char)s[right]] + 1);
+        last[(unsigned char)s[right]] = right;
+        best = max(best, right - left + 1);
+    }
+    return best;
+}</code></pre><div class="lesson-actions"><a class="problem-link" href="https://leetcode.cn/problems/longest-substring-without-repeating-characters/" target="_blank" rel="noreferrer">打开题目</a><select class="status-select" data-problem="longest-substring"><option value="todo">未开始</option><option value="practicing">练习中</option><option value="mastered">已掌握</option></select></div></div></details>
+                <details class="lesson"><summary><span class="lesson-title"><strong>438. 找到字符串中所有字母异位词</strong><span>定长窗口 · 频次差</span></span><span class="difficulty medium">中等</span></summary><div class="lesson-content"><div class="lesson-grid"><div class="lesson-note"><h4>窗口长度</h4><p>异位词长度必然等于 p，因此窗口固定为 p.size()。每次右侧加入一个字符，超长后左侧移出一个字符。</p></div><div class="lesson-note"><h4>状态选择</h4><p>初学可直接比较两个 26 长数组，复杂度仍是 O(26n)。熟练后可维护不匹配字符种类数。</p></div></div><pre><code>vector&lt;int&gt; findAnagrams(string s, string p) {
+    if (p.size() &gt; s.size()) return {};
+    array&lt;int, 26&gt; need{}, window{};
+    for (char c : p) ++need[c - 'a'];
+    vector&lt;int&gt; ans;
+    for (int right = 0; right &lt; s.size(); ++right) {
+        ++window[s[right] - 'a'];
+        if (right &gt;= p.size()) --window[s[right - p.size()] - 'a'];
+        if (right + 1 &gt;= p.size() && window == need)
+            ans.push_back(right - p.size() + 1);
+    }
+    return ans;
+}</code></pre><div class="lesson-actions"><a class="problem-link" href="https://leetcode.cn/problems/find-all-anagrams-in-a-string/" target="_blank" rel="noreferrer">打开题目</a><select class="status-select" data-problem="find-anagrams"><option value="todo">未开始</option><option value="practicing">练习中</option><option value="mastered">已掌握</option></select></div></div></details>
+              </div>
+            </div>
+
+            <div class="day-block">
+              <div class="day-head"><h3>Day 6 · 综合与周测</h3><span>2 题 · 限时训练</span></div>
+              <div class="lesson-list">
+                <details class="lesson"><summary><span class="lesson-title"><strong>42. 接雨水</strong><span>相向双指针 · 维护左右最高墙</span></span><span class="difficulty">困难</span></summary><div class="lesson-content"><div class="lesson-grid"><div class="lesson-note"><h4>本质</h4><p>位置 i 的水量是 min(左侧最高, 右侧最高)-height[i]。双指针用于在不知道另一侧精确最高值时，先结算较矮侧。</p></div><div class="lesson-note"><h4>结算条件</h4><p>当 leftMax ≤ rightMax，左侧当前位置的上界已经由 leftMax 决定，右侧至少存在 rightMax 兜底，可安全结算。</p></div></div><pre><code>int trap(vector&lt;int&gt;& height) {
+    int left = 0, right = height.size() - 1;
+    int leftMax = 0, rightMax = 0, water = 0;
+    while (left &lt;= right) {
+        if (leftMax &lt;= rightMax) {
+            leftMax = max(leftMax, height[left]);
+            water += leftMax - height[left++];
+        } else {
+            rightMax = max(rightMax, height[right]);
+            water += rightMax - height[right--];
+        }
+    }
+    return water;
+}</code></pre><div class="lesson-actions"><a class="problem-link" href="https://leetcode.cn/problems/trapping-rain-water/" target="_blank" rel="noreferrer">打开题目</a><select class="status-select" data-problem="trapping-rain-water"><option value="todo">未开始</option><option value="practicing">练习中</option><option value="mastered">已掌握</option></select></div></div></details>
+                <details class="lesson"><summary><span class="lesson-title"><strong>周测：两数之和 + 三数之和裸写</strong><span>45 分钟模拟面试</span></span><span class="difficulty medium">复盘</span></summary><div class="lesson-content"><div class="lesson-grid"><div class="lesson-note"><h4>计时安排</h4><p>5 分钟澄清题意，25 分钟编码，10 分钟测试，5 分钟讲复杂度与替代方案。</p></div><div class="lesson-note"><h4>合格标准</h4><p>无提示写出；能解释哈希与排序双指针的选择；主动覆盖重复数、空数组、溢出和无解情况。</p></div></div><div class="lesson-actions"><select class="status-select" data-problem="week1-mock"><option value="todo">未开始</option><option value="practicing">需要重测</option><option value="mastered">通过周测</option></select></div></div></details>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="side-column">
+          <section class="panel today-card"><h3>今天怎么开始</h3><p><strong>第一天只做两题。</strong></p><ol class="rule-list"><li>读两数之和教案</li><li>关掉代码独立实现</li><li>完成异位词分组</li><li>口述复杂度</li><li>明天先裸写两数之和</li></ol></section>
+          <section class="panel"><h3>第 1 周进度</h3><div class="progress-track"><div id="progressFill" class="progress-fill"></div></div><div class="progress-meta"><span id="progressText">0 / 9 题已开始</span><span id="masteredText">0 题已掌握</span></div></section>
+          <section class="panel"><h3>我的学习笔记</h3><textarea id="studyNote" class="note-area" placeholder="记录今天卡在哪里、犯了什么错、下次看到什么信号应该想到该算法……"></textarea></section>
+          <section class="panel"><h3>面试口述模板</h3><ol class="rule-list"><li>复述问题与边界</li><li>给出暴力方案和复杂度</li><li>指出重复计算</li><li>解释优化数据结构</li><li>编码并用样例走查</li><li>总结时空复杂度</li></ol></section>
+          <section class="panel"><p class="source-note">题目范围依据力扣官方 LeetCode Hot 100 学习计划整理。代码和讲解为本站重新编写，仅用于个人学习。</p><a href="https://leetcode.cn/studyplan/top-100-liked/" target="_blank" rel="noreferrer">查看官方题单</a></section>
+        </aside>
+      </div>
+    </main>
+    <script src="algorithm-plan.js?v=20261111"></script>
+  </body>
+</html>
