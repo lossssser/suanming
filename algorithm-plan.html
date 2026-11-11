@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="面向 C++ 求职者的 LeetCode Hot 100 十周学习计划与详细教案。">
     <title>LeetCode Hot 100 教案 · 十三的小工具</title>
-    <link rel="stylesheet" href="algorithm-plan.css?v=20261111">
+    <link rel="stylesheet" href="algorithm-plan.css?v=20261111b">
   </head>
   <body>
     <main class="page-shell">
@@ -43,23 +43,51 @@
 
           <section class="panel">
             <h2>10 周路线</h2>
+            <p class="panel-intro">点击任意一周查看学习目标；第 1 周已经放入完整教案。</p>
             <div class="week-list">
-              <div class="week-row"><span class="week-number">第 1 周</span><div><h3>哈希、双指针与滑动窗口</h3><p>建立“用空间换时间”和维护区间状态的直觉。</p></div><span class="week-count">10 题</span></div>
-              <div class="week-row"><span class="week-number">第 2 周</span><div><h3>子串、数组与矩阵</h3><p>前缀和、区间合并、原地修改和矩阵模拟。</p></div><span class="week-count">10 题</span></div>
-              <div class="week-row"><span class="week-number">第 3 周</span><div><h3>链表</h3><p>虚拟头结点、快慢指针、反转和合并。</p></div><span class="week-count">12 题</span></div>
-              <div class="week-row"><span class="week-number">第 4 周</span><div><h3>二叉树基础</h3><p>递归定义、遍历、层序搜索和结构判断。</p></div><span class="week-count">11 题</span></div>
-              <div class="week-row"><span class="week-number">第 5 周</span><div><h3>二叉树进阶与图论</h3><p>路径问题、公共祖先、DFS、BFS 和拓扑排序。</p></div><span class="week-count">10 题</span></div>
-              <div class="week-row"><span class="week-number">第 6 周</span><div><h3>回溯与二分</h3><p>选择树、剪枝、边界二分和旋转数组。</p></div><span class="week-count">13 题</span></div>
-              <div class="week-row"><span class="week-number">第 7 周</span><div><h3>栈、单调栈与堆</h3><p>最近更大元素、区间贡献和 Top K。</p></div><span class="week-count">9 题</span></div>
-              <div class="week-row"><span class="week-number">第 8 周</span><div><h3>贪心与一维动态规划</h3><p>局部最优证明、状态定义和转移顺序。</p></div><span class="week-count">12 题</span></div>
-              <div class="week-row"><span class="week-number">第 9 周</span><div><h3>多维动态规划与技巧</h3><p>网格、字符串匹配、位运算和原地算法。</p></div><span class="week-count">13 题</span></div>
-              <div class="week-row"><span class="week-number">第 10 周</span><div><h3>错题重刷与模拟面试</h3><p>按薄弱模块组卷，完成 45 分钟编码与口述。</p></div><span class="week-count">3 轮</span></div>
+              <details class="week-route" id="weekRoute1">
+                <summary class="week-row"><span class="week-number">第 1 周</span><div><h3>哈希、双指针与滑动窗口</h3><p>建立“用空间换时间”和维护区间状态的直觉。</p></div><span class="week-count">9 项训练</span></summary>
+                <div class="week-route-content" id="week1Mount"></div>
+              </details>
+              <details class="week-route"><summary class="week-row"><span class="week-number">第 2 周</span><div><h3>子串、数组与矩阵</h3><p>前缀和、区间合并、原地修改和矩阵模拟。</p></div><span class="week-count">10 题</span></summary><p class="week-preview">重点解决连续区间统计、数组原地操作和二维坐标变换。详细教案将在完成第 1 周后开放。</p></details>
+              <details class="week-route"><summary class="week-row"><span class="week-number">第 3 周</span><div><h3>链表</h3><p>虚拟头结点、快慢指针、反转和合并。</p></div><span class="week-count">12 题</span></summary><p class="week-preview">重点建立指针修改顺序、哨兵节点和链表分段处理的稳定模板。</p></details>
+              <details class="week-route"><summary class="week-row"><span class="week-number">第 4 周</span><div><h3>二叉树基础</h3><p>递归定义、遍历、层序搜索和结构判断。</p></div><span class="week-count">11 题</span></summary><p class="week-preview">从“一个节点应该返回什么”入手，掌握递归函数的定义与终止条件。</p></details>
+              <details class="week-route"><summary class="week-row"><span class="week-number">第 5 周</span><div><h3>二叉树进阶与图论</h3><p>路径问题、公共祖先、DFS、BFS 和拓扑排序。</p></div><span class="week-count">10 题</span></summary><p class="week-preview">把树的遍历经验迁移到图，区分访问标记、层级扩散与依赖关系。</p></details>
+              <details class="week-route"><summary class="week-row"><span class="week-number">第 6 周</span><div><h3>回溯与二分</h3><p>选择树、剪枝、边界二分和旋转数组。</p></div><span class="week-count">13 题</span></summary><p class="week-preview">回溯训练“选择、递归、撤销”，二分训练单调性和边界不变量。</p></details>
+              <details class="week-route"><summary class="week-row"><span class="week-number">第 7 周</span><div><h3>栈、单调栈与堆</h3><p>最近更大元素、区间贡献和 Top K。</p></div><span class="week-count">9 题</span></summary><p class="week-preview">理解栈保存的候选元素为什么仍有价值，以及堆如何维护动态最值。</p></details>
+              <details class="week-route"><summary class="week-row"><span class="week-number">第 8 周</span><div><h3>贪心与一维动态规划</h3><p>局部最优证明、状态定义和转移顺序。</p></div><span class="week-count">12 题</span></summary><p class="week-preview">先学会证明贪心选择，再用状态定义拆解不能直接贪心的问题。</p></details>
+              <details class="week-route"><summary class="week-row"><span class="week-number">第 9 周</span><div><h3>多维动态规划与技巧</h3><p>网格、字符串匹配、位运算和原地算法。</p></div><span class="week-count">13 题</span></summary><p class="week-preview">集中训练二维状态、初始化顺序、空间压缩和常见技巧题。</p></details>
+              <details class="week-route"><summary class="week-row"><span class="week-number">第 10 周</span><div><h3>错题重刷与模拟面试</h3><p>按薄弱模块组卷，完成 45 分钟编码与口述。</p></div><span class="week-count">3 轮</span></summary><p class="week-preview">不再学习新模板，按真实面试节奏完成三轮计时、讲解和复盘。</p></details>
             </div>
           </section>
 
-          <section class="panel" id="week1">
+          <section class="week-course" id="week1">
             <h2>第 1 周详细教案</h2>
             <p class="panel-intro">本周不是追求题量，而是学会三件事：什么时候用哈希、什么时候左右指针移动、窗口扩大与收缩由什么条件控制。</p>
+
+            <div class="algorithm-principles">
+              <article>
+                <span class="principle-id">01</span>
+                <h3>哈希表：把“反复查找”变成直接查询</h3>
+                <p><strong>为什么使用：</strong>暴力法经常为每个元素再次扫描数组寻找搭档，重复查找使复杂度达到 O(n²)。哈希表用额外空间记录“已经见过什么”，平均一次查询只需 O(1)。</p>
+                <p><strong>怎么使用：</strong>先明确键和值。键通常是要查询的数字、字符串规范形式或状态；值可以是下标、出现次数或分组结果。遍历时按题意决定“先查后存”还是“先存后查”。</p>
+                <p><strong>识别信号：</strong>快速判断是否存在、统计频次、按共同特征分组、保留原下标。</p>
+              </article>
+              <article>
+                <span class="principle-id">02</span>
+                <h3>双指针：利用顺序一次排除一批答案</h3>
+                <p><strong>为什么使用：</strong>当数组有序，或可以维护一个已处理区间时，指针的一次移动能够证明某批候选答案不可能更优，因此不必枚举所有组合。</p>
+                <p><strong>怎么使用：</strong>同向指针通常由 fast 探索、slow 维护结果边界；相向指针从两端开始，根据单调关系移动其中一侧。写代码前必须先说清每个指针代表什么。</p>
+                <p><strong>识别信号：</strong>有序数组、原地修改、两数关系、首尾夹逼、删除或压缩元素。</p>
+              </article>
+              <article>
+                <span class="principle-id">03</span>
+                <h3>滑动窗口：维护连续区间而不是重复计算</h3>
+                <p><strong>为什么使用：</strong>连续子数组或子串的暴力枚举会重复统计相邻区间。窗口右端加入新元素、左端移除旧元素，就能复用上一步状态。</p>
+                <p><strong>怎么使用：</strong>先写出窗口必须满足的合法条件。右指针负责扩张；条件被破坏时左指针收缩；在“刚合法”或“始终合法”的位置更新答案。</p>
+                <p><strong>识别信号：</strong>最长或最短连续区间、固定长度子串、区间内不重复、频次满足条件。</p>
+              </article>
+            </div>
 
             <div class="day-block">
               <div class="day-head"><h3>Day 1 · 哈希表建立映射</h3><span>2 题 · 约 90 分钟</span></div>
@@ -70,6 +98,12 @@
                     <div class="lesson-grid">
                       <div class="lesson-note"><h4>识别信号</h4><p>需要寻找两个元素满足固定关系，并返回原下标。暴力枚举是 O(n²)，说明可以缓存已经见过的数字。</p></div>
                       <div class="lesson-note"><h4>推导</h4><p>遍历到 x 时，只需知道 target-x 是否出现过。先查询再写入，可以避免同一个元素被使用两次。</p></div>
+                    </div>
+                    <div class="reasoning-flow">
+                      <div><b>1. 暴力问题</b><span>每个 nums[i] 都向后寻找搭档，要比较约 n² 次。</span></div>
+                      <div><b>2. 可复用信息</b><span>走到 i 时，前面的元素已经扫描过，不应再扫描一遍。</span></div>
+                      <div><b>3. 哈希设计</b><span>键存数字，值存下标；用 target-nums[i] 直接查询搭档。</span></div>
+                      <div><b>4. 执行顺序</b><span>先查后存，保证当前元素不会和自己组成答案。</span></div>
                     </div>
 <pre><code>vector&lt;int&gt; twoSum(vector&lt;int&gt;& nums, int target) {
     unordered_map&lt;int, int&gt; seen;
@@ -238,6 +272,6 @@
         </aside>
       </div>
     </main>
-    <script src="algorithm-plan.js?v=20261111"></script>
+    <script src="algorithm-plan.js?v=20261111b"></script>
   </body>
 </html>

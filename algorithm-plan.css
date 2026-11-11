@@ -63,11 +63,32 @@ button, textarea, select { font: inherit; }
 .method-step p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
 
 .week-list { display: grid; gap: 10px; }
-.week-row { display: grid; grid-template-columns: 74px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px; border: 1px solid var(--line); border-radius: 6px; }
+.week-route { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: #fff; }
+.week-route[open] { border-color: #8ab7df; box-shadow: 0 8px 24px rgba(23, 105, 170, .08); }
+.week-row { cursor: pointer; list-style: none; display: grid; grid-template-columns: 74px minmax(0, 1fr) auto 24px; gap: 14px; align-items: center; padding: 14px; }
+.week-row::-webkit-details-marker { display: none; }
+.week-row::after { content: "+"; width: 24px; height: 24px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 4px; color: var(--blue); font-weight: 800; }
+.week-route[open] > .week-row::after { content: "−"; }
+.week-row:hover { background: #f5f9fd; }
 .week-number { color: var(--blue); font-weight: 800; }
 .week-row h3 { margin: 0 0 4px; font-size: 16px; }
 .week-row p { margin: 0; color: var(--muted); font-size: 13px; }
 .week-count { color: var(--muted); font-size: 13px; }
+.week-preview { margin: 0; padding: 12px 18px 16px 102px; border-top: 1px solid #edf0f4; color: var(--muted); font-size: 14px; line-height: 1.7; }
+.week-route-content { border-top: 1px solid var(--line); }
+.week-course { padding: 22px; background: #fbfcfe; }
+.week-course > h2 { margin-top: 0; }
+
+.algorithm-principles { display: grid; gap: 12px; margin: 20px 0 26px; }
+.algorithm-principles article { position: relative; padding: 18px 18px 18px 72px; border: 1px solid #cfd9e6; border-radius: 7px; background: #fff; }
+.algorithm-principles h3 { margin: 0 0 10px; font-size: 17px; }
+.algorithm-principles p { margin: 7px 0 0; color: #475467; font-size: 14px; line-height: 1.75; }
+.principle-id { position: absolute; top: 18px; left: 18px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 5px; color: #fff; background: var(--blue); font: 700 13px/1 Consolas, monospace; }
+.reasoning-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
+.reasoning-flow div { padding: 12px; border: 1px solid #cfd9e6; border-radius: 6px; background: #fff; }
+.reasoning-flow b, .reasoning-flow span { display: block; }
+.reasoning-flow b { margin-bottom: 6px; color: var(--blue); font-size: 13px; }
+.reasoning-flow span { color: #475467; font-size: 13px; line-height: 1.65; }
 
 .day-block { margin-top: 18px; }
 .day-head { display: flex; justify-content: space-between; gap: 16px; align-items: end; padding-bottom: 10px; border-bottom: 2px solid #17243a; }
@@ -90,7 +111,23 @@ button, textarea, select { font: inherit; }
 .lesson-note p, .lesson-note li { color: #475467; font-size: 14px; line-height: 1.7; }
 .lesson-note p { margin: 0; }
 .lesson-note ul { margin: 0; padding-left: 20px; }
-pre { overflow: auto; margin: 14px 0; padding: 16px; border-radius: 6px; color: #e6edf3; background: #0d1117; font: 13px/1.65 Consolas, monospace; }
+.code-editor { margin: 16px 0; overflow: hidden; border: 1px solid #2b2b2b; border-radius: 7px; background: #1e1e1e; box-shadow: 0 10px 26px rgba(15, 23, 42, .18); }
+.code-editor-bar { height: 38px; padding: 0 14px; display: flex; align-items: center; gap: 7px; color: #c8c8c8; background: #181818; border-bottom: 1px solid #2b2b2b; font: 12px/1 Consolas, monospace; }
+.editor-dot { width: 10px; height: 10px; border-radius: 50%; background: #ff5f57; }
+.editor-dot:nth-child(2) { background: #febc2e; }
+.editor-dot:nth-child(3) { margin-right: 8px; background: #28c840; }
+pre { overflow: auto; margin: 0; padding: 12px 0 14px; color: #d4d4d4; background: #1e1e1e; font: 14px/1.75 "Cascadia Code", Consolas, monospace; tab-size: 4; }
+pre code { display: block; min-width: max-content; }
+.code-line { display: block; min-height: 24px; padding-right: 18px; }
+.code-line:hover { background: #252526; }
+.line-number { position: sticky; left: 0; display: inline-block; width: 46px; margin-right: 16px; padding-right: 12px; color: #858585; background: #1e1e1e; text-align: right; user-select: none; }
+.tok-keyword { color: #c586c0; }
+.tok-type { color: #4ec9b0; }
+.tok-number { color: #b5cea8; }
+.tok-string { color: #ce9178; }
+.tok-comment { color: #6a9955; }
+.tok-function { color: #dcdcaa; }
+.tok-preprocessor { color: #c586c0; }
 .lesson-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .status-select { height: 38px; border: 1px solid var(--line); border-radius: 5px; padding: 0 8px; background: #fff; }
 .problem-link { display: inline-flex; align-items: center; min-height: 38px; padding: 0 12px; border-radius: 5px; color: #fff; background: var(--blue); text-decoration: none; font-weight: 700; }
@@ -109,6 +146,7 @@ pre { overflow: auto; margin: 14px 0; padding: 16px; border-radius: 6px; color: 
   .hero-stats { max-width: 520px; }
   .side-column { grid-template-columns: 1fr 1fr; }
   .method-grid { grid-template-columns: 1fr 1fr; }
+  .reasoning-flow { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 620px) {
   .page-shell { width: min(1240px, calc(100% - 20px)); padding-top: 14px; }
@@ -117,8 +155,13 @@ pre { overflow: auto; margin: 14px 0; padding: 16px; border-radius: 6px; color: 
   .hero { padding: 24px 18px; overflow: hidden; }
   .hero h1 { font-size: 32px; line-height: 1.22; }
   .hero-stats, .side-column, .method-grid, .lesson-grid { grid-template-columns: 1fr; }
-  .week-row { grid-template-columns: 58px 1fr; }
+  .week-row { grid-template-columns: 58px 1fr 24px; }
+  .week-row::after { grid-column: 3; grid-row: 1 / span 2; }
   .week-count { grid-column: 2; }
+  .week-preview { padding: 12px 14px 16px; }
+  .week-course { padding: 16px 12px; }
+  .algorithm-principles article { padding: 64px 14px 16px; }
+  .reasoning-flow { grid-template-columns: 1fr; }
   .lesson summary { grid-template-columns: auto 1fr; }
   .difficulty { grid-column: 2; width: max-content; }
   .lesson-content { padding: 0 14px 18px; }
